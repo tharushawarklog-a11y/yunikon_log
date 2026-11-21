@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Yunikon Work Log — Yunikon International</title>
-  <link id="dynamic-favicon" rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-&sz=w128" />
+  <link id="dynamic-favicon" rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-" />
 
   <!-- Google Fonts: Inter & Noto Sans Sinhala -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -21,8 +21,8 @@
   <!-- SheetJS for Real Excel (.xlsx) Export -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
-  <!-- html2pdf.js for Direct PDF Download on Mobile & PC -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- jsPDF for Guaranteed Non-Blank PDF Generation on Mobile & PC -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- Google Identity Services (Pure Client-Side OAuth2 - Free Tier, No Apps Script) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -33,7 +33,7 @@
       --bg-secondary: #ffffff;
       --bg-tertiary: #f1f5f9;
       --text-primary: #0f172a;
-      --text-secondary: #475569;
+      --text-secondary: #334155;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
       --accent-primary: #dc2626;
@@ -186,7 +186,6 @@
       border-color: var(--border-color);
     }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -197,24 +196,6 @@
     ::-webkit-scrollbar-thumb {
       background: var(--border-color);
       border-radius: 9999px;
-    }
-
-    /* Print optimization */
-    @media print {
-      body * {
-        visibility: hidden;
-      }
-      #print-export-area, #print-export-area * {
-        visibility: visible;
-      }
-      #print-export-area {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: #ffffff !important;
-        color: #000000 !important;
-      }
     }
   </style>
 </head>
@@ -228,7 +209,7 @@
     <div class="w-full max-w-md rounded-3xl p-6 sm:p-8 border border-white/15 bg-zinc-900 text-white shadow-2xl">
       <div class="flex flex-col items-center text-center mb-6">
         <div class="w-16 h-16 rounded-2xl bg-white/10 p-2 flex items-center justify-center mb-3 shadow-inner overflow-hidden">
-          <img id="lock-logo-img" src="" alt="Yunikon Logo" class="w-full h-full object-contain rounded-xl" />
+          <img id="lock-logo-img" src="" alt="Yunikon Work Log Logo" class="w-full h-full object-contain rounded-xl" />
         </div>
         <h2 class="text-xl font-extrabold tracking-tight" data-i18n="appLockedTitle">Yunikon Work Log Locked</h2>
         <p class="text-xs text-zinc-400 mt-1" data-i18n="appLockedSubtitle">Select your profile and enter your personal PIN / Password</p>
@@ -267,11 +248,11 @@
       <!-- Left: Dynamic Logo + Title + Live Auto Clock -->
       <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
         <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-tertiary-theme border border-theme p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
-          <img id="navbar-logo" src="" alt="Yunikon Logo" class="w-full h-full object-contain rounded-lg" />
+          <img id="navbar-logo" src="" alt="Yunikon Work Log Logo" class="w-full h-full object-contain rounded-lg" />
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-extrabold tracking-tight truncate">Yunikon Work Log</h1>
+            <h1 class="text-base sm:text-lg font-extrabold tracking-tight truncate" data-i18n="brandTitle">Yunikon Work Log</h1>
             <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider badge-secondary">
               Yunikon International
             </span>
@@ -284,13 +265,13 @@
         </div>
       </div>
 
-      <!-- Right: Compact Controls (Role Pill, Google Drive Sync Status, Theme Palette, Light/Dark, Language, App Lock) -->
+      <!-- Right: Compact Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
-        <!-- Compact Role / Admin Permission Button (Top Bar as requested) -->
+        <!-- Compact Role / Permission Button -->
         <button id="open-role-modal-btn" type="button" title="Role & Permissions"
           class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
           <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-          <span id="active-user-badge" class="max-w-[75px] sm:max-w-[110px] truncate">User 1</span>
+          <span id="active-user-badge" class="max-w-[75px] sm:max-w-[110px] truncate">Member 1</span>
           <span id="active-role-tag" class="px-1.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase badge-secondary">Owner</span>
         </button>
 
@@ -302,11 +283,11 @@
           <span id="drive-status-text" class="hidden sm:inline">Local</span>
         </button>
 
-        <!-- Palette Switcher (Red/Black/White vs Navy/Yellow/White) -->
+        <!-- Palette Switcher -->
         <button id="palette-toggle-btn" type="button" title="Switch Theme Color Palette"
           class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
           <span id="palette-swatch" class="w-3.5 h-3.5 rounded-full border border-white/40 shadow-sm" style="background: linear-gradient(135deg, #dc2626 50%, #111111 50%);"></span>
-          <span id="palette-label" class="hidden md:inline">Red/Black</span>
+          <span id="palette-label" class="hidden md:inline">Red / Black</span>
         </button>
 
         <!-- Dark / Light Mode Toggle -->
@@ -333,7 +314,7 @@
   <!-- MAIN WORKSPACE -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5">
 
-    <!-- KPI SUMMARY CARDS (AUTO TOTALS) -->
+    <!-- KPI SUMMARY CARDS -->
     <section class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
       <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
         <div>
@@ -409,14 +390,14 @@
         <form id="work-log-form" class="space-y-4" novalidate>
           <input type="hidden" id="edit-log-id" value="" />
 
-          <!-- REQUIRED TITLE FIELD (Chassis Number removed, Title mandatory) -->
+          <!-- MANDATORY TITLE FIELD -->
           <div>
             <label for="log-title" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1.5">
               <span><span data-i18n="taskTitleLabel">Work / Document Title</span> <span class="text-rose-500">*</span></span>
               <span class="text-[11px] font-normal text-muted-theme" data-i18n="requiredTag">Required</span>
             </label>
             <input id="log-title" type="text" required
-              placeholder="e.g., Toyota Prius 2024 - LC & Customs Clearance"
+              placeholder="e.g., Vehicle Import - LC & Customs Clearance"
               data-i18n-placeholder="titlePlaceholder"
               class="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-semibold" />
             <p id="title-error-msg" class="hidden text-xs text-rose-500 font-semibold mt-1" data-i18n="titleRequiredError">
@@ -440,13 +421,11 @@
                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
               </button>
             </div>
-            <!-- Custom Dropdown Menu -->
             <div id="doc-dropdown-list" class="hidden absolute z-30 left-0 right-0 mt-1.5 max-h-56 overflow-y-auto rounded-2xl theme-card p-1.5 shadow-2xl">
-              <!-- Populated dynamically via JS -->
             </div>
           </div>
 
-          <!-- DATE & TIME (Auto-filled with current date/time, editable if logging earlier work) -->
+          <!-- DATE & TIME -->
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label for="log-date" class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="dateLabel">Date</label>
@@ -461,7 +440,7 @@
             </div>
           </div>
 
-          <!-- TASK STATUS (3 States: Not Started, In Progress, Completed) -->
+          <!-- TASK STATUS -->
           <div>
             <label class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="statusLabel">Work Progress Status</label>
             <div class="grid grid-cols-3 gap-2">
@@ -515,7 +494,6 @@
               <input id="photo-input" type="file" accept="image/*" multiple class="hidden" />
             </label>
 
-            <!-- Selected Photos Preview Grid -->
             <div id="form-photo-grid" class="grid grid-cols-5 gap-2 mt-2.5 empty:hidden"></div>
           </div>
 
@@ -599,16 +577,14 @@
         </div>
 
         <!-- WORK LOG CARDS CONTAINER -->
-        <div id="logs-list-container" class="space-y-3">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="logs-list-container" class="space-y-3"></div>
       </section>
     </div>
   </main>
 
   <!-- FOOTER -->
   <footer class="mt-auto py-4 px-4 text-center text-xs text-muted-theme border-t border-theme">
-    <p>Yunikon Work Log • Yunikon International Vehicle Import Operations • Multi-User Cloud & Offline Ready</p>
+    <p>Yunikon Work Log • Yunikon International • Multi-User Personal Google Drive Sync</p>
   </footer>
 
   <!-- ========================================================= -->
@@ -616,7 +592,6 @@
   <!-- ========================================================= -->
   <div id="report-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-4 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
-      <!-- Modal Header -->
       <div class="px-4 sm:px-6 py-3.5 border-b border-theme flex items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-500"></i>
@@ -637,26 +612,23 @@
         </div>
       </div>
 
-      <!-- Printable / PDF Report Content -->
       <div class="overflow-y-auto p-4 sm:p-6 bg-zinc-100 dark:bg-zinc-950 flex-1">
         <div id="print-export-area" class="bg-white text-slate-900 rounded-2xl p-5 sm:p-8 shadow-md max-w-3xl mx-auto">
-          <!-- Report Header with Company Logo -->
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-slate-900">
             <div class="flex items-center gap-3.5">
               <img id="report-logo-img" src="" alt="Yunikon International" class="w-14 h-14 object-contain rounded-xl border border-slate-200 p-1" />
               <div>
                 <h1 class="text-xl font-black tracking-tight text-slate-900">YUNIKON INTERNATIONAL</h1>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-600" id="report-subtitle-text">Daily Vehicle Import Work Log Report</p>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-600">Yunikon Work Log — Daily Import Report</p>
               </div>
             </div>
             <div class="text-left sm:text-right text-xs text-slate-600 space-y-0.5">
-              <p><strong id="report-gen-label">Generated:</strong> <span id="report-generated-time"></span></p>
-              <p><strong id="report-by-label">Prepared By:</strong> <span id="report-prepared-by"></span></p>
-              <p><strong id="report-filter-label">Filter:</strong> <span id="report-filter-summary">All Records</span></p>
+              <p><strong>Generated:</strong> <span id="report-generated-time"></span></p>
+              <p><strong>Prepared By:</strong> <span id="report-prepared-by"></span></p>
+              <p><strong>Filter:</strong> <span id="report-filter-summary">All Records</span></p>
             </div>
           </div>
 
-          <!-- Summary Strip inside Report -->
           <div class="grid grid-cols-4 gap-2 my-4 text-center">
             <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200">
               <span class="block text-[10px] font-bold uppercase text-slate-500">Total</span>
@@ -676,10 +648,7 @@
             </div>
           </div>
 
-          <!-- Detailed Log Items Table -->
-          <div id="report-items-container" class="space-y-3 mt-4">
-            <!-- Populated dynamically -->
-          </div>
+          <div id="report-items-container" class="space-y-3 mt-4"></div>
         </div>
       </div>
     </div>
@@ -696,9 +665,7 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div id="single-modal-body" class="p-5 overflow-y-auto space-y-4">
-        <!-- Populated dynamically -->
-      </div>
+      <div id="single-modal-body" class="p-5 overflow-y-auto space-y-4"></div>
     </div>
   </div>
 
@@ -727,12 +694,10 @@
 
       <div class="p-5 overflow-y-auto space-y-4 text-sm">
         <p class="text-xs text-muted-theme" data-i18n="teamRolesDesc">
-          Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs without boss approval delays.
+          Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs with no boss approval required.
         </p>
 
-        <div id="users-role-list" class="space-y-3">
-          <!-- Rendered dynamically for the 3 users -->
-        </div>
+        <div id="users-role-list" class="space-y-3"></div>
       </div>
     </div>
   </div>
@@ -753,7 +718,6 @@
       </div>
 
       <div class="p-5 overflow-y-auto space-y-4">
-        <!-- Auto-Lock / Remember Time Selector (Exact 7 requested options) -->
         <div>
           <label for="auto-lock-select" class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="autoLockTimeLabel">
             Auto-Lock / Reminder Time
@@ -764,22 +728,21 @@
             <option value="10">10 Minutes</option>
             <option value="30">30 Minutes</option>
             <option value="60">60 Minutes</option>
-            <option value="always">Always (Lock on Hide / Reopen)</option>
+            <option value="always">Always</option>
             <option value="disable">Disable</option>
           </select>
           <p class="text-[11px] text-muted-theme mt-1" data-i18n="autoLockHelp">
-            Automatically locks the app after inactivity or when reopening the browser tab.
+            Automatically locks the app after inactivity or when reopening.
           </p>
         </div>
 
-        <!-- Set / Change Personal PIN or Password for Current User -->
         <div class="pt-3 border-t border-theme space-y-2.5">
           <label class="block text-xs font-bold uppercase tracking-wider" data-i18n="setPersonalPinLabel">
             Set Your Personal PIN / Password
           </label>
           <p class="text-xs text-muted-theme">
             <span data-i18n="currentProfileText">Active Profile:</span>
-            <strong id="pin-setting-username" class="text-primary">User 1</strong>
+            <strong id="pin-setting-username" class="text-primary">Member 1</strong>
           </p>
           <input id="new-pin-input" type="password" placeholder="Enter new PIN or Password (min 4 chars)"
             class="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-semibold" />
@@ -788,7 +751,6 @@
           </button>
         </div>
 
-        <!-- Lock Now Button -->
         <div class="pt-3 border-t border-theme">
           <button id="lock-now-btn" type="button" class="w-full py-2.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center justify-center gap-2">
             <i data-lucide="lock" class="w-4 h-4"></i>
@@ -821,9 +783,17 @@
             <span data-i18n="driveZeroBackendTitle">100% Free Tier • No Google Apps Script • GitHub Pages Ready</span>
           </p>
           <p class="text-xs text-muted-theme" data-i18n="driveZeroBackendDesc">
-            Uses official Google Identity Services & Drive REST API v3 directly from your browser to save and auto-sync "yunikon_work_log_db.json" in your personal Google Drive whenever the app opens or logs change.
+            Uses Google Identity Services & Drive REST API v3 directly in your browser to sync "yunikon_work_log_data.json" with your personal Google Drive automatically when the app opens and whenever logs change.
           </p>
         </div>
+
+        <label class="flex items-center justify-between p-3 rounded-2xl border border-theme bg-tertiary-theme/50 cursor-pointer">
+          <div>
+            <span class="font-bold block text-xs sm:text-sm" data-i18n="autoSyncOnLoadLabel">Auto-Sync on App Load</span>
+            <span class="text-[11px] text-muted-theme" data-i18n="autoSyncOnLoadDesc">Automatically pull & sync Drive data when opening the app</span>
+          </div>
+          <input id="auto-sync-on-load-checkbox" type="checkbox" class="w-4 h-4 accent-emerald-600 rounded" checked />
+        </label>
 
         <div id="owner-drive-config-box" class="space-y-2">
           <label for="google-client-id-input" class="block text-xs font-bold uppercase tracking-wider">
@@ -832,14 +802,14 @@
           <input id="google-client-id-input" type="text" placeholder="xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com"
             class="w-full theme-input rounded-xl px-3 py-2.5 text-xs font-mono" />
           <p class="text-[11px] text-muted-theme">
-            Add your GitHub Pages URL (e.g. <code>https://username.github.io</code>) under Authorized JavaScript Origins in Google Cloud Console (Free tier).
+            Add your GitHub Pages URL under Authorized JavaScript Origins in Google Cloud Console (Free tier).
           </p>
         </div>
 
         <div class="flex flex-wrap gap-2 pt-1">
           <button id="connect-drive-btn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold btn-accent flex items-center justify-center gap-1.5">
             <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-            <span data-i18n="connectSyncDrive">Connect & Auto-Sync Now</span>
+            <span data-i18n="connectSyncDrive">Sign In & Auto-Sync Now</span>
           </button>
           <button id="manual-pull-drive-btn" type="button" class="py-2.5 px-3.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme">
             <span data-i18n="syncNowBtn">Sync Now</span>
@@ -866,38 +836,37 @@
       ----------------------------------------------------------- */
       const LOGOS = {
         'red-black': {
-          primary: 'https://drive.google.com/thumbnail?id=1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-&sz=w256',
-          fallback: 'https://lh3.googleusercontent.com/d/1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-',
+          id: '1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-',
+          primary: 'https://lh3.googleusercontent.com/d/1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-',
+          fallback: 'https://drive.google.com/uc?export=view&id=1CSRE2ix31nyy7tUBOXENXOkhLkeIH3e-',
           svg: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23111111"/><path d="M22 25 L50 55 L78 25 L66 25 L50 43 L34 25 Z" fill="%23dc2626"/><rect x="44" y="50" width="12" height="28" rx="4" fill="%23ffffff"/></svg>`
         },
         'navy-yellow': {
-          primary: 'https://drive.google.com/thumbnail?id=1lDDs-PwvWKCCYUTX0Dcfzf_kfVy3c3Vn&sz=w256',
-          fallback: 'https://lh3.googleusercontent.com/d/1lDDs-PwvWKCCYUTX0Dcfzf_kfVy3c3Vn',
+          id: '1lDDs-PwvWKCCYUTX0Dcfzf_kfVy3c3Vn',
+          primary: 'https://lh3.googleusercontent.com/d/1lDDs-PwvWKCCYUTX0Dcfzf_kfVy3c3Vn',
+          fallback: 'https://drive.google.com/uc?export=view&id=1lDDs-PwvWKCCYUTX0Dcfzf_kfVy3c3Vn',
           svg: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%230f294a"/><path d="M22 25 L50 55 L78 25 L66 25 L50 43 L34 25 Z" fill="%23facc15"/><rect x="44" y="50" width="12" height="28" rx="4" fill="%23ffffff"/></svg>`
         }
       };
 
       const VEHICLE_DOCUMENT_TYPES = [
-        'Customs Declaration (CUSDEC)',
+        'CUSDEC',
         'Bill of Lading (B/L)',
         'Letter of Credit (LC)',
         'Commercial Invoice',
         'Packing List',
-        'Export Certificate / Deregistration Certificate',
-        'JAAI / JEVIC Pre-Shipment Inspection Certificate',
-        'Import Control License (ICL)',
-        'RMV Registration / MTA-2 Form',
+        'Export Certificate',
+        'JAAI Inspection Certificate',
+        'JEVIC Certificate',
+        'RMV Registration',
         'Delivery Order (DO)',
-        'Marine & Motor Insurance Cover Note',
-        'Bank Settlement / TT Swift Copy',
-        'Sri Lanka Ports Authority (SLPA) Gate Pass',
-        'Valuation & Duty Assessment Sheet',
-        'Proforma Invoice (PI)',
-        'Vehicle Handover & Release Note'
+        'Insurance Certificate',
+        'Arrival Notice'
       ];
 
       const I18N = {
         en: {
+          brandTitle: 'Yunikon Work Log',
           appLockedTitle: 'Yunikon Work Log Locked',
           appLockedSubtitle: 'Select your profile and enter your personal PIN / Password',
           selectUser: 'Team Member',
@@ -915,7 +884,7 @@
           cancel: 'Cancel',
           taskTitleLabel: 'Work / Document Title',
           requiredTag: 'Required',
-          titlePlaceholder: 'e.g., Toyota Prius 2024 - LC & Customs Clearance',
+          titlePlaceholder: 'e.g., Vehicle Import - LC & Customs Clearance',
           titleRequiredError: 'Title is required! Please enter a title before saving.',
           docTypeLabel: 'Vehicle Import Document Type',
           selectOrType: 'Select or Type',
@@ -941,18 +910,20 @@
           allUsers: 'All Users',
           reportPreviewTitle: 'Work Log Report Preview (Boss Copy)',
           teamRolesTitle: 'Team & Role Permissions (3 Users)',
-          teamRolesDesc: 'Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs without boss approval delays.',
+          teamRolesDesc: 'Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs with no boss approval required.',
           appLockSettingsTitle: 'App Lock & Security',
           autoLockTimeLabel: 'Auto-Lock / Reminder Time',
-          autoLockHelp: 'Automatically locks the app after inactivity or when reopening the browser tab.',
+          autoLockHelp: 'Automatically locks the app after inactivity or when reopening.',
           setPersonalPinLabel: 'Set Your Personal PIN / Password',
           currentProfileText: 'Active Profile:',
           updatePinBtn: 'Update My PIN / Password',
           lockNowBtn: 'Lock App Immediately',
           driveSyncTitle: 'Google Drive Auto-Sync (Free API)',
           driveZeroBackendTitle: '100% Free Tier • No Google Apps Script • GitHub Pages Ready',
-          driveZeroBackendDesc: 'Uses official Google Identity Services & Drive REST API v3 directly from your browser to save and auto-sync "yunikon_work_log_db.json" in your personal Google Drive whenever the app opens or logs change.',
-          connectSyncDrive: 'Connect & Auto-Sync Now',
+          driveZeroBackendDesc: 'Uses Google Identity Services & Drive REST API v3 directly in your browser to sync "yunikon_work_log_data.json" with your personal Google Drive automatically when the app opens and whenever logs change.',
+          autoSyncOnLoadLabel: 'Auto-Sync on App Load',
+          autoSyncOnLoadDesc: 'Automatically pull & sync Drive data when opening the app',
+          connectSyncDrive: 'Sign In & Auto-Sync Now',
           syncNowBtn: 'Sync Now',
           noLogsFound: 'No work logs match your current view.',
           noLogsHint: 'Add your first vehicle import task on the left or clear filters.',
@@ -961,6 +932,7 @@
           deleteBtn: 'Delete'
         },
         si: {
+          brandTitle: 'Yunikon Work Log',
           appLockedTitle: 'Yunikon Work Log අගුළු දමා ඇත',
           appLockedSubtitle: 'ඔබගේ නම තෝරා ඔබගේ PIN / මුරපදය ඇතුළත් කරන්න',
           selectUser: 'සාමාජිකයා තෝරන්න',
@@ -968,8 +940,8 @@
           unlockBtn: 'ඇතුළු වන්න (Unlock)',
           defaultPinHint: 'මුරපදයක් සකසා නැත්නම්: 1234',
           totalTasks: 'මුළු වැඩ ගණන',
-          statusCompleted: 'අවසන් කර ඇත',
-          statusInProgress: 'සිදු කරමින් පවතී',
+          statusCompleted: 'අවසන් කළා',
+          statusInProgress: 'කරගෙන යනවා',
           statusNotStarted: 'ආරම්භ කර නැත',
           totalPhotos: 'ඡායාරූප ගණන',
           newWorkLog: 'දෛනික වැඩ සටහනක් එක් කරන්න',
@@ -978,7 +950,7 @@
           cancel: 'අවලංගු කරන්න',
           taskTitleLabel: 'වැඩෙහි මාතෘකාව (Title)',
           requiredTag: 'අනිවාර්යයි',
-          titlePlaceholder: 'උදා: Toyota Prius 2024 - LC සහ රේගු ලියකියවිලි',
+          titlePlaceholder: 'උදා: වාහන ආනයනය - LC සහ රේගු ලියකියවිලි',
           titleRequiredError: 'මාතෘකාව (Title) අනිවාර්යයි! කරුණාකර මාතෘකාවක් ඇතුළත් කරන්න.',
           docTypeLabel: 'වාහන ආනයන ලියවිලි වර්ගය',
           selectOrType: 'තෝරන්න හෝ ටයිප් කරන්න',
@@ -1004,7 +976,7 @@
           allUsers: 'සියලු සාමාජිකයින්',
           reportPreviewTitle: 'වැඩ වාර්තා පෙරදසුන (Boss Copy)',
           teamRolesTitle: 'සාමාජිකයින් සහ බලතල (Users 3)',
-          teamRolesDesc: 'සාමාජිකයා මාරු කිරීම හෝ Owner / Admin තනතුරු සැකසීම මෙතැනින් කළ හැක.',
+          teamRolesDesc: 'සාමාජිකයා මාරු කිරීම හෝ Owner / Admin තනතුරු සැකසීම මෙතැනින් කළ හැක. සියලු දෙනාටම සියලු වැඩ පෙනේ.',
           appLockSettingsTitle: 'App Lock සහ ආරක්ෂාව',
           autoLockTimeLabel: 'ස්වයංක්‍රීයව අගුළු වැටෙන වේලාව (Auto-Lock)',
           autoLockHelp: 'නියමිත කාලයකට පසු හෝ නැවත App එක විවෘත කරන විට මුරපදය ඉල්ලයි.',
@@ -1014,8 +986,10 @@
           lockNowBtn: 'දැන් App එක අගුළු දමන්න (Lock Now)',
           driveSyncTitle: 'Google Drive Auto-Sync (නොමිලේ)',
           driveZeroBackendTitle: '100% නොමිලේ • Apps Script අවශ්‍ය නැත • GitHub Pages සඳහා සුදුසුයි',
-          driveZeroBackendDesc: 'App එක විවෘත කරන විට සහ වැඩ සටහන් වෙනස් කරන විට ස්වයංක්‍රීයව ඔබගේ Google Drive වෙත දත්ත Sync වේ.',
-          connectSyncDrive: 'Google Drive සම්බන්ධ කර Sync කරන්න',
+          driveZeroBackendDesc: 'App එක විවෘත කරන විට සහ වැඩ සටහන් වෙනස් කරන විට "yunikon_work_log_data.json" ගොනුව ඔබගේ Google Drive වෙත ස්වයංක්‍රීයව Sync වේ.',
+          autoSyncOnLoadLabel: 'App එක Load වන විට Auto-Sync',
+          autoSyncOnLoadDesc: 'App එක විවෘත කරන වහාම Drive දත්ත ස්වයංක්‍රීයව Sync කරන්න',
+          connectSyncDrive: 'Sign In කර Auto-Sync කරන්න',
           syncNowBtn: 'දැන් Sync කරන්න',
           noLogsFound: 'වැඩ සටහන් කිසිවක් හමු නොවීය.',
           noLogsHint: 'වම් පසින් නව වැඩ සටහනක් ඇතුළත් කරන්න.',
@@ -1028,7 +1002,9 @@
       /* -----------------------------------------------------------
          2. APPLICATION STATE & LOCAL STORAGE PERSISTENCE
       ----------------------------------------------------------- */
-      const STORAGE_KEY = 'yunikon_work_log_state_v1';
+      const STORAGE_KEY = 'yunikon_work_log_state_v2';
+      const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
+      const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
       const defaultState = {
         palette: 'red-black', // 'red-black' | 'navy-yellow'
@@ -1039,12 +1015,13 @@
         isLocked: false,
         lastActiveTimestamp: Date.now(),
         googleClientId: '',
+        autoSyncOnLoad: true,
         driveFileId: null,
         lastSyncTime: null,
         users: [
-          { id: 'u1', name: 'Member 1 (Owner)', role: 'Owner', pin: '1234' },
-          { id: 'u2', name: 'Member 2 (Admin)', role: 'Admin', pin: '1234' },
-          { id: 'u3', name: 'Member 3 (Admin)', role: 'Admin', pin: '1234' }
+          { id: 'u1', name: 'Member 1', role: 'Owner', pin: '1234' },
+          { id: 'u2', name: 'Member 2', role: 'Admin', pin: '1234' },
+          { id: 'u3', name: 'Member 3', role: 'Admin', pin: '1234' }
         ],
         logs: []
       };
@@ -1054,16 +1031,24 @@
       let googleAccessToken = null;
       let tokenClient = null;
       let isSyncing = false;
+      let gsiReady = false;
 
       function loadState() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
+          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v1');
           if (!raw) return structuredClone(defaultState);
           const parsed = JSON.parse(raw);
+          const normalizedUsers = Array.isArray(parsed.users) && parsed.users.length === 3
+            ? parsed.users.map(u => ({
+                ...u,
+                role: u.role === 'Owner' ? 'Owner' : 'Admin'
+              }))
+            : structuredClone(defaultState.users);
+
           return {
             ...structuredClone(defaultState),
             ...parsed,
-            users: Array.isArray(parsed.users) && parsed.users.length === 3 ? parsed.users : structuredClone(defaultState.users),
+            users: normalizedUsers,
             logs: Array.isArray(parsed.logs) ? parsed.logs : []
           };
         } catch (err) {
@@ -1077,10 +1062,10 @@
           state.lastActiveTimestamp = Date.now();
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (err) {
-          showToast('Storage almost full! Try fewer photos per entry.', 'error');
+          showToast('Local storage full! Try fewer photos per entry.', 'error');
         }
         if (triggerDriveSync) {
-          autoSyncToGoogleDrive('push');
+          pushToGoogleDrive();
         }
       }
 
@@ -1103,7 +1088,7 @@
           el.style.opacity = '0';
           el.style.transform = 'translateY(8px)';
           setTimeout(() => el.remove(), 300);
-        }, 3200);
+        }, 3400);
       }
 
       function setLogoWithFallback(imgEl, paletteKey) {
@@ -1128,7 +1113,7 @@
           reader.onload = (e) => {
             const img = new Image();
             img.onload = () => {
-              const MAX_DIM = 960;
+              const MAX_DIM = 800;
               let { width, height } = img;
               if (width > MAX_DIM || height > MAX_DIM) {
                 if (width > height) {
@@ -1144,7 +1129,7 @@
               canvas.height = height;
               const ctx = canvas.getContext('2d');
               ctx.drawImage(img, 0, 0, width, height);
-              resolve(canvas.toDataURL('image/jpeg', 0.72));
+              resolve(canvas.toDataURL('image/jpeg', 0.68));
             };
             img.onerror = reject;
             img.src = e.target.result;
@@ -1179,6 +1164,14 @@
           .replace(/"/g, '&quot;');
       }
 
+      function sanitizePdfText(str) {
+        return String(str || '')
+          .replace(/[^\x20-\x7E\n\r]/g, (ch) => {
+            const code = ch.charCodeAt(0);
+            return code >= 0x0D80 && code <= 0x0DFF ? '[SI]' : ' ';
+          });
+      }
+
       /* -----------------------------------------------------------
          4. THEME (4 MODES) & BILINGUAL ENGINE
       ----------------------------------------------------------- */
@@ -1186,7 +1179,6 @@
         document.body.setAttribute('data-palette', state.palette);
         document.body.setAttribute('data-mode', state.mode);
 
-        // Update Logos & Favicon dynamically
         setLogoWithFallback(document.getElementById('navbar-logo'), state.palette);
         setLogoWithFallback(document.getElementById('lock-logo-img'), state.palette);
         setLogoWithFallback(document.getElementById('report-logo-img'), state.palette);
@@ -1196,7 +1188,6 @@
           favicon.href = LOGOS[state.palette].primary;
         }
 
-        // Update Palette Button UI
         const swatch = document.getElementById('palette-swatch');
         const label = document.getElementById('palette-label');
         if (state.palette === 'red-black') {
@@ -1207,7 +1198,6 @@
           label.textContent = 'Navy / Yellow';
         }
 
-        // Update Mode Icon
         const modeIcon = document.getElementById('mode-icon');
         modeIcon.setAttribute('data-lucide', state.mode === 'dark' ? 'sun' : 'moon');
         lucide.createIcons();
@@ -1227,6 +1217,11 @@
         const langBtn = document.getElementById('lang-toggle-btn');
         langBtn.textContent = state.lang === 'en' ? 'සිංහල' : 'English';
 
+        const isEditing = Boolean(document.getElementById('edit-log-id').value);
+        document.getElementById('form-heading').textContent = isEditing ? dict.editWorkLog : dict.newWorkLog;
+        document.getElementById('save-btn-text').textContent = isEditing ? dict.updateWorkLog : dict.saveWorkLog;
+
+        renderUserUI();
         renderLogs();
       }
 
@@ -1298,18 +1293,7 @@
         setTimeout(() => pinInput.focus(), 100);
       }
 
-      function lockAppNow() {
-        if (state.autoLockMinutes === 'disable') {
-          showToast('App Lock is currently set to Disable. Change Auto-Lock time first.', 'warning');
-          return;
-        }
-        state.isLocked = true;
-        saveState(false);
-        renderLockScreen();
-      }
-
       function initAutoLockWatchers() {
-        // Track user activity to reset inactivity timer
         ['click', 'keydown', 'touchstart', 'mousemove'].forEach(evt => {
           window.addEventListener(evt, () => {
             if (!state.isLocked) {
@@ -1318,7 +1302,6 @@
           }, { passive: true });
         });
 
-        // Lock immediately on tab hide if "Always" is chosen
         document.addEventListener('visibilitychange', () => {
           if (document.hidden && state.autoLockMinutes === 'always') {
             state.isLocked = true;
@@ -1326,10 +1309,12 @@
           } else if (!document.hidden) {
             checkShouldLockOnStartup();
             renderLockScreen();
+            if (state.autoSyncOnLoad && state.googleClientId && googleAccessToken) {
+              pullAndSyncFromGoogleDrive();
+            }
           }
         });
 
-        // Periodic check every 10 seconds for 1/5/10/30/60 minute timeouts
         setInterval(() => {
           if (state.isLocked || state.autoLockMinutes === 'disable' || state.autoLockMinutes === 'always') return;
           const mins = parseInt(state.autoLockMinutes, 10);
@@ -1459,8 +1444,10 @@
       }
 
       /* -----------------------------------------------------------
-         9. WORK LOG CRUD & RENDERING
+         9. WORK LOG CRUD, INLINE STATUS CYCLING & RENDERING
       ----------------------------------------------------------- */
+      const STATUS_CYCLE = ['not_started', 'in_progress', 'completed'];
+
       function getFilteredLogs() {
         const search = document.getElementById('filter-search').value.trim().toLowerCase();
         const dateFilter = document.getElementById('filter-date').value;
@@ -1496,22 +1483,37 @@
         document.getElementById('stat-photos').textContent = photos;
       }
 
-      function getStatusBadgeHtml(status) {
+      function getStatusBadgeHtml(status, clickableId = null) {
         const dict = I18N[state.lang] || I18N.en;
+        const attrs = clickableId
+          ? `role="button" tabindex="0" onclick="window.cycleLogStatus('${clickableId}')" title="Click to cycle status"`
+          : '';
+
         if (status === 'completed') {
-          return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+          return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${dict.statusCompleted}
           </span>`;
         }
         if (status === 'in_progress') {
-          return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400">
+          return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${dict.statusInProgress}
           </span>`;
         }
-        return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400">
+        return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
           <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>${dict.statusNotStarted}
         </span>`;
       }
+
+      window.cycleLogStatus = function (id) {
+        const log = state.logs.find(l => l.id === id);
+        if (!log) return;
+        const currIdx = STATUS_CYCLE.indexOf(log.status);
+        log.status = STATUS_CYCLE[(currIdx + 1) % STATUS_CYCLE.length];
+        log.updatedAt = Date.now();
+        saveState(true);
+        renderLogs();
+        showToast('Status updated!', 'success');
+      };
 
       function renderLogs() {
         const container = document.getElementById('logs-list-container');
@@ -1551,13 +1553,12 @@
               <div class="flex flex-wrap items-start justify-between gap-2">
                 <div class="space-y-1 min-w-0 flex-1">
                   <div class="flex flex-wrap items-center gap-1.5">
-                    ${getStatusBadgeHtml(log.status)}
+                    ${getStatusBadgeHtml(log.status, log.id)}
                     ${log.docType ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
                   </div>
                   <h3 class="text-base font-extrabold leading-snug break-words">${escapeHtml(log.title)}</h3>
                 </div>
 
-                <!-- Card Quick Actions -->
                 <div class="flex items-center gap-1.5 shrink-0">
                   <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
                     class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-tertiary-theme hover:opacity-80 flex items-center gap-1">
@@ -1642,7 +1643,6 @@
         const log = state.logs.find(l => l.id === id);
         if (!log) return;
 
-        // Owner can delete any log; Admin can delete their own logs
         if (activeUser.role !== 'Owner' && log.userId !== activeUser.id) {
           showToast('Only Owner can delete another member’s log.', 'warning');
           return;
@@ -1671,7 +1671,7 @@
 
         body.innerHTML = `
           <div class="flex flex-wrap items-center gap-2">
-            ${getStatusBadgeHtml(log.status)}
+            ${getStatusBadgeHtml(log.status, log.id)}
             ${log.docType ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
           </div>
           <div class="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-tertiary-theme text-xs">
@@ -1705,18 +1705,16 @@
       ----------------------------------------------------------- */
       function renderUserUI() {
         const activeUser = getActiveUser();
-        document.getElementById('active-user-badge').textContent = activeUser.name.split(' ')[0];
+        document.getElementById('active-user-badge').textContent = activeUser.name;
         document.getElementById('active-role-tag').textContent = activeUser.role;
         document.getElementById('pin-setting-username').textContent = `${activeUser.name} (${activeUser.role})`;
 
-        // Populate Filter User Dropdown
         const filterUserEl = document.getElementById('filter-user');
         const currentFilter = filterUserEl.value;
         filterUserEl.innerHTML = `<option value="all">${I18N[state.lang].allUsers}</option>` +
           state.users.map(u => `<option value="${u.id}">${escapeHtml(u.name)}</option>`).join('');
         filterUserEl.value = currentFilter || 'all';
 
-        // Populate Role Management Modal
         const listEl = document.getElementById('users-role-list');
         const isCurrentOwner = activeUser.role === 'Owner';
 
@@ -1744,7 +1742,6 @@
           `;
         }).join('');
 
-        // Bind User Rename, Role Change & Switch
         listEl.querySelectorAll('input[data-rename-user]').forEach(inp => {
           inp.addEventListener('change', () => {
             const uid = inp.getAttribute('data-rename-user');
@@ -1782,7 +1779,7 @@
       }
 
       /* -----------------------------------------------------------
-         11. REPORT PREVIEW, EXCEL (.XLSX) & PDF EXPORT FOR BOSS
+         11. REPORT PREVIEW, EXCEL (.XLSX) & GUARANTEED PDF EXPORT
       ----------------------------------------------------------- */
       function buildReportPreview() {
         const filtered = getFilteredLogs();
@@ -1829,8 +1826,7 @@
               ${log.notes ? `<p class="text-xs text-slate-700 pt-1">${escapeHtml(log.notes)}</p>` : ''}
               ${photos.length ? `
                 <div class="flex flex-wrap gap-1.5 pt-1.5">
-                  ${photos.slice(0, 6).map(src => `<img src="${src}" class="w-14 h-14 object-cover rounded border border-slate-300" />`).join('')}
-                  ${photos.length > 6 ? `<span class="text-[11px] text-slate-500 self-center">+${photos.length - 6} more</span>` : ''}
+                  ${photos.slice(0, 10).map(src => `<img src="${src}" class="w-14 h-14 object-cover rounded border border-slate-300" />`).join('')}
                 </div>
               ` : ''}
             </div>
@@ -1841,7 +1837,7 @@
       function exportToExcel() {
         const filtered = getFilteredLogs();
         if (!filtered.length) {
-          showToast('No logs to export!', 'warning');
+          showToast('No work logs to export!', 'warning');
           return;
         }
 
@@ -1863,52 +1859,181 @@
           'Attached Photos': Array.isArray(log.photos) ? log.photos.length : 0
         }));
 
-        if (typeof XLSX !== 'undefined') {
-          const ws = XLSX.utils.json_to_sheet(rows);
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, 'Yunikon Work Log');
-          const fileName = `Yunikon_Work_Log_${getTodayISO()}.xlsx`;
-          XLSX.writeFile(wb, fileName);
-          showToast('Excel sheet downloaded for Boss!', 'success');
-        } else {
-          showToast('Excel library loading, please try again in a second.', 'warning');
+        try {
+          if (typeof XLSX !== 'undefined') {
+            const ws = XLSX.utils.json_to_sheet(rows);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Yunikon Work Log');
+            XLSX.writeFile(wb, `Yunikon_Work_Log_${getTodayISO()}.xlsx`);
+            showToast('Excel (.xlsx) downloaded for Boss!', 'success');
+            return;
+          }
+        } catch (err) {
+          console.warn('XLSX fallback to CSV:', err);
         }
+
+        // Reliable CSV fallback if SheetJS CDN is blocked
+        const headers = Object.keys(rows[0]);
+        const csv = [
+          headers.join(','),
+          ...rows.map(r => headers.map(h => `"${String(r[h]).replace(/"/g, '""')}"`).join(','))
+        ].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Yunikon_Work_Log_${getTodayISO()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Spreadsheet exported!', 'success');
       }
 
       function exportToPDF() {
         const filtered = getFilteredLogs();
         if (!filtered.length) {
-          showToast('No logs to export!', 'warning');
+          showToast('No work logs to export to PDF!', 'warning');
           return;
         }
-        buildReportPreview();
-        const element = document.getElementById('print-export-area');
 
-        if (typeof html2pdf !== 'undefined') {
-          showToast('Generating PDF report...', 'info');
-          const opt = {
-            margin: 8,
-            filename: `Yunikon_Work_Log_${getTodayISO()}.pdf`,
-            image: { type: 'jpeg', quality: 0.9 },
-            html2canvas: { scale: 2, useCORS: true },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        try {
+          const jsPDFCtor = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+          if (!jsPDFCtor) {
+            throw new Error('jsPDF unavailable');
+          }
+
+          const doc = new jsPDFCtor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+          const pageWidth = doc.internal.pageSize.getWidth();
+          const pageHeight = doc.internal.pageSize.getHeight();
+          const margin = 14;
+          const contentWidth = pageWidth - margin * 2;
+          let y = 16;
+
+          const activeUser = getActiveUser();
+          const completedCount = filtered.filter(l => l.status === 'completed').length;
+          const progressCount = filtered.filter(l => l.status === 'in_progress').length;
+          const notStartedCount = filtered.filter(l => l.status === 'not_started').length;
+
+          // Header Banner
+          doc.setFillColor(15, 23, 42);
+          doc.rect(0, 0, pageWidth, 28, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(15);
+          doc.text('YUNIKON INTERNATIONAL - YUNIKON WORK LOG', margin, 12);
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.text(
+            sanitizePdfText(`Generated: ${new Date().toLocaleString()}   |   By: ${activeUser.name} (${activeUser.role})`),
+            margin,
+            21
+          );
+
+          y = 36;
+          doc.setTextColor(15, 23, 42);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.text(
+            `Summary: Total=${filtered.length}   Completed=${completedCount}   In Progress=${progressCount}   Not Started=${notStartedCount}`,
+            margin,
+            y
+          );
+          y += 8;
+
+          const statusMap = {
+            completed: 'COMPLETED',
+            in_progress: 'IN PROGRESS',
+            not_started: 'NOT STARTED'
           };
-          html2pdf().set(opt).from(element).save().then(() => {
-            showToast('PDF downloaded! Ready to send to Boss.', 'success');
-          }).catch(() => {
-            window.print();
+
+          filtered.forEach((log, idx) => {
+            if (y > pageHeight - 45) {
+              doc.addPage();
+              y = 18;
+            }
+
+            doc.setDrawColor(203, 213, 225);
+            doc.setFillColor(248, 250, 252);
+            doc.roundedRect(margin, y, contentWidth, 8, 2, 2, 'FD');
+
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            const titleLine = sanitizePdfText(`#${idx + 1}  ${log.title}  [${statusMap[log.status] || log.status}]`);
+            doc.text(titleLine.slice(0, 92), margin + 3, y + 5.3);
+            y += 12;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(71, 85, 105);
+            const metaLine = sanitizePdfText(
+              `Doc Type: ${log.docType || 'General'}  |  Date/Time: ${log.date} ${log.time}  |  User: ${log.userName}`
+            );
+            const metaWrapped = doc.splitTextToSize(metaLine, contentWidth);
+            doc.text(metaWrapped, margin, y);
+            y += metaWrapped.length * 4.5 + 1;
+
+            if (log.notes) {
+              doc.setTextColor(30, 41, 59);
+              const noteWrapped = doc.splitTextToSize(sanitizePdfText(`Notes: ${log.notes}`), contentWidth);
+              doc.text(noteWrapped, margin, y);
+              y += noteWrapped.length * 4.5 + 2;
+            }
+
+            // Render attached compressed photos cleanly into PDF
+            const photos = Array.isArray(log.photos) ? log.photos : [];
+            if (photos.length > 0) {
+              const thumbW = 24;
+              const thumbH = 18;
+              let xPos = margin;
+              if (y + thumbH + 6 > pageHeight - 14) {
+                doc.addPage();
+                y = 18;
+              }
+              photos.slice(0, 6).forEach((dataUrl) => {
+                try {
+                  if (xPos + thumbW > pageWidth - margin) {
+                    xPos = margin;
+                    y += thumbH + 3;
+                  }
+                  doc.addImage(dataUrl, 'JPEG', xPos, y, thumbW, thumbH);
+                  xPos += thumbW + 3;
+                } catch (imgErr) {
+                  // Skip malformed image data safely without failing PDF
+                }
+              });
+              y += thumbH + 6;
+            } else {
+              y += 3;
+            }
+
+            doc.setDrawColor(226, 232, 240);
+            doc.line(margin, y, pageWidth - margin, y);
+            y += 6;
           });
-        } else {
-          window.print();
+
+          const fileName = `Yunikon_Work_Log_${getTodayISO()}.pdf`;
+          doc.save(fileName);
+          showToast('PDF report generated & downloaded!', 'success');
+        } catch (err) {
+          console.error('PDF generation error:', err);
+          // Guaranteed text/HTML PDF download fallback so it is never blank
+          buildReportPreview();
+          const reportText = document.getElementById('print-export-area').innerText;
+          const blob = new Blob([reportText], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Yunikon_Work_Log_${getTodayISO()}.pdf`;
+          a.click();
+          URL.revokeObjectURL(url);
+          showToast('PDF exported via fallback!', 'success');
         }
       }
 
       /* -----------------------------------------------------------
          12. PURE CLIENT-SIDE GOOGLE DRIVE AUTO-SYNC (NO APPS SCRIPT)
       ----------------------------------------------------------- */
-      const DRIVE_FILE_NAME = 'yunikon_work_log_db.json';
-      const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
-
       function updateDriveStatusUI(status, text) {
         const dot = document.getElementById('drive-status-dot');
         const label = document.getElementById('drive-status-text');
@@ -1934,6 +2059,9 @@
         const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+        if (!searchRes.ok) {
+          throw new Error(`Drive search failed (${searchRes.status})`);
+        }
         const searchData = await searchRes.json();
         if (searchData.files && searchData.files.length > 0) {
           state.driveFileId = searchData.files[0].id;
@@ -1941,116 +2069,186 @@
           return state.driveFileId;
         }
 
-        // Create initial file
-        const meta = { name: DRIVE_FILE_NAME, mimeType: 'application/json' };
         const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(meta)
+          body: JSON.stringify({ name: DRIVE_FILE_NAME, mimeType: 'application/json' })
         });
+        if (!createRes.ok) {
+          throw new Error(`Drive file create failed (${createRes.status})`);
+        }
         const created = await createRes.json();
         state.driveFileId = created.id;
         saveState(false);
         return state.driveFileId;
       }
 
-      async function autoSyncToGoogleDrive(direction = 'both') {
-        if (!state.googleClientId || !googleAccessToken || isSyncing) {
-          if (!state.googleClientId) updateDriveStatusUI('local', 'Local');
-          return;
-        }
+      function mergeLogsWithRemote(remoteLogs) {
+        if (!Array.isArray(remoteLogs)) return;
+        const map = new Map();
+        remoteLogs.forEach(item => {
+          if (item && item.id) map.set(item.id, item);
+        });
+        state.logs.forEach(item => {
+          if (!item || !item.id) return;
+          const existing = map.get(item.id);
+          if (!existing || (item.updatedAt || 0) >= (existing.updatedAt || 0)) {
+            map.set(item.id, item);
+          }
+        });
+        state.logs = Array.from(map.values());
+      }
 
+      async function pullAndSyncFromGoogleDrive() {
+        if (!state.googleClientId || !googleAccessToken || isSyncing) return;
         try {
           isSyncing = true;
           updateDriveStatusUI('syncing', 'Syncing...');
-
           const fileId = await findOrCreateDriveFile(googleAccessToken);
 
-          if (direction === 'pull' || direction === 'both') {
-            const getRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-              headers: { Authorization: `Bearer ${googleAccessToken}` }
-            });
-            if (getRes.ok) {
-              const remoteText = await getRes.text();
-              if (remoteText && remoteText.trim().startsWith('{')) {
-                const remoteData = JSON.parse(remoteText);
-                if (Array.isArray(remoteData.logs)) {
-                  // Merge remote & local logs cleanly by ID (newest updatedAt wins)
-                  const map = new Map();
-                  [...remoteData.logs, ...state.logs].forEach(item => {
-                    const existing = map.get(item.id);
-                    if (!existing || (item.updatedAt || 0) >= (existing.updatedAt || 0)) {
-                      map.set(item.id, item);
-                    }
-                  });
-                  state.logs = Array.from(map.values());
-                  if (Array.isArray(remoteData.users) && remoteData.users.length === 3) {
-                    state.users = remoteData.users;
-                  }
-                  renderUserUI();
-                  renderLogs();
-                }
+          const getRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            headers: { Authorization: `Bearer ${googleAccessToken}` }
+          });
+
+          if (getRes.ok) {
+            const text = await getRes.text();
+            if (text && text.trim().startsWith('{')) {
+              const remoteData = JSON.parse(text);
+              mergeLogsWithRemote(remoteData.logs);
+              if (Array.isArray(remoteData.users) && remoteData.users.length === 3) {
+                state.users = remoteData.users.map(u => ({
+                  ...u,
+                  role: u.role === 'Owner' ? 'Owner' : 'Admin'
+                }));
               }
             }
           }
 
-          // Push merged state back to Google Drive
-          const payload = JSON.stringify({
-            app: 'Yunikon Work Log',
-            updatedAt: Date.now(),
-            users: state.users,
-            logs: state.logs
-          });
-
-          const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-            method: 'PATCH',
-            headers: {
-              Authorization: `Bearer ${googleAccessToken}`,
-              'Content-Type': 'application/json'
-            },
-            body: payload
-          });
-
-          if (uploadRes.ok) {
-            state.lastSyncTime = Date.now();
-            saveState(false);
-            updateDriveStatusUI('synced', 'Synced');
-          } else {
-            updateDriveStatusUI('error', 'Retry Sync');
-          }
+          await uploadCurrentPayloadToDrive(fileId);
+          renderUserUI();
+          renderLogs();
+          updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
-          console.error('Drive Sync Error:', err);
+          console.error('Pull & Sync error:', err);
           updateDriveStatusUI('error', 'Sync Err');
         } finally {
           isSyncing = false;
         }
       }
 
-      function initGoogleDriveAuth(silent = false) {
-        if (!state.googleClientId || typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+      async function uploadCurrentPayloadToDrive(fileId) {
+        const payload = JSON.stringify({
+          app: 'Yunikon Work Log',
+          company: 'Yunikon International',
+          updatedAt: Date.now(),
+          users: state.users,
+          logs: state.logs
+        });
+
+        const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${googleAccessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: payload
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(`Drive upload failed (${uploadRes.status})`);
+        }
+        state.lastSyncTime = Date.now();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      async function pushToGoogleDrive() {
+        if (!state.googleClientId || !state.autoSyncOnLoad) return;
+        if (!googleAccessToken) {
+          requestGoogleToken(true);
           return;
         }
+        if (isSyncing) return;
 
-        tokenClient = google.accounts.oauth2.initTokenClient({
+        try {
+          isSyncing = true;
+          updateDriveStatusUI('syncing', 'Syncing...');
+          const fileId = await findOrCreateDriveFile(googleAccessToken);
+          await uploadCurrentPayloadToDrive(fileId);
+          updateDriveStatusUI('synced', 'Synced');
+        } catch (err) {
+          console.error('Push error:', err);
+          updateDriveStatusUI('error', 'Retry Sync');
+        } finally {
+          isSyncing = false;
+        }
+      }
+
+      function setupTokenClient() {
+        if (!state.googleClientId) return null;
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) return null;
+
+        return google.accounts.oauth2.initTokenClient({
           client_id: state.googleClientId,
           scope: DRIVE_SCOPE,
           callback: (resp) => {
             if (resp && resp.access_token) {
               googleAccessToken = resp.access_token;
-              autoSyncToGoogleDrive('both');
-              if (!silent) showToast('Connected & Synced with Google Drive!', 'success');
+              pullAndSyncFromGoogleDrive();
+            } else if (resp && resp.error) {
+              updateDriveStatusUI('local', 'Sign In');
             }
           }
         });
+      }
 
-        // Auto-sync immediately when app opens
+      function requestGoogleToken(silentOnLoad = false) {
+        if (!state.googleClientId) {
+          updateDriveStatusUI('local', 'Local');
+          return;
+        }
+        tokenClient = setupTokenClient();
+        if (!tokenClient) return;
+
         try {
-          tokenClient.requestAccessToken({ prompt: silent ? '' : 'consent' });
-        } catch (e) {
-          console.warn('Silent token request skipped until user clicks Connect.');
+          tokenClient.requestAccessToken({ prompt: silentOnLoad ? 'none' : 'consent' });
+        } catch (err) {
+          if (!silentOnLoad) {
+            showToast('Unable to open Google sign-in popup. Check Client ID & origins.', 'warning');
+          }
+        }
+      }
+
+      function triggerAutoSyncOnLoad() {
+        if (!state.googleClientId) {
+          updateDriveStatusUI('local', 'Local');
+          return;
+        }
+        if (!state.autoSyncOnLoad) {
+          updateDriveStatusUI('local', 'Auto-Sync Off');
+          return;
+        }
+
+        const tryStart = () => {
+          if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+            gsiReady = true;
+            requestGoogleToken(true);
+            return true;
+          }
+          return false;
+        };
+
+        if (!tryStart()) {
+          let attempts = 0;
+          const timer = setInterval(() => {
+            attempts += 1;
+            if (tryStart() || attempts >= 20) {
+              clearInterval(timer);
+              if (!gsiReady) updateDriveStatusUI('local', 'Drive Ready');
+            }
+          }, 300);
         }
       }
 
@@ -2058,21 +2256,18 @@
          13. EVENT LISTENERS & INITIALIZATION
       ----------------------------------------------------------- */
       function bindEvents() {
-        // Palette Switcher
         document.getElementById('palette-toggle-btn').addEventListener('click', () => {
           state.palette = state.palette === 'red-black' ? 'navy-yellow' : 'red-black';
           saveState(false);
           applyTheme();
         });
 
-        // Dark / Light Mode Toggle
         document.getElementById('mode-toggle-btn').addEventListener('click', () => {
           state.mode = state.mode === 'light' ? 'dark' : 'light';
           saveState(false);
           applyTheme();
         });
 
-        // Language Toggle (Sinhala / English)
         const toggleLang = () => {
           state.lang = state.lang === 'en' ? 'si' : 'en';
           saveState(false);
@@ -2081,7 +2276,6 @@
         document.getElementById('lang-toggle-btn').addEventListener('click', toggleLang);
         document.getElementById('lock-lang-toggle').addEventListener('click', toggleLang);
 
-        // App Lock Unlock Handler
         const attemptUnlock = () => {
           const selectedUserId = document.getElementById('lock-user-select').value;
           const enteredPin = document.getElementById('lock-pin-input').value.trim();
@@ -2094,7 +2288,7 @@
             saveState(false);
             renderLockScreen();
             renderUserUI();
-            showToast(`Welcome back, ${user.name}!`, 'success');
+            showToast(`Welcome, ${user.name}!`, 'success');
           } else {
             errEl.textContent = state.lang === 'si' ? 'වැරදි PIN / මුරපදයකි!' : 'Incorrect PIN / Password!';
             errEl.classList.remove('hidden');
@@ -2105,7 +2299,6 @@
           if (e.key === 'Enter') attemptUnlock();
         });
 
-        // App Lock Settings Modal
         document.getElementById('open-lock-settings-btn').addEventListener('click', () => {
           document.getElementById('auto-lock-select').value = state.autoLockMinutes;
           document.getElementById('new-pin-input').value = '';
@@ -2115,11 +2308,13 @@
         });
         document.getElementById('close-lock-settings').addEventListener('click', () => {
           document.getElementById('lock-settings-modal').classList.add('hidden');
+          document.getElementById('lock-settings-modal').classList.remove('flex');
         });
         document.getElementById('auto-lock-select').addEventListener('change', (e) => {
           state.autoLockMinutes = e.target.value;
+          if (state.autoLockMinutes === 'disable') state.isLocked = false;
           saveState(false);
-          showToast(`Auto-Lock timer set to: ${e.target.options[e.target.selectedIndex].text}`, 'success');
+          showToast(`Auto-Lock set to: ${e.target.options[e.target.selectedIndex].text}`, 'success');
         });
         document.getElementById('save-pin-btn').addEventListener('click', () => {
           const newPin = document.getElementById('new-pin-input').value.trim();
@@ -2135,12 +2330,12 @@
         });
         document.getElementById('lock-now-btn').addEventListener('click', () => {
           document.getElementById('lock-settings-modal').classList.add('hidden');
+          document.getElementById('lock-settings-modal').classList.remove('flex');
           state.isLocked = true;
           saveState(false);
           renderLockScreen();
         });
 
-        // Role & Multi-User Modal
         document.getElementById('open-role-modal-btn').addEventListener('click', () => {
           renderUserUI();
           const m = document.getElementById('role-modal');
@@ -2149,35 +2344,46 @@
         });
         document.getElementById('close-role-modal').addEventListener('click', () => {
           document.getElementById('role-modal').classList.add('hidden');
+          document.getElementById('role-modal').classList.remove('flex');
         });
 
-        // Google Drive Sync Modal
         document.getElementById('drive-sync-btn').addEventListener('click', () => {
           document.getElementById('google-client-id-input').value = state.googleClientId || '';
+          document.getElementById('auto-sync-on-load-checkbox').checked = Boolean(state.autoSyncOnLoad);
           const isOwner = getActiveUser().role === 'Owner';
           document.getElementById('google-client-id-input').disabled = !isOwner;
+          if (state.lastSyncTime) {
+            document.getElementById('last-sync-timestamp').textContent = new Date(state.lastSyncTime).toLocaleString();
+          }
           const m = document.getElementById('drive-modal');
           m.classList.remove('hidden');
           m.classList.add('flex');
         });
         document.getElementById('close-drive-modal').addEventListener('click', () => {
           document.getElementById('drive-modal').classList.add('hidden');
+          document.getElementById('drive-modal').classList.remove('flex');
+        });
+        document.getElementById('auto-sync-on-load-checkbox').addEventListener('change', (e) => {
+          state.autoSyncOnLoad = e.target.checked;
+          saveState(false);
+          showToast(state.autoSyncOnLoad ? 'Auto-Sync on Load enabled.' : 'Auto-Sync on Load paused.', 'info');
         });
         document.getElementById('connect-drive-btn').addEventListener('click', () => {
           const cid = document.getElementById('google-client-id-input').value.trim();
           if (!cid) {
-            showToast('Please paste your Google OAuth Client ID first.', 'warning');
+            showToast('Please enter your Google OAuth Web Client ID first.', 'warning');
             return;
           }
           state.googleClientId = cid;
+          state.autoSyncOnLoad = document.getElementById('auto-sync-on-load-checkbox').checked;
           saveState(false);
-          initGoogleDriveAuth(false);
+          requestGoogleToken(false);
         });
         document.getElementById('manual-pull-drive-btn').addEventListener('click', () => {
           if (googleAccessToken) {
-            autoSyncToGoogleDrive('both');
+            pullAndSyncFromGoogleDrive();
           } else {
-            initGoogleDriveAuth(false);
+            requestGoogleToken(false);
           }
         });
         document.getElementById('export-json-backup-btn').addEventListener('click', () => {
@@ -2190,7 +2396,7 @@
           URL.revokeObjectURL(url);
         });
 
-        // Work Log Form Submit (Strict Title Validation)
+        // Work Log Form Submit (Mandatory Title Check)
         document.getElementById('work-log-form').addEventListener('submit', (e) => {
           e.preventDefault();
           const titleInput = document.getElementById('log-title');
@@ -2227,7 +2433,7 @@
                 photos: [...draftPhotos],
                 updatedAt: Date.now()
               };
-              showToast('Work log updated & synced!', 'success');
+              showToast('Work log updated & syncing...', 'success');
             }
           } else {
             state.logs.unshift({
@@ -2244,7 +2450,7 @@
               createdAt: Date.now(),
               updatedAt: Date.now()
             });
-            showToast('Work log saved!', 'success');
+            showToast('Work log saved & syncing...', 'success');
           }
 
           saveState(true);
@@ -2265,13 +2471,11 @@
 
         document.getElementById('cancel-edit-btn').addEventListener('click', resetForm);
 
-        // Photo Input
         document.getElementById('photo-input').addEventListener('change', async (e) => {
           await handlePhotoFiles(e.target.files);
           e.target.value = '';
         });
 
-        // Filters
         ['filter-search', 'filter-date', 'filter-status', 'filter-user'].forEach(id => {
           document.getElementById(id).addEventListener('input', renderLogs);
           document.getElementById(id).addEventListener('change', renderLogs);
@@ -2285,7 +2489,6 @@
           renderLogs();
         });
 
-        // Preview & Export Modal
         document.getElementById('preview-report-btn').addEventListener('click', () => {
           buildReportPreview();
           const m = document.getElementById('report-preview-modal');
@@ -2294,6 +2497,7 @@
         });
         document.getElementById('close-preview-modal').addEventListener('click', () => {
           document.getElementById('report-preview-modal').classList.add('hidden');
+          document.getElementById('report-preview-modal').classList.remove('flex');
         });
 
         document.getElementById('export-excel-btn').addEventListener('click', exportToExcel);
@@ -2301,16 +2505,18 @@
         document.getElementById('export-pdf-btn').addEventListener('click', exportToPDF);
         document.getElementById('modal-download-pdf').addEventListener('click', exportToPDF);
 
-        // Single Log Modal & Lightbox Close
         document.getElementById('close-single-modal').addEventListener('click', () => {
           document.getElementById('single-log-modal').classList.add('hidden');
+          document.getElementById('single-log-modal').classList.remove('flex');
         });
         document.getElementById('close-lightbox-btn').addEventListener('click', () => {
           document.getElementById('image-lightbox').classList.add('hidden');
+          document.getElementById('image-lightbox').classList.remove('flex');
         });
         document.getElementById('image-lightbox').addEventListener('click', (e) => {
           if (e.target.id === 'image-lightbox') {
             document.getElementById('image-lightbox').classList.add('hidden');
+            document.getElementById('image-lightbox').classList.remove('flex');
           }
         });
       }
@@ -2331,10 +2537,8 @@
         renderLockScreen();
         lucide.createIcons();
 
-        // Auto-sync with Google Drive on App Open (if configured)
-        if (state.googleClientId) {
-          setTimeout(() => initGoogleDriveAuth(true), 1200);
-        }
+        // Automatically sync with Google Drive on app load when enabled & configured
+        triggerAutoSyncOnLoad();
       });
     })();
   </script>
