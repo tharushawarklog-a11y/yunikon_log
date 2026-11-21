@@ -21,10 +21,10 @@
   <!-- SheetJS for Real Excel (.xlsx) Export -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
-  <!-- jsPDF for PDF Generation -->
+  <!-- jsPDF for Multi-Page PDF Slicing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <!-- html2canvas for Canvas Capture (Guarantees Non-Blank Multi-Page PDF with Unicode Sinhala Text) -->
+  <!-- html2canvas for High-DPI Canvas Capture (Guarantees Non-Blank PDF with Unicode Sinhala Text) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- Google Identity Services (Client-Side OAuth2 API) -->
@@ -131,6 +131,7 @@
       color: var(--text-primary);
       transition: background-color 0.25s ease, color 0.25s ease;
       overflow-x: hidden;
+      width: 100vw;
     }
 
     .theme-card {
@@ -221,7 +222,7 @@
     }
   </style>
 </head>
-<body data-palette="red-black" data-mode="light" class="min-h-screen flex flex-col">
+<body data-palette="red-black" data-mode="light" class="min-h-screen flex flex-col antialiased">
 
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-[92vw] sm:max-w-sm pointer-events-none"></div>
@@ -333,86 +334,86 @@
     </div>
   </header>
 
-  <!-- PROMINENT GOOGLE DRIVE RECONNECT BANNER -->
+  <!-- GOOGLE DRIVE RECONNECT BANNER -->
   <div id="drive-reconnect-banner" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3">
-    <div class="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
-          <i data-lucide="cloud-off" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+    <div class="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 shadow-sm">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+          <i data-lucide="cloud-off" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
         </div>
-        <div class="text-xs">
-          <p class="font-extrabold text-sm" data-i18n="driveAuthRequired">Google Drive Auto-Sync Ready</p>
-          <p class="text-amber-700 dark:text-amber-300 font-medium" data-i18n="driveAuthDesc">Connect Google account once for auto-syncing daily logs on load & updates.</p>
+        <div class="text-xs min-w-0">
+          <p class="font-extrabold text-xs sm:text-sm" data-i18n="driveAuthRequired">Google Drive Auto-Sync Ready</p>
+          <p class="text-amber-700 dark:text-amber-300 font-medium truncate text-[11px]" data-i18n="driveAuthDesc">Connect Google account once for auto-syncing daily logs on load & updates.</p>
         </div>
       </div>
-      <button id="banner-reconnect-btn" type="button" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 hover:bg-amber-500 text-white shadow transition flex items-center gap-1.5">
-        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      <button id="banner-reconnect-btn" type="button" class="px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-amber-600 hover:bg-amber-500 text-white shadow transition flex items-center gap-1.5 shrink-0">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
         <span data-i18n="reconnectNow">Connect & Auto-Sync Google Drive</span>
       </button>
     </div>
   </div>
 
   <!-- MAIN WORKSPACE -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5 overflow-x-hidden">
 
     <!-- KPI SUMMARY CARDS -->
     <section class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
-      <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
         <div>
           <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide" data-i18n="totalTasks">Total Logs</p>
-          <p id="stat-total" class="text-2xl sm:text-3xl font-extrabold mt-0.5 tabular-nums">0</p>
+          <p id="stat-total" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums">0</p>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-tertiary-theme flex items-center justify-center">
-          <i data-lucide="clipboard-list" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme">
+          <i data-lucide="clipboard-list" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
         <div>
           <p class="text-[11px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide" data-i18n="statusCompleted">Completed</p>
-          <p id="stat-completed" class="text-2xl sm:text-3xl font-extrabold mt-0.5 tabular-nums text-emerald-600 dark:text-emerald-400">0</p>
+          <p id="stat-completed" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-emerald-600 dark:text-emerald-400">0</p>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-          <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+          <i data-lucide="check-circle-2" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
         <div>
           <p class="text-[11px] sm:text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide" data-i18n="statusInProgress">In Progress</p>
-          <p id="stat-progress" class="text-2xl sm:text-3xl font-extrabold mt-0.5 tabular-nums text-amber-600 dark:text-amber-400">0</p>
+          <p id="stat-progress" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-amber-600 dark:text-amber-400">0</p>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
-          <i data-lucide="clock" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+          <i data-lucide="clock" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between">
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
         <div>
           <p class="text-[11px] sm:text-xs font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wide" data-i18n="statusNotStarted">Not Started</p>
-          <p id="stat-notstarted" class="text-2xl sm:text-3xl font-extrabold mt-0.5 tabular-nums text-rose-600 dark:text-rose-400">0</p>
+          <p id="stat-notstarted" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-rose-600 dark:text-rose-400">0</p>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
-          <i data-lucide="circle-dashed" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+          <i data-lucide="circle-dashed" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3.5 sm:p-4 flex items-center justify-between col-span-2 sm:col-span-1">
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between col-span-2 sm:col-span-1">
         <div>
           <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide" data-i18n="totalPhotos">Attached Photos</p>
-          <p id="stat-photos" class="text-2xl sm:text-3xl font-extrabold mt-0.5 tabular-nums">0</p>
+          <p id="stat-photos" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums">0</p>
         </div>
-        <div class="w-10 h-10 rounded-xl bg-tertiary-theme flex items-center justify-center">
-          <i data-lucide="images" class="w-5 h-5"></i>
+        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme">
+          <i data-lucide="images" class="w-4 h-4"></i>
         </div>
       </div>
     </section>
 
-    <!-- MAIN GRID: LEFT = LOG ENTRY FORM | RIGHT = LOGS LIST (TABLE & CARD VIEWS) -->
+    <!-- MAIN GRID: LEFT = LOG ENTRY FORM | RIGHT = COMPACT STRIP LOG LIST -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
       <!-- ADD / EDIT WORK LOG FORM (5 cols on LG) -->
-      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-6 space-y-4">
+      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-5 space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-theme">
           <div class="flex items-center gap-2.5">
             <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shadow-sm">
@@ -428,19 +429,19 @@
           </button>
         </div>
 
-        <form id="work-log-form" class="space-y-4" novalidate>
+        <form id="work-log-form" class="space-y-3.5" novalidate>
           <input type="hidden" id="edit-log-id" value="" />
 
           <!-- MANDATORY TITLE FIELD -->
           <div>
-            <label for="log-title" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1.5">
+            <label for="log-title" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1">
               <span><span data-i18n="taskTitleLabel">Work / Document Title</span> <span class="text-rose-500">*</span></span>
               <span class="text-[11px] font-normal text-muted-theme" data-i18n="requiredTag">Required</span>
             </label>
             <input id="log-title" type="text" required
               placeholder="e.g., Vehicle Import - LC & Customs Clearance"
               data-i18n-placeholder="titlePlaceholder"
-              class="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-semibold" />
+              class="w-full theme-input rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold" />
             <p id="title-error-msg" class="hidden text-xs text-rose-500 font-semibold mt-1" data-i18n="titleRequiredError">
               Title is required! Please enter a title before saving.
             </p>
@@ -448,7 +449,7 @@
 
           <!-- VEHICLE IMPORT DOCUMENT TYPE (Dropdown + Manual Typing Combobox) -->
           <div class="relative">
-            <label for="doc-type-input" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1.5">
+            <label for="doc-type-input" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1">
               <span data-i18n="docTypeLabel">Vehicle Import Document Type</span>
               <span class="text-[11px] font-normal text-muted-theme" data-i18n="selectOrType">Select or Type</span>
             </label>
@@ -456,55 +457,55 @@
               <input id="doc-type-input" type="text" autocomplete="off"
                 placeholder="Select from list or type custom document..."
                 data-i18n-placeholder="docTypePlaceholder"
-                class="w-full theme-input rounded-xl pl-3.5 pr-10 py-2.5 text-sm font-medium" />
+                class="w-full theme-input rounded-xl pl-3 pr-9 py-2 text-xs sm:text-sm font-medium" />
               <button id="doc-dropdown-toggle" type="button" aria-label="Toggle Document List"
-                class="absolute right-2 p-1.5 rounded-lg text-muted-theme hover:text-primary">
+                class="absolute right-2 p-1 rounded-lg text-muted-theme hover:text-primary">
                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
               </button>
             </div>
-            <div id="doc-dropdown-list" class="hidden absolute z-30 left-0 right-0 mt-1.5 max-h-56 overflow-y-auto rounded-2xl theme-card p-1.5 shadow-2xl">
+            <div id="doc-dropdown-list" class="hidden absolute z-30 left-0 right-0 mt-1 max-h-52 overflow-y-auto rounded-2xl theme-card p-1 shadow-2xl">
             </div>
           </div>
 
           <!-- DATE & TIME -->
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-2 gap-2.5">
             <div>
-              <label for="log-date" class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="dateLabel">Date</label>
-              <input id="log-date" type="date" class="w-full theme-input rounded-xl px-3 py-2 text-sm font-medium" />
+              <label for="log-date" class="block text-xs font-bold uppercase tracking-wider mb-1" data-i18n="dateLabel">Date</label>
+              <input id="log-date" type="date" class="w-full theme-input rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-medium" />
             </div>
             <div>
-              <label for="log-time" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1.5">
+              <label for="log-time" class="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-1">
                 <span data-i18n="timeLabel">Time</span>
                 <button type="button" id="set-now-btn" class="text-[10px] underline font-bold text-emerald-600 dark:text-emerald-400" data-i18n="nowBtn">Now</button>
               </label>
-              <input id="log-time" type="time" class="w-full theme-input rounded-xl px-3 py-2 text-sm font-medium" />
+              <input id="log-time" type="time" class="w-full theme-input rounded-xl px-2.5 py-1.5 text-xs sm:text-sm font-medium" />
             </div>
           </div>
 
           <!-- TASK STATUS -->
           <div>
-            <label class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="statusLabel">Work Progress Status</label>
+            <label class="block text-xs font-bold uppercase tracking-wider mb-1" data-i18n="statusLabel">Work Progress Status</label>
             <div class="grid grid-cols-3 gap-2">
               <label class="cursor-pointer">
                 <input type="radio" name="log-status" value="not_started" class="peer sr-only" />
-                <div class="rounded-xl p-2.5 text-center border border-theme bg-tertiary-theme peer-checked:border-rose-500 peer-checked:bg-rose-500/15 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition">
-                  <i data-lucide="circle-dashed" class="w-4 h-4 mx-auto mb-1"></i>
+                <div class="rounded-xl p-2 text-center border border-theme bg-tertiary-theme peer-checked:border-rose-500 peer-checked:bg-rose-500/15 peer-checked:text-rose-600 dark:peer-checked:text-rose-400 transition">
+                  <i data-lucide="circle-dashed" class="w-3.5 h-3.5 mx-auto mb-0.5"></i>
                   <span class="block text-[11px] font-bold leading-tight" data-i18n="statusNotStarted">Not Started</span>
                 </div>
               </label>
 
               <label class="cursor-pointer">
                 <input type="radio" name="log-status" value="in_progress" class="peer sr-only" checked />
-                <div class="rounded-xl p-2.5 text-center border border-theme bg-tertiary-theme peer-checked:border-amber-500 peer-checked:bg-amber-500/15 peer-checked:text-amber-600 dark:peer-checked:text-amber-400 transition">
-                  <i data-lucide="loader-2" class="w-4 h-4 mx-auto mb-1"></i>
+                <div class="rounded-xl p-2 text-center border border-theme bg-tertiary-theme peer-checked:border-amber-500 peer-checked:bg-amber-500/15 peer-checked:text-amber-600 dark:peer-checked:text-amber-400 transition">
+                  <i data-lucide="loader-2" class="w-3.5 h-3.5 mx-auto mb-0.5"></i>
                   <span class="block text-[11px] font-bold leading-tight" data-i18n="statusInProgress">In Progress</span>
                 </div>
               </label>
 
               <label class="cursor-pointer">
                 <input type="radio" name="log-status" value="completed" class="peer sr-only" />
-                <div class="rounded-xl p-2.5 text-center border border-theme bg-tertiary-theme peer-checked:border-emerald-500 peer-checked:bg-emerald-500/15 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition">
-                  <i data-lucide="check-circle-2" class="w-4 h-4 mx-auto mb-1"></i>
+                <div class="rounded-xl p-2 text-center border border-theme bg-tertiary-theme peer-checked:border-emerald-500 peer-checked:bg-emerald-500/15 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 transition">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 mx-auto mb-0.5"></i>
                   <span class="block text-[11px] font-bold leading-tight" data-i18n="statusCompleted">Completed</span>
                 </div>
               </label>
@@ -513,105 +514,109 @@
 
           <!-- MANUAL TASK DESCRIPTION / NOTES -->
           <div>
-            <label for="log-notes" class="block text-xs font-bold uppercase tracking-wider mb-1.5" data-i18n="notesLabel">Manual Task Notes / Details</label>
-            <textarea id="log-notes" rows="3"
+            <label for="log-notes" class="block text-xs font-bold uppercase tracking-wider mb-1" data-i18n="notesLabel">Manual Task Notes / Details</label>
+            <textarea id="log-notes" rows="2.5"
               placeholder="Write details about completed work, bank/customs updates, pending items..."
               data-i18n-placeholder="notesPlaceholder"
-              class="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm"></textarea>
+              class="w-full theme-input rounded-xl px-3 py-2 text-xs sm:text-sm"></textarea>
           </div>
 
           <!-- PHOTO UPLOAD (UP TO 10 PHOTOS) -->
           <div>
-            <div class="flex items-center justify-between mb-1.5">
+            <div class="flex items-center justify-between mb-1">
               <label class="text-xs font-bold uppercase tracking-wider" data-i18n="photosLabel">Document / Work Photos (Max 10)</label>
-              <span id="photo-count-badge" class="text-xs font-extrabold px-2 py-0.5 rounded-full bg-tertiary-theme">0 / 10</span>
+              <span id="photo-count-badge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-tertiary-theme">0 / 10</span>
             </div>
 
             <label for="photo-input" id="photo-dropzone"
-              class="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-theme bg-tertiary-theme/60 hover:bg-tertiary-theme p-4 cursor-pointer transition text-center">
-              <i data-lucide="camera" class="w-6 h-6 mb-1 text-muted-theme"></i>
+              class="flex flex-col items-center justify-center rounded-xl border border-dashed border-theme bg-tertiary-theme/60 hover:bg-tertiary-theme p-3 cursor-pointer transition text-center">
+              <i data-lucide="camera" class="w-5 h-5 mb-0.5 text-muted-theme"></i>
               <span class="text-xs font-bold" data-i18n="uploadPhotosBtn">Tap to Add Photos (Camera / Gallery)</span>
-              <span class="text-[11px] text-muted-theme mt-0.5" data-i18n="photoSubHint">Auto-optimized for fast Google Drive sync</span>
               <input id="photo-input" type="file" accept="image/*" multiple class="hidden" />
             </label>
 
-            <div id="form-photo-grid" class="grid grid-cols-5 gap-2 mt-2.5 empty:hidden"></div>
+            <div id="form-photo-grid" class="grid grid-cols-5 gap-1.5 mt-2 empty:hidden"></div>
           </div>
 
           <!-- SUBMIT BUTTON -->
           <button type="submit" id="save-log-btn"
-            class="w-full py-3.5 rounded-xl font-extrabold text-sm btn-accent shadow-lg flex items-center justify-center gap-2">
+            class="w-full py-3 rounded-xl font-extrabold text-xs sm:text-sm btn-accent shadow-md flex items-center justify-center gap-2">
             <i data-lucide="save" class="w-4 h-4"></i>
             <span id="save-btn-text" data-i18n="saveWorkLog">Save Work Log</span>
           </button>
         </form>
       </section>
 
-      <!-- RIGHT PANEL: FILTERS, VIEW SWITCHER & WORK LOG LIST (TABLE COLUMNS / CARDS) (7 cols on LG) -->
-      <section class="lg:col-span-7 space-y-4">
+      <!-- RIGHT PANEL: FILTERS, VIEW SWITCHER & WORK LOG LIST (COMPACT STRIPS DEFAULT) (7 cols on LG) -->
+      <section class="lg:col-span-7 space-y-3.5">
 
         <!-- ACTION & EXPORT BAR -->
-        <div class="theme-card rounded-3xl p-4 sm:p-5 space-y-3.5">
+        <div class="theme-card rounded-3xl p-3.5 sm:p-4 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 class="text-base sm:text-lg font-extrabold flex items-center gap-2">
+              <h2 class="text-base font-extrabold flex items-center gap-2">
                 <span data-i18n="workRecordsHeading">Daily Work Records</span>
                 <span id="filtered-count-pill" class="px-2 py-0.5 rounded-full text-xs font-bold bg-tertiary-theme">0</span>
               </h2>
-              <p class="text-xs text-muted-theme" data-i18n="allTeamVisible">All team logs visible • Instant Excel & PDF report for Boss</p>
+              <p class="text-[11px] text-muted-theme" data-i18n="allTeamVisible">All team logs visible • Instant Excel & PDF report for Boss</p>
             </div>
 
             <!-- View Switcher + Export Buttons -->
-            <div class="flex flex-wrap items-center gap-2">
-              <!-- TABLE vs CARD VIEW SWITCHER -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              <!-- VIEW MODE SWITCHER: STRIPS (DEFAULT) / TABLE / CARDS -->
               <div class="flex items-center p-0.5 rounded-xl border border-theme bg-tertiary-theme">
+                <button id="view-mode-strips" type="button" title="Compact Strips View (පොඩි තීරු)"
+                  class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs">
+                  <i data-lucide="menu" class="w-3.5 h-3.5"></i>
+                  <span data-i18n="stripViewBtn">Strips</span>
+                </button>
                 <button id="view-mode-table" type="button" title="Table Columns View (තීරු)"
-                  class="px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs">
+                  class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
                   <i data-lucide="table" class="w-3.5 h-3.5"></i>
-                  <span data-i18n="tableViewBtn">Columns</span>
+                  <span data-i18n="tableViewBtn">Table</span>
                 </button>
                 <button id="view-mode-cards" type="button" title="Card View (කාඩ්පත)"
-                  class="px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
+                  class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
                   <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                   <span data-i18n="cardViewBtn">Cards</span>
                 </button>
               </div>
 
               <button id="preview-report-btn" type="button"
-                class="px-3 py-2 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
-                <i data-lucide="eye" class="w-4 h-4"></i>
+                class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1 transition">
+                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 <span data-i18n="previewReport">Preview</span>
               </button>
 
               <button id="export-excel-btn" type="button"
-                class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm flex items-center gap-1.5 transition">
-                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs flex items-center gap-1 transition">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
                 <span data-i18n="exportExcel">Excel</span>
               </button>
 
               <button id="export-pdf-btn" type="button"
-                class="px-3 py-2 rounded-xl text-xs font-bold btn-accent shadow-sm flex items-center gap-1.5 transition">
-                <i data-lucide="file-text" class="w-4 h-4"></i>
+                class="px-2.5 py-1.5 rounded-xl text-xs font-bold btn-accent shadow-xs flex items-center gap-1 transition">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
                 <span data-i18n="exportPdf">PDF</span>
               </button>
             </div>
           </div>
 
           <!-- SEARCH & FILTER BAR -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 pt-2 border-t border-theme">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-2 border-t border-theme">
             <div class="sm:col-span-4 relative">
-              <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-theme"></i>
+              <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-theme"></i>
               <input id="filter-search" type="text" placeholder="Search title, document..."
                 data-i18n-placeholder="searchPlaceholder"
-                class="w-full theme-input rounded-xl pl-9 pr-3 py-2 text-xs font-medium" />
+                class="w-full theme-input rounded-xl pl-8 pr-2.5 py-1.5 text-xs font-medium" />
             </div>
 
             <div class="sm:col-span-3">
-              <input id="filter-date" type="date" class="w-full theme-input rounded-xl px-2.5 py-2 text-xs font-medium" />
+              <input id="filter-date" type="date" class="w-full theme-input rounded-xl px-2 py-1.5 text-xs font-medium" />
             </div>
 
             <div class="sm:col-span-3">
-              <select id="filter-status" class="w-full theme-input rounded-xl px-2.5 py-2 text-xs font-medium">
+              <select id="filter-status" class="w-full theme-input rounded-xl px-2 py-1.5 text-xs font-medium">
                 <option value="all" data-i18n="allStatuses">All Statuses</option>
                 <option value="completed" data-i18n="statusCompleted">Completed</option>
                 <option value="in_progress" data-i18n="statusInProgress">In Progress</option>
@@ -619,26 +624,26 @@
               </select>
             </div>
 
-            <div class="sm:col-span-2 flex gap-1.5">
-              <select id="filter-user" class="w-full theme-input rounded-xl px-2 py-2 text-xs font-medium">
+            <div class="sm:col-span-2 flex gap-1">
+              <select id="filter-user" class="w-full theme-input rounded-xl px-1.5 py-1.5 text-xs font-medium">
                 <option value="all" data-i18n="allUsers">All Users</option>
               </select>
               <button id="reset-filters-btn" type="button" title="Reset Filters"
-                class="px-2.5 rounded-xl border border-theme bg-tertiary-theme hover:opacity-80 flex items-center justify-center shrink-0">
+                class="px-2 rounded-xl border border-theme bg-tertiary-theme hover:opacity-80 flex items-center justify-center shrink-0">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- WORK LOG CONTAINER (DYNAMIC TABLE COLUMNS / CARDS VIEW) -->
-        <div id="logs-list-container" class="space-y-3"></div>
+        <!-- WORK LOG CONTAINER (COMPACT STRIPS DEFAULT) -->
+        <div id="logs-list-container" class="space-y-2"></div>
       </section>
     </div>
   </main>
 
   <!-- FOOTER -->
-  <footer class="mt-auto py-4 px-4 text-center text-xs text-muted-theme border-t border-theme">
+  <footer class="mt-auto py-3 px-4 text-center text-xs text-muted-theme border-t border-theme">
     <p>Yunikon Work Log • Yunikon International • Auto-Sync Google Drive & Multi-User Support</p>
   </footer>
 
@@ -652,16 +657,16 @@
           <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-500"></i>
           <h3 class="font-extrabold text-sm sm:text-base" data-i18n="reportPreviewTitle">Work Log Report Preview (Boss Copy)</h3>
         </div>
-        <div class="flex items-center gap-2">
-          <button id="modal-download-excel" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white flex items-center gap-1.5">
+        <div class="flex items-center gap-1.5">
+          <button id="modal-download-excel" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white flex items-center gap-1">
             <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
             <span>Excel</span>
           </button>
-          <button id="modal-download-pdf" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-accent flex items-center gap-1.5">
+          <button id="modal-download-pdf" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-bold btn-accent flex items-center gap-1">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
             <span>PDF</span>
           </button>
-          <button id="modal-native-print" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-zinc-800 text-white flex items-center gap-1.5">
+          <button id="modal-native-print" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-zinc-800 text-white flex items-center gap-1">
             <i data-lucide="printer" class="w-3.5 h-3.5"></i>
             <span data-i18n="printPdf">Print</span>
           </button>
@@ -673,41 +678,41 @@
 
       <div class="overflow-y-auto p-4 sm:p-6 bg-zinc-100 dark:bg-zinc-950 flex-1">
         <div id="print-export-area" class="bg-white text-slate-900 rounded-2xl p-5 sm:p-8 shadow-md max-w-3xl mx-auto">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b-2 border-slate-900">
-            <div class="flex items-center gap-3.5">
-              <img id="report-logo-img" src="" alt="Yunikon International" class="w-14 h-14 object-contain rounded-xl border border-slate-200 p-1" />
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b-2 border-slate-900">
+            <div class="flex items-center gap-3">
+              <img id="report-logo-img" src="" alt="Yunikon International" class="w-12 h-12 object-contain rounded-xl border border-slate-200 p-1" />
               <div>
-                <h1 class="text-xl font-black tracking-tight text-slate-900">YUNIKON INTERNATIONAL</h1>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-600">Yunikon Work Log — Daily Import Report</p>
+                <h1 class="text-lg font-black tracking-tight text-slate-900">YUNIKON INTERNATIONAL</h1>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Yunikon Work Log — Daily Import Report</p>
               </div>
             </div>
-            <div class="text-left sm:text-right text-xs text-slate-600 space-y-0.5">
+            <div class="text-left sm:text-right text-[11px] text-slate-600 space-y-0.5">
               <p><strong>Generated:</strong> <span id="report-generated-time"></span></p>
               <p><strong>Prepared By:</strong> <span id="report-prepared-by"></span></p>
               <p><strong>Filter Summary:</strong> <span id="report-filter-summary">All Records</span></p>
             </div>
           </div>
 
-          <div class="grid grid-cols-4 gap-2 my-4 text-center">
-            <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200">
+          <div class="grid grid-cols-4 gap-2 my-3 text-center">
+            <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
               <span class="block text-[10px] font-bold uppercase text-slate-500">Total</span>
-              <span id="rep-stat-total" class="text-lg font-black text-slate-900">0</span>
+              <span id="rep-stat-total" class="text-base font-black text-slate-900">0</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
               <span class="block text-[10px] font-bold uppercase text-emerald-700">Completed</span>
-              <span id="rep-stat-completed" class="text-lg font-black text-emerald-700">0</span>
+              <span id="rep-stat-completed" class="text-base font-black text-emerald-700">0</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
               <span class="block text-[10px] font-bold uppercase text-amber-700">In Progress</span>
-              <span id="rep-stat-progress" class="text-lg font-black text-amber-700">0</span>
+              <span id="rep-stat-progress" class="text-base font-black text-amber-700">0</span>
             </div>
-            <div class="p-2.5 rounded-xl bg-rose-50 border border-rose-200">
+            <div class="p-2 rounded-xl bg-rose-50 border border-rose-200">
               <span class="block text-[10px] font-bold uppercase text-rose-700">Not Started</span>
-              <span id="rep-stat-notstarted" class="text-lg font-black text-rose-700">0</span>
+              <span id="rep-stat-notstarted" class="text-base font-black text-rose-700">0</span>
             </div>
           </div>
 
-          <div id="report-items-container" class="space-y-3 mt-4"></div>
+          <div id="report-items-container" class="space-y-2 mt-3"></div>
         </div>
       </div>
     </div>
@@ -961,7 +966,8 @@
           exportExcel: 'Excel',
           exportPdf: 'PDF',
           printPdf: 'Print',
-          tableViewBtn: 'Columns',
+          stripViewBtn: 'Strips',
+          tableViewBtn: 'Table',
           cardViewBtn: 'Cards',
           searchPlaceholder: 'Search title, document...',
           allStatuses: 'All Statuses',
@@ -983,8 +989,8 @@
           autoSyncOnLoadDesc: 'Automatically pull & sync Drive data when opening the app',
           connectSyncDrive: 'Connect & Auto-Sync Google Drive',
           syncNowBtn: 'Sync Now',
-          noLogsFound: 'No work logs match your current view.',
-          noLogsHint: 'Add your first vehicle import task on the left or clear filters.',
+          noLogsFound: 'No work logs recorded yet.',
+          noLogsHint: 'Add your first vehicle import task on the left or connect Google Drive to sync.',
           viewDetails: 'Preview',
           editBtn: 'Edit',
           deleteBtn: 'Delete',
@@ -1040,7 +1046,8 @@
           exportExcel: 'Excel ගන්න',
           exportPdf: 'PDF ගන්න',
           printPdf: 'මුද්‍රණය (Print)',
-          tableViewBtn: 'තීරු පෙනුම (Columns)',
+          stripViewBtn: 'පොඩි තීරු (Strips)',
+          tableViewBtn: 'තීරු පෙනුම (Table)',
           cardViewBtn: 'කාඩ්පත (Cards)',
           searchPlaceholder: 'මාතෘකාව හෝ ලියවිල්ල සොයන්න...',
           allStatuses: 'සියලු තත්ත්වයන්',
@@ -1062,8 +1069,8 @@
           autoSyncOnLoadDesc: 'App එක විවෘත කරන වහාම Drive දත්ත ස්වයංක්‍රීයව Sync කරන්න',
           connectSyncDrive: 'Google Drive Connect කර Sync කරන්න',
           syncNowBtn: 'දැන් Sync කරන්න',
-          noLogsFound: 'වැඩ සටහන් කිසිවක් හමු නොවීය.',
-          noLogsHint: 'වම් පසින් නව වැඩ සටහනක් ඇතුළත් කරන්න.',
+          noLogsFound: 'කිසිදු වැඩ සටහනක් ඇතුළත් කර නැත.',
+          noLogsHint: 'වම් පසින් ඔබේ පළමු වැඩ සටහන එකතු කරන්න හෝ Google Drive Sync කරන්න.',
           viewDetails: 'බලන්න',
           editBtn: 'වෙනස් කරන්න',
           deleteBtn: 'මකන්න',
@@ -1080,14 +1087,11 @@
         }
       };
 
-      // Sample vehicle SVG image data
-      const SAMPLE_CAR_IMG_1 = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%231e293b"/><path d="M50 200 L90 130 L160 110 L280 110 L340 160 L360 200 Z" fill="%23dc2626"/><circle cx="110" cy="210" r="30" fill="%23000"/><circle cx="110" cy="210" r="14" fill="%2394a3b8"/><circle cx="290" cy="210" r="30" fill="%23000"/><circle cx="290" cy="210" r="14" fill="%2394a3b8"/><text x="200" y="70" font-family="sans-serif" font-size="20" font-weight="bold" fill="%23ffffff" text-anchor="middle">HONDA VEZEL HYBRID</text><text x="200" y="270" font-family="sans-serif" font-size="14" fill="%2394a3b8" text-anchor="middle">Yunikon International Document</text></svg>`;
-      const SAMPLE_CAR_IMG_2 = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%230f294a"/><path d="M60 190 L100 120 L180 100 L270 100 L320 150 L340 190 Z" fill="%23facc15"/><circle cx="120" cy="200" r="26" fill="%23000"/><circle cx="120" cy="200" r="12" fill="%23e2e8f0"/><circle cx="280" cy="200" r="26" fill="%23000"/><circle cx="280" cy="200" r="12" fill="%23e2e8f0"/><text x="200" y="65" font-family="sans-serif" font-size="18" font-weight="bold" fill="%23ffffff" text-anchor="middle">TOYOTA PRIUS S-SAFETY</text><text x="200" y="265" font-family="sans-serif" font-size="14" fill="%23cbd5e1" text-anchor="middle">Customs Clearance Passed</text></svg>`;
-
       /* -----------------------------------------------------------
          2. APPLICATION STATE & LOCAL STORAGE PERSISTENCE
+         NOTE: defaultState.logs starts EMPTY ([]). No demo data!
       ----------------------------------------------------------- */
-      const STORAGE_KEY = 'yunikon_work_log_state_v6';
+      const STORAGE_KEY = 'yunikon_work_log_state_v8';
       const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
       const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
@@ -1109,7 +1113,7 @@
         palette: 'red-black',
         mode: 'light',
         lang: 'en',
-        viewMode: 'table', // 'table' (Columns/Rows view) | 'cards'
+        viewMode: 'strips', // 'strips' (Compact Strips - Default) | 'table' | 'cards'
         activeUserId: 'u1',
         autoLockMinutes: '10',
         isLocked: false,
@@ -1125,50 +1129,7 @@
           { id: 'u2', name: 'Member 2', role: 'Admin', pin: '1234' },
           { id: 'u3', name: 'Member 3', role: 'Admin', pin: '1234' }
         ],
-        logs: [
-          {
-            id: 'sample_log_1',
-            title: 'Honda Vezel Hybrid - LC & Customs Clearance',
-            docType: 'Letter of Credit (LC)',
-            date: getTodayISO(0),
-            time: '09:30',
-            status: 'completed',
-            notes: 'LC opened via Commercial Bank. Customs CUSDEC verification completed for Honda Vezel (RU3-1348237). Ready for port clearance.',
-            photos: [SAMPLE_CAR_IMG_1],
-            userId: 'u1',
-            userName: 'Member 1',
-            createdAt: Date.now() - 3600000,
-            updatedAt: Date.now() - 3600000
-          },
-          {
-            id: 'sample_log_2',
-            title: 'Toyota Prius S-Safety - Bill of Lading & JAAI Certificate',
-            docType: 'Bill of Lading (B/L)',
-            date: getTodayISO(-1),
-            time: '14:15',
-            status: 'in_progress',
-            notes: 'Bill of Lading received from Kobe Port. JAAI inspection passed in Japan yard. Waiting for RMV approval.',
-            photos: [SAMPLE_CAR_IMG_2],
-            userId: 'u2',
-            userName: 'Member 2',
-            createdAt: Date.now() - 86400000,
-            updatedAt: Date.now() - 86400000
-          },
-          {
-            id: 'sample_log_3',
-            title: 'Suzuki Wagon R FZ - Commercial Invoice & Packing List',
-            docType: 'Commercial Invoice',
-            date: getTodayISO(-2),
-            time: '11:00',
-            status: 'not_started',
-            notes: 'Invoice received from supplier. Pending shipping company approval and LC amendment.',
-            photos: [],
-            userId: 'u3',
-            userName: 'Member 3',
-            createdAt: Date.now() - 172800000,
-            updatedAt: Date.now() - 172800000
-          }
-        ]
+        logs: [] // ZERO DEMO LOGS BY DEFAULT!
       };
 
       let state = loadState();
@@ -1180,7 +1141,7 @@
 
       function loadState() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v5');
+          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v7');
           if (!raw) return structuredClone(defaultState);
           const parsed = JSON.parse(raw);
           const normalizedUsers = Array.isArray(parsed.users) && parsed.users.length === 3
@@ -1194,7 +1155,7 @@
             ...structuredClone(defaultState),
             ...parsed,
             users: normalizedUsers,
-            logs: Array.isArray(parsed.logs) && parsed.logs.length > 0 ? parsed.logs : defaultState.logs
+            logs: Array.isArray(parsed.logs) ? parsed.logs : []
           };
         } catch (err) {
           console.error('Failed to load state:', err);
@@ -1472,7 +1433,7 @@
 
           let html = matches.map(doc => `
             <button type="button" data-doc-val="${escapeHtml(doc)}"
-              class="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold hover:bg-tertiary-theme transition flex items-center justify-between">
+              class="w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold hover:bg-tertiary-theme transition flex items-center justify-between">
               <span>${escapeHtml(doc)}</span>
               <i data-lucide="file-text" class="w-3.5 h-3.5 text-muted-theme"></i>
             </button>
@@ -1481,13 +1442,13 @@
           if (filterText.trim() && !matches.some(m => m.toLowerCase() === query)) {
             html += `
               <button type="button" data-doc-val="${escapeHtml(filterText.trim())}"
-                class="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 mt-1">
+                class="w-full text-left px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 mt-1">
                 + Use Custom: "${escapeHtml(filterText.trim())}"
               </button>
             `;
           }
 
-          listEl.innerHTML = html || `<div class="px-3 py-2 text-xs text-muted-theme">Type any custom document name...</div>`;
+          listEl.innerHTML = html || `<div class="px-3 py-1.5 text-xs text-muted-theme">Type any custom document name...</div>`;
           lucide.createIcons();
 
           listEl.querySelectorAll('button[data-doc-val]').forEach(btn => {
@@ -1538,7 +1499,7 @@
           <div class="relative aspect-square rounded-xl overflow-hidden border border-theme group bg-black">
             <img src="${src}" alt="Attachment ${idx + 1}" class="w-full h-full object-cover cursor-pointer" onclick="window.openLightbox('${src}')" />
             <button type="button" data-remove-photo="${idx}"
-              class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold shadow">
+              class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center text-[9px] font-bold shadow">
               ✕
             </button>
           </div>
@@ -1576,7 +1537,7 @@
       }
 
       /* -----------------------------------------------------------
-         9. WORK LOG CRUD, STRUCTURED COLUMNS/TABLE VIEW & CARDS VIEW
+         9. WORK LOG CRUD & COMPACT STRIP VIEW (පොඩි තීරු)
       ----------------------------------------------------------- */
       const STATUS_CYCLE = ['not_started', 'in_progress', 'completed'];
 
@@ -1615,24 +1576,26 @@
         document.getElementById('stat-photos').textContent = photos;
       }
 
-      function getStatusBadgeHtml(status, clickableId = null) {
+      function getStatusBadgeHtml(status, clickableId = null, compact = false) {
         const dict = I18N[state.lang] || I18N.en;
         const attrs = clickableId
           ? `role="button" tabindex="0" onclick="window.cycleLogStatus('${clickableId}')" title="Click to cycle status"`
           : '';
 
+        const pad = compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-[11px]';
+
         if (status === 'completed') {
-          return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${dict.statusCompleted}
+          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span><span>${dict.statusCompleted}</span>
           </span>`;
         }
         if (status === 'in_progress') {
-          return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>${dict.statusInProgress}
+          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span><span>${dict.statusInProgress}</span>
           </span>`;
         }
-        return `<span ${attrs} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
-          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>${dict.statusNotStarted}
+        return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span><span>${dict.statusNotStarted}</span>
         </span>`;
       }
 
@@ -1657,100 +1620,156 @@
 
         if (!filtered.length) {
           container.innerHTML = `
-            <div class="theme-card rounded-3xl p-8 text-center space-y-2">
-              <div class="w-12 h-12 rounded-2xl bg-tertiary-theme mx-auto flex items-center justify-center text-muted-theme">
-                <i data-lucide="folder-open" class="w-6 h-6"></i>
+            <div class="theme-card rounded-3xl p-6 sm:p-8 text-center space-y-2">
+              <div class="w-10 h-10 rounded-2xl bg-tertiary-theme mx-auto flex items-center justify-center text-muted-theme">
+                <i data-lucide="folder-open" class="w-5 h-5"></i>
               </div>
-              <h3 class="font-bold text-sm">${dict.noLogsFound}</h3>
-              <p class="text-xs text-muted-theme">${dict.noLogsHint}</p>
+              <h3 class="font-bold text-sm text-primary">${dict.noLogsFound}</h3>
+              <p class="text-xs text-muted-theme max-w-xs mx-auto">${dict.noLogsHint}</p>
             </div>
           `;
           lucide.createIcons();
           return;
         }
 
-        // 1. STRUCTURED TABLE COLUMNS VIEW (තීරු තීරු පෙනුම)
-        if (state.viewMode === 'table') {
+        // 1. COMPACT HORIZONTAL STRIP VIEW ("පොඩි තීරු") - DEFAULT
+        if (state.viewMode === 'strips') {
+          container.innerHTML = filtered.map(log => {
+            const photos = Array.isArray(log.photos) ? log.photos : [];
+            const borderDotColor = log.status === 'completed'
+              ? 'bg-emerald-500'
+              : (log.status === 'in_progress' ? 'bg-amber-500' : 'bg-rose-500');
+
+            const photosThumbStack = photos.length > 0
+              ? `<div class="flex items-center gap-1 shrink-0">
+                  ${photos.slice(0, 3).map((src, i) => `
+                    <img src="${src}" alt="Thumb ${i + 1}" onclick="window.openLightbox('${src}')"
+                      class="w-8 h-8 rounded-lg object-cover border border-theme cursor-pointer hover:scale-110 transition shrink-0" />
+                  `).join('')}
+                  ${photos.length > 3 ? `<span class="text-[10px] font-bold text-muted-theme bg-tertiary-theme px-1.5 py-0.5 rounded-md">+${photos.length - 3}</span>` : ''}
+                </div>`
+              : '';
+
+            return `
+              <article class="theme-card rounded-xl p-2.5 sm:p-3 transition hover:border-accent-primary/40 space-y-1.5">
+                <!-- COMPACT SINGLE-ROW LAYOUT -->
+                <div class="flex items-center justify-between gap-2">
+                  <!-- Left: Status dot + Title + Doc Badge -->
+                  <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <span class="w-2.5 h-2.5 rounded-full ${borderDotColor} shrink-0" title="Status: ${log.status}"></span>
+
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <h3 class="text-xs sm:text-sm font-extrabold text-primary truncate leading-tight">${escapeHtml(log.title)}</h3>
+                        ${log.docType ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold badge-secondary shrink-0">${escapeHtml(log.docType)}</span>` : ''}
+                      </div>
+                      ${log.notes ? `<p class="text-[11px] text-muted-theme truncate mt-0.5 leading-tight">${escapeHtml(log.notes)}</p>` : ''}
+                    </div>
+                  </div>
+
+                  <!-- Right: Metadata, Thumbnails & Quick Actions -->
+                  <div class="flex items-center gap-2 shrink-0">
+                    ${photosThumbStack}
+
+                    <div class="hidden md:flex flex-col text-right text-[10px] text-muted-theme font-medium tabular-nums">
+                      <span>${escapeHtml(log.date)}</span>
+                      <span>${escapeHtml(log.userName)}</span>
+                    </div>
+
+                    ${getStatusBadgeHtml(log.status, log.id, true)}
+
+                    <div class="flex items-center gap-0.5 border-l border-theme pl-1.5">
+                      <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
+                        class="p-1 rounded-lg bg-tertiary-theme hover:opacity-80">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
+                        class="p-1 rounded-lg bg-tertiary-theme hover:opacity-80">
+                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
+                        class="p-1 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join('');
+        }
+        // 2. TABLE COLUMNS VIEW (තීරු)
+        else if (state.viewMode === 'table') {
           container.innerHTML = `
-            <div class="theme-card rounded-3xl overflow-hidden border border-theme shadow-sm">
+            <div class="theme-card rounded-2xl overflow-hidden border border-theme shadow-xs">
               <div class="overflow-x-auto w-full">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr class="border-b border-theme bg-tertiary-theme/70 text-[11px] font-extrabold uppercase tracking-wider text-muted-theme">
-                      <th class="p-3.5 whitespace-nowrap min-w-[110px]">${dict.colDateTime}</th>
-                      <th class="p-3.5 min-w-[200px]">${dict.colTitle}</th>
-                      <th class="p-3.5 whitespace-nowrap min-w-[130px]">${dict.colDocType}</th>
-                      <th class="p-3.5 whitespace-nowrap min-w-[110px]">${dict.colStatus}</th>
-                      <th class="p-3.5 whitespace-nowrap min-w-[100px]">${dict.colPhotos}</th>
-                      <th class="p-3.5 whitespace-nowrap min-w-[90px]">${dict.colStaff}</th>
-                      <th class="p-3.5 text-right whitespace-nowrap min-w-[100px]">${dict.colActions}</th>
+                    <tr class="border-b border-theme bg-tertiary-theme/70 text-[10px] font-extrabold uppercase tracking-wider text-muted-theme">
+                      <th class="p-2.5 whitespace-nowrap">${dict.colDateTime}</th>
+                      <th class="p-2.5 min-w-[180px]">${dict.colTitle}</th>
+                      <th class="p-2.5 whitespace-nowrap">${dict.colDocType}</th>
+                      <th class="p-2.5 whitespace-nowrap">${dict.colStatus}</th>
+                      <th class="p-2.5 whitespace-nowrap">${dict.colPhotos}</th>
+                      <th class="p-2.5 whitespace-nowrap">${dict.colStaff}</th>
+                      <th class="p-2.5 text-right whitespace-nowrap">${dict.colActions}</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-theme">
-                    ${filtered.map((log, idx) => {
+                    ${filtered.map((log) => {
                       const photos = Array.isArray(log.photos) ? log.photos : [];
                       return `
                         <tr class="hover:bg-tertiary-theme/40 transition">
-                          <!-- Date & Time Column -->
-                          <td class="p-3.5 align-top whitespace-nowrap font-medium text-muted-theme">
+                          <td class="p-2.5 align-top whitespace-nowrap font-medium text-muted-theme">
                             <div class="font-bold text-primary tabular-nums">${escapeHtml(log.date)}</div>
                             <div class="text-[10px] tabular-nums">${escapeHtml(log.time)}</div>
                           </td>
 
-                          <!-- Title & Notes Column -->
-                          <td class="p-3.5 align-top space-y-1">
-                            <div class="font-extrabold text-sm text-primary leading-snug break-words">${escapeHtml(log.title)}</div>
-                            ${log.notes ? `<p class="text-xs text-secondary-theme line-clamp-2 leading-relaxed whitespace-pre-line">${escapeHtml(log.notes)}</p>` : ''}
+                          <td class="p-2.5 align-top space-y-0.5">
+                            <div class="font-extrabold text-xs text-primary leading-snug break-words">${escapeHtml(log.title)}</div>
+                            ${log.notes ? `<p class="text-[11px] text-muted-theme line-clamp-1">${escapeHtml(log.notes)}</p>` : ''}
                           </td>
 
-                          <!-- Document Type Column -->
-                          <td class="p-3.5 align-top whitespace-nowrap">
+                          <td class="p-2.5 align-top whitespace-nowrap">
                             ${log.docType
-                              ? `<span class="px-2.5 py-1 rounded-lg text-[11px] font-bold badge-secondary inline-block">${escapeHtml(log.docType)}</span>`
-                              : `<span class="text-muted-theme text-[11px]">—</span>`
+                              ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold badge-secondary inline-block">${escapeHtml(log.docType)}</span>`
+                              : `<span class="text-muted-theme text-[10px]">—</span>`
                             }
                           </td>
 
-                          <!-- Status Column (Clickable Inline Cycle) -->
-                          <td class="p-3.5 align-top whitespace-nowrap">
-                            ${getStatusBadgeHtml(log.status, log.id)}
+                          <td class="p-2.5 align-top whitespace-nowrap">
+                            ${getStatusBadgeHtml(log.status, log.id, true)}
                           </td>
 
-                          <!-- Photos Column -->
-                          <td class="p-3.5 align-top whitespace-nowrap">
+                          <td class="p-2.5 align-top whitespace-nowrap">
                             ${photos.length > 0
                               ? `<div class="flex items-center gap-1">
                                   <img src="${photos[0]}" onclick="window.openLightbox('${photos[0]}')"
-                                    class="w-9 h-9 rounded-lg object-cover border border-theme cursor-pointer hover:scale-105 transition shrink-0" />
+                                    class="w-7 h-7 rounded-md object-cover border border-theme cursor-pointer hover:scale-105 transition shrink-0" />
                                   ${photos.length > 1
-                                    ? `<span class="px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-tertiary-theme">+${photos.length - 1}</span>`
+                                    ? `<span class="px-1 py-0.5 rounded text-[9px] font-extrabold bg-tertiary-theme">+${photos.length - 1}</span>`
                                     : ''}
                                 </div>`
-                              : `<span class="text-muted-theme text-[11px]">No photos</span>`
+                              : `<span class="text-muted-theme text-[10px]">No photos</span>`
                             }
                           </td>
 
-                          <!-- Staff Column -->
-                          <td class="p-3.5 align-top whitespace-nowrap font-medium">
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] bg-tertiary-theme">
-                              <i data-lucide="user" class="w-3 h-3 text-muted-theme"></i>
-                              <strong>${escapeHtml(log.userName)}</strong>
-                            </span>
+                          <td class="p-2.5 align-top whitespace-nowrap font-medium">
+                            <span class="text-[11px]"><strong>${escapeHtml(log.userName)}</strong></span>
                           </td>
 
-                          <!-- Actions Column -->
-                          <td class="p-3.5 align-top text-right whitespace-nowrap">
+                          <td class="p-2.5 align-top text-right whitespace-nowrap">
                             <div class="flex items-center justify-end gap-1">
                               <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
-                                class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
+                                class="p-1 rounded-lg bg-tertiary-theme hover:opacity-80">
                                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                               </button>
                               <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
-                                class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
+                                class="p-1 rounded-lg bg-tertiary-theme hover:opacity-80">
                                 <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                               </button>
                               <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
-                                class="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+                                class="p-1 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
                                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                               </button>
                             </div>
@@ -1763,58 +1782,58 @@
               </div>
             </div>
           `;
-        } else {
-          // 2. CARD VIEW
+        }
+        // 3. CARD VIEW
+        else {
           container.innerHTML = filtered.map(log => {
             const photos = Array.isArray(log.photos) ? log.photos : [];
             const thumbsHtml = photos.length
-              ? `<div class="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1">
+              ? `<div class="flex items-center gap-1.5 mt-2 overflow-x-auto pb-0.5">
                   ${photos.map((src, i) => `
                     <img src="${src}" alt="Photo ${i + 1}" onclick="window.openLightbox('${src}')"
-                      class="w-12 h-12 rounded-xl object-cover border border-theme shrink-0 cursor-pointer hover:scale-105 transition" />
+                      class="w-10 h-10 rounded-lg object-cover border border-theme shrink-0 cursor-pointer hover:scale-105 transition" />
                   `).join('')}
                 </div>`
               : '';
 
             return `
-              <article class="theme-card rounded-3xl p-4 sm:p-5 space-y-2.5">
+              <article class="theme-card rounded-2xl p-3.5 space-y-2">
                 <div class="flex flex-wrap items-start justify-between gap-2">
                   <div class="space-y-1 min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-1.5">
-                      ${getStatusBadgeHtml(log.status, log.id)}
-                      ${log.docType ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
+                      ${getStatusBadgeHtml(log.status, log.id, true)}
+                      ${log.docType ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
                     </div>
-                    <h3 class="text-base font-extrabold leading-snug break-words">${escapeHtml(log.title)}</h3>
+                    <h3 class="text-xs sm:text-sm font-extrabold leading-snug break-words">${escapeHtml(log.title)}</h3>
                   </div>
 
-                  <div class="flex items-center gap-1.5 shrink-0">
+                  <div class="flex items-center gap-1 shrink-0">
                     <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
-                      class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-tertiary-theme hover:opacity-80 flex items-center gap-1">
+                      class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
                       <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                      <span class="hidden sm:inline">${dict.viewDetails}</span>
                     </button>
                     <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
-                      class="p-1.5 rounded-xl bg-tertiary-theme hover:opacity-80">
+                      class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
                       <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                     </button>
                     <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
-                      class="p-1.5 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+                      class="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
                       <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                     </button>
                   </div>
                 </div>
 
-                ${log.notes ? `<p class="text-xs sm:text-sm text-secondary-theme whitespace-pre-line leading-relaxed">${escapeHtml(log.notes)}</p>` : ''}
+                ${log.notes ? `<p class="text-xs text-muted-theme whitespace-pre-line leading-relaxed line-clamp-3">${escapeHtml(log.notes)}</p>` : ''}
 
                 ${thumbsHtml}
 
-                <div class="pt-2 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-theme font-medium">
+                <div class="pt-1.5 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-[10px] text-muted-theme font-medium">
                   <span class="flex items-center gap-1">
-                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="user" class="w-3 h-3"></i>
                     <strong>${escapeHtml(log.userName)}</strong>
                   </span>
                   <span class="flex items-center gap-1 tabular-nums">
-                    <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
+                    <i data-lucide="calendar-clock" class="w-3 h-3"></i>
                     ${escapeHtml(log.date)} • ${escapeHtml(log.time)}
                     ${photos.length ? ` • 📷 ${photos.length}/10` : ''}
                   </span>
@@ -2033,29 +2052,29 @@
 
         const container = document.getElementById('report-items-container');
         if (!filtered.length) {
-          container.innerHTML = `<p class="text-center text-sm text-slate-500 py-6">No work logs in selected filter.</p>`;
+          container.innerHTML = `<p class="text-center text-xs text-slate-500 py-6">No work logs in selected filter.</p>`;
           return;
         }
 
         container.innerHTML = filtered.map((log, idx) => {
           const photos = Array.isArray(log.photos) ? log.photos : [];
           return `
-            <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1.5">
-              <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/70 space-y-1">
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
                 <span class="text-xs font-black text-slate-900">#${idx + 1} • ${escapeHtml(log.title)}</span>
-                <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-900 text-white">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900 text-white">
                   ${statusTextMap[log.status] || log.status}
                 </span>
               </div>
-              <div class="text-[11px] text-slate-600 flex flex-wrap gap-3">
+              <div class="text-[10px] text-slate-600 flex flex-wrap gap-3">
                 <span><strong>Doc Type:</strong> ${escapeHtml(log.docType || 'General Task')}</span>
                 <span><strong>Staff:</strong> ${escapeHtml(log.userName)}</span>
                 <span><strong>Date/Time:</strong> ${escapeHtml(log.date)} ${escapeHtml(log.time)}</span>
               </div>
-              ${log.notes ? `<p class="text-xs text-slate-700 pt-1">${escapeHtml(log.notes)}</p>` : ''}
+              ${log.notes ? `<p class="text-[11px] text-slate-700 pt-0.5">${escapeHtml(log.notes)}</p>` : ''}
               ${photos.length ? `
-                <div class="flex flex-wrap gap-1.5 pt-1.5">
-                  ${photos.slice(0, 10).map(src => `<img src="${src}" class="w-14 h-14 object-cover rounded border border-slate-300" />`).join('')}
+                <div class="flex flex-wrap gap-1 pt-1">
+                  ${photos.slice(0, 10).map(src => `<img src="${src}" class="w-12 h-12 object-cover rounded border border-slate-300" />`).join('')}
                 </div>
               ` : ''}
             </div>
@@ -2130,7 +2149,6 @@
           const sourceEl = document.getElementById('print-export-area');
           if (!sourceEl) throw new Error('Report container element missing');
 
-          // Create an off-screen clone with clear white background for perfect rendering
           const clone = sourceEl.cloneNode(true);
           clone.style.width = '794px';
           clone.style.position = 'absolute';
@@ -2492,20 +2510,38 @@
         document.getElementById('lang-toggle-btn').addEventListener('click', toggleLang);
         document.getElementById('lock-lang-toggle').addEventListener('click', toggleLang);
 
-        // View Mode Switcher: Columns / Table vs Cards
+        // View Mode Switcher: Strips (Compact Rows) / Table / Cards
+        const updateViewBtns = (activeMode) => {
+          const btnStrips = document.getElementById('view-mode-strips');
+          const btnTable = document.getElementById('view-mode-table');
+          const btnCards = document.getElementById('view-mode-cards');
+
+          const activeStyle = 'px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs';
+          const inactiveStyle = 'px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary';
+
+          btnStrips.className = activeMode === 'strips' ? activeStyle : inactiveStyle;
+          btnTable.className = activeMode === 'table' ? activeStyle : inactiveStyle;
+          btnCards.className = activeMode === 'cards' ? activeStyle : inactiveStyle;
+        };
+
+        document.getElementById('view-mode-strips').addEventListener('click', () => {
+          state.viewMode = 'strips';
+          saveState(false);
+          updateViewBtns('strips');
+          renderLogs();
+        });
+
         document.getElementById('view-mode-table').addEventListener('click', () => {
           state.viewMode = 'table';
           saveState(false);
-          document.getElementById('view-mode-table').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs';
-          document.getElementById('view-mode-cards').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary';
+          updateViewBtns('table');
           renderLogs();
         });
 
         document.getElementById('view-mode-cards').addEventListener('click', () => {
           state.viewMode = 'cards';
           saveState(false);
-          document.getElementById('view-mode-cards').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs';
-          document.getElementById('view-mode-table').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary';
+          updateViewBtns('cards');
           renderLogs();
         });
 
