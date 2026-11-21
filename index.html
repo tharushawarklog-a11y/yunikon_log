@@ -247,8 +247,14 @@
 
         <div>
           <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5" data-i18n="enterPin">PIN / Password</label>
-          <input id="lock-pin-input" type="password" inputmode="text" autocomplete="off" placeholder="••••"
-            class="w-full rounded-xl px-4 py-3 bg-zinc-800 border border-zinc-700 text-white text-center text-lg tracking-widest font-bold focus:outline-none focus:border-red-500" />
+          <div class="relative flex items-center">
+            <input id="lock-pin-input" type="password" inputmode="text" autocomplete="off" placeholder="••••"
+              class="w-full rounded-xl pl-4 pr-11 py-3 bg-zinc-800 border border-zinc-700 text-white text-center text-lg tracking-widest font-bold focus:outline-none focus:border-red-500" />
+            <button id="toggle-lock-pin-vis" type="button" aria-label="Toggle PIN Visibility"
+              class="absolute right-3 p-1.5 text-zinc-400 hover:text-white transition">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
           <p id="lock-error-msg" class="text-xs text-red-400 mt-1.5 hidden text-center font-medium"></p>
         </div>
 
@@ -257,9 +263,9 @@
           <span data-i18n="unlockBtn">Unlock Workspace</span>
         </button>
 
-        <div class="pt-2 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-400">
-          <span data-i18n="defaultPinHint">Default PIN if not set: 1234</span>
-          <button type="button" id="lock-lang-toggle" class="text-zinc-200 underline font-semibold">සිංහල / EN</button>
+        <div class="pt-2 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-400 gap-1 text-center sm:text-left">
+          <span data-i18n="defaultPinHint">Default PIN: 1234 • Custom PIN saved automatically</span>
+          <button type="button" id="lock-lang-toggle" class="text-zinc-200 underline font-semibold shrink-0">සිංහල / EN</button>
         </div>
       </div>
     </div>
@@ -800,17 +806,33 @@
         </div>
 
         <div class="pt-3 border-t border-theme space-y-2.5">
-          <label class="block text-xs font-bold uppercase tracking-wider" data-i18n="setPersonalPinLabel">
-            Set Your Personal PIN / Password
-          </label>
-          <p class="text-xs text-muted-theme">
-            <span data-i18n="currentProfileText">Active Profile:</span>
-            <strong id="pin-setting-username" class="text-primary">Member 1</strong>
-          </p>
-          <input id="new-pin-input" type="password" placeholder="Enter new PIN or Password (min 4 chars)"
-            class="w-full theme-input rounded-xl px-3.5 py-2.5 text-sm font-semibold" />
-          <button id="save-pin-btn" type="button" class="w-full py-2.5 rounded-xl text-xs font-bold btn-accent">
-            <span data-i18n="updatePinBtn">Update My PIN / Password</span>
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider" data-i18n="setPersonalPinLabel">
+              Set Personal PIN / Password
+            </label>
+            <span id="pin-saved-indicator" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hidden flex items-center gap-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Saved
+            </span>
+          </div>
+
+          <div>
+            <label for="target-user-pin-select" class="block text-[11px] text-muted-theme font-medium mb-1" data-i18n="selectUserToUpdate">Select Profile to Update:</label>
+            <select id="target-user-pin-select" class="w-full theme-input rounded-xl px-3 py-2 text-xs font-bold mb-2">
+            </select>
+          </div>
+
+          <div class="relative flex items-center">
+            <input id="new-pin-input" type="password" placeholder="Enter new PIN or Password (min 4 chars)"
+              class="w-full theme-input rounded-xl pl-3.5 pr-10 py-2.5 text-sm font-semibold" />
+            <button id="toggle-new-pin-vis" type="button" aria-label="Toggle Password Visibility"
+              class="absolute right-3 p-1.5 text-muted-theme hover:text-primary transition">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <button id="save-pin-btn" type="button" class="w-full py-2.5 rounded-xl text-xs font-extrabold btn-accent shadow-sm flex items-center justify-center gap-1.5">
+            <i data-lucide="key-round" class="w-4 h-4"></i>
+            <span data-i18n="updatePinBtn">Update PIN / Password</span>
           </button>
         </div>
 
@@ -932,7 +954,7 @@
           selectUser: 'Team Member',
           enterPin: 'PIN / Password',
           unlockBtn: 'Unlock Workspace',
-          defaultPinHint: 'Default PIN if not set: 1234',
+          defaultPinHint: 'Default PIN: 1234 • Custom PIN saved automatically',
           totalTasks: 'Total Logs',
           statusCompleted: 'Completed',
           statusInProgress: 'In Progress',
@@ -978,9 +1000,10 @@
           appLockSettingsTitle: 'App Lock & Security',
           autoLockTimeLabel: 'Auto-Lock / Reminder Time',
           autoLockHelp: 'Automatically locks the app after inactivity or when reopening.',
-          setPersonalPinLabel: 'Set Your Personal PIN / Password',
+          setPersonalPinLabel: 'Set Personal PIN / Password',
+          selectUserToUpdate: 'Select Profile to Update:',
           currentProfileText: 'Active Profile:',
-          updatePinBtn: 'Update My PIN / Password',
+          updatePinBtn: 'Update PIN / Password',
           lockNowBtn: 'Lock App Immediately',
           driveSyncTitle: 'Google Drive Auto-Sync (Free API)',
           driveZeroBackendTitle: '100% Client-Side • Automatic Load Sync',
@@ -1012,7 +1035,7 @@
           selectUser: 'සාමාජිකයා තෝරන්න',
           enterPin: 'PIN / මුරපදය',
           unlockBtn: 'ඇතුළු වන්න (Unlock)',
-          defaultPinHint: 'මුරපදයක් සකසා නැත්නම්: 1234',
+          defaultPinHint: 'පෙරනිමි PIN: 1234 • වෙනස් කළ PIN ස්වයංක්‍රීයව සුරැකේ',
           totalTasks: 'මුළු වැඩ ගණන',
           statusCompleted: 'අවසන් කළා',
           statusInProgress: 'කරගෙන යනවා',
@@ -1058,7 +1081,8 @@
           appLockSettingsTitle: 'App Lock සහ ආරක්ෂාව',
           autoLockTimeLabel: 'ස්වයංක්‍රීයව අගුළු වැටෙන වේලාව (Auto-Lock)',
           autoLockHelp: 'නියමිත කාලයකට පසු හෝ නැවත App එක විවෘත කරන විට මුරපදය ඉල්ලයි.',
-          setPersonalPinLabel: 'ඔබගේ පුද්ගලික PIN / මුරපදය වෙනස් කරන්න',
+          setPersonalPinLabel: 'PIN / මුරපදය වෙනස් කරන්න',
+          selectUserToUpdate: 'මුරපදය වෙනස් කරන සාමාජිකයා:',
           currentProfileText: 'වත්මන් සාමාජිකයා:',
           updatePinBtn: 'PIN / මුරපදය සුරකින්න',
           lockNowBtn: 'දැන් App එක අගුළු දමන්න (Lock Now)',
@@ -1089,11 +1113,32 @@
 
       /* -----------------------------------------------------------
          2. APPLICATION STATE & LOCAL STORAGE PERSISTENCE
-         NOTE: defaultState.logs starts EMPTY ([]). No demo data!
+         REDUNDANT DEDICATED PIN STORAGE KEY: 'yunikon_user_pins_v1'
       ----------------------------------------------------------- */
       const STORAGE_KEY = 'yunikon_work_log_state_v8';
+      const PIN_BACKUP_KEY = 'yunikon_user_pins_v1';
       const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
       const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+
+      function loadSavedPinsMap() {
+        try {
+          const raw = localStorage.getItem(PIN_BACKUP_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (err) {
+          console.warn('Failed to load backup PIN map:', err);
+          return {};
+        }
+      }
+
+      function saveUserPinToBackup(userId, newPin) {
+        try {
+          const map = loadSavedPinsMap();
+          map[userId] = String(newPin).trim();
+          localStorage.setItem(PIN_BACKUP_KEY, JSON.stringify(map));
+        } catch (err) {
+          console.error('Failed to save PIN to backup key:', err);
+        }
+      }
 
       function getTodayISO(offsetDays = 0) {
         const now = new Date();
@@ -1129,7 +1174,7 @@
           { id: 'u2', name: 'Member 2', role: 'Admin', pin: '1234' },
           { id: 'u3', name: 'Member 3', role: 'Admin', pin: '1234' }
         ],
-        logs: [] // ZERO DEMO LOGS BY DEFAULT!
+        logs: []
       };
 
       let state = loadState();
@@ -1141,15 +1186,26 @@
 
       function loadState() {
         try {
+          const backupPinsMap = loadSavedPinsMap();
           const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v7');
-          if (!raw) return structuredClone(defaultState);
-          const parsed = JSON.parse(raw);
-          const normalizedUsers = Array.isArray(parsed.users) && parsed.users.length === 3
-            ? parsed.users.map(u => ({
-                ...u,
-                role: u.role === 'Owner' ? 'Owner' : 'Admin'
-              }))
-            : structuredClone(defaultState.users);
+          const parsed = raw ? JSON.parse(raw) : structuredClone(defaultState);
+
+          const defaultUsers = structuredClone(defaultState.users);
+          const sourceUsers = (Array.isArray(parsed.users) && parsed.users.length === 3)
+            ? parsed.users
+            : defaultUsers;
+
+          const normalizedUsers = sourceUsers.map((u, i) => {
+            const fallbackDef = defaultUsers[i] || { id: `u${i+1}`, name: `Member ${i+1}`, role: 'Admin', pin: '1234' };
+            const uid = u.id || fallbackDef.id;
+            const customPin = backupPinsMap[uid] || u.pin || fallbackDef.pin || '1234';
+            return {
+              id: uid,
+              name: u.name || fallbackDef.name,
+              role: (u.role === 'Owner') ? 'Owner' : 'Admin',
+              pin: String(customPin).trim()
+            };
+          });
 
           return {
             ...structuredClone(defaultState),
@@ -1169,6 +1225,15 @@
           if (googleAccessToken) {
             state.googleAccessToken = googleAccessToken;
           }
+
+          // Flushes user PINs to backup store as well
+          const backupPins = loadSavedPinsMap();
+          state.users.forEach(u => {
+            if (u.id && u.pin) {
+              backupPins[u.id] = String(u.pin).trim();
+            }
+          });
+          localStorage.setItem(PIN_BACKUP_KEY, JSON.stringify(backupPins));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (err) {
           showToast('Local storage full! Try fewer photos per entry.', 'error');
@@ -1345,7 +1410,7 @@
       }
 
       /* -----------------------------------------------------------
-         6. APP LOCK & AUTO-LOCK TIMER
+         6. APP LOCK & AUTO-LOCK TIMER (WITH PERMANENT PIN SYNC)
       ----------------------------------------------------------- */
       function checkShouldLockOnStartup() {
         if (state.autoLockMinutes === 'disable') {
@@ -1381,6 +1446,7 @@
           .map(u => `<option value="${u.id}" ${u.id === state.activeUserId ? 'selected' : ''}>${escapeHtml(u.name)} [${u.role}]</option>`)
           .join('');
         pinInput.value = '';
+        pinInput.type = 'password';
         errEl.classList.add('hidden');
 
         lockScreen.classList.remove('hidden');
@@ -1953,9 +2019,17 @@
       ----------------------------------------------------------- */
       function renderUserUI() {
         const activeUser = getActiveUser();
+        const backupPins = loadSavedPinsMap();
+
         document.getElementById('active-user-badge').textContent = activeUser.name;
         document.getElementById('active-role-tag').textContent = activeUser.role;
-        document.getElementById('pin-setting-username').textContent = `${activeUser.name} (${activeUser.role})`;
+
+        // Target user select in Security Modal
+        const targetPinSelect = document.getElementById('target-user-pin-select');
+        if (targetPinSelect) {
+          const currSelected = targetPinSelect.value;
+          targetPinSelect.innerHTML = state.users.map(u => `<option value="${u.id}" ${u.id === (currSelected || activeUser.id) ? 'selected' : ''}>${escapeHtml(u.name)} (${u.role})</option>`).join('');
+        }
 
         const filterUserEl = document.getElementById('filter-user');
         const currentFilter = filterUserEl.value;
@@ -1968,6 +2042,8 @@
 
         listEl.innerHTML = state.users.map(u => {
           const isCurrent = u.id === state.activeUserId;
+          const userPin = backupPins[u.id] || u.pin || '1234';
+
           return `
             <div class="p-3.5 rounded-2xl border ${isCurrent ? 'border-emerald-500 bg-emerald-500/5' : 'border-theme bg-tertiary-theme/50'} space-y-2.5">
               <div class="flex items-center justify-between gap-2">
@@ -1980,10 +2056,10 @@
                 </select>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-[11px] text-muted-theme">PIN: ••••</span>
+                <span class="text-[11px] font-semibold text-muted-theme">PIN: <strong class="text-primary font-mono">${escapeHtml(userPin)}</strong></span>
                 ${isCurrent
                   ? `<span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">● Active Profile</span>`
-                  : `<button type="button" data-switch-user="${u.id}" class="px-3 py-1 rounded-lg text-xs font-bold btn-accent">Switch to User</button>`
+                  : `<button type="button" data-switch-user="${u.id}" class="px-3 py-1 rounded-lg text-xs font-bold btn-accent">Switch Profile</button>`
                 }
               </div>
             </div>
@@ -2344,11 +2420,19 @@
             if (text && text.trim().startsWith('{')) {
               const remoteData = JSON.parse(text);
               mergeLogsWithRemote(remoteData.logs);
+
+              // Preserves local custom PINs when merging user roles/profiles from Drive
+              const localBackupPins = loadSavedPinsMap();
               if (Array.isArray(remoteData.users) && remoteData.users.length === 3) {
-                state.users = remoteData.users.map(u => ({
-                  ...u,
-                  role: u.role === 'Owner' ? 'Owner' : 'Admin'
-                }));
+                state.users = remoteData.users.map((remoteUser, idx) => {
+                  const localUser = state.users.find(u => u.id === remoteUser.id) || state.users[idx];
+                  const mergedPin = localBackupPins[remoteUser.id] || localUser.pin || remoteUser.pin || '1234';
+                  return {
+                    ...remoteUser,
+                    role: remoteUser.role === 'Owner' ? 'Owner' : 'Admin',
+                    pin: String(mergedPin).trim()
+                  };
+                });
               }
             }
           }
@@ -2545,13 +2629,51 @@
           renderLogs();
         });
 
+        // Eye Toggle on Lock Screen
+        const toggleLockPinVisBtn = document.getElementById('toggle-lock-pin-vis');
+        if (toggleLockPinVisBtn) {
+          toggleLockPinVisBtn.addEventListener('click', () => {
+            const input = document.getElementById('lock-pin-input');
+            const icon = toggleLockPinVisBtn.querySelector('i');
+            if (input.type === 'password') {
+              input.type = 'text';
+              icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+              input.type = 'password';
+              icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+          });
+        }
+
+        // Eye Toggle in Security Modal
+        const toggleNewPinVisBtn = document.getElementById('toggle-new-pin-vis');
+        if (toggleNewPinVisBtn) {
+          toggleNewPinVisBtn.addEventListener('click', () => {
+            const input = document.getElementById('new-pin-input');
+            const icon = toggleNewPinVisBtn.querySelector('i');
+            if (input.type === 'password') {
+              input.type = 'text';
+              icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+              input.type = 'password';
+              icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+          });
+        }
+
+        // APP UNLOCK LOGIC (NORMALIZED COMPARISON WITH BACKUP STORE)
         const attemptUnlock = () => {
           const selectedUserId = document.getElementById('lock-user-select').value;
           const enteredPin = document.getElementById('lock-pin-input').value.trim();
           const user = state.users.find(u => u.id === selectedUserId);
           const errEl = document.getElementById('lock-error-msg');
 
-          if (user && enteredPin === user.pin) {
+          const backupPins = loadSavedPinsMap();
+          const expectedPin = String(backupPins[selectedUserId] || (user && user.pin) || '1234').trim();
+
+          if (user && String(enteredPin).trim() === expectedPin) {
             state.activeUserId = user.id;
             state.isLocked = false;
             saveState(false);
@@ -2569,8 +2691,10 @@
         });
 
         document.getElementById('open-lock-settings-btn').addEventListener('click', () => {
+          renderUserUI();
           document.getElementById('auto-lock-select').value = state.autoLockMinutes;
           document.getElementById('new-pin-input').value = '';
+          document.getElementById('pin-saved-indicator').classList.add('hidden');
           const m = document.getElementById('lock-settings-modal');
           m.classList.remove('hidden');
           m.classList.add('flex');
@@ -2585,18 +2709,46 @@
           saveState(false);
           showToast(`Auto-Lock set to: ${e.target.options[e.target.selectedIndex].text}`, 'success');
         });
-        document.getElementById('save-pin-btn').addEventListener('click', () => {
+
+        // PERMANENT DEDICATED PIN UPDATE LOGIC
+        const handleUpdatePin = () => {
           const newPin = document.getElementById('new-pin-input').value.trim();
           if (newPin.length < 4) {
             showToast('PIN / Password must be at least 4 characters.', 'warning');
             return;
           }
-          const user = getActiveUser();
-          user.pin = newPin;
+
+          const targetUserId = document.getElementById('target-user-pin-select').value || state.activeUserId;
+          const user = state.users.find(u => u.id === targetUserId) || getActiveUser();
+
+          // 1. Update state memory
+          user.pin = String(newPin).trim();
+
+          // 2. Immediate Backup Storage Flush
+          saveUserPinToBackup(user.id, newPin);
+
+          // 3. Full State Sync & Storage Save
           saveState(true);
+
           document.getElementById('new-pin-input').value = '';
-          showToast(`Personal PIN updated for ${user.name}!`, 'success');
+          const indicator = document.getElementById('pin-saved-indicator');
+          if (indicator) {
+            indicator.classList.remove('hidden');
+            setTimeout(() => indicator.classList.add('hidden'), 3500);
+          }
+
+          renderUserUI();
+          showToast(`PIN updated & saved permanently for ${user.name}!`, 'success');
+        };
+
+        document.getElementById('save-pin-btn').addEventListener('click', handleUpdatePin);
+        document.getElementById('new-pin-input').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleUpdatePin();
+          }
         });
+
         document.getElementById('lock-now-btn').addEventListener('click', () => {
           document.getElementById('lock-settings-modal').classList.add('hidden');
           document.getElementById('lock-settings-modal').classList.remove('flex');
@@ -2795,7 +2947,7 @@
           }
         });
 
-        // Periodic background auto-sync check every 2 minutes
+        // Background auto-sync check every 2 minutes
         setInterval(() => {
           if (googleAccessToken && state.autoSyncOnLoad) {
             pushToGoogleDrive();
