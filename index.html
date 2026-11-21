@@ -275,7 +275,7 @@
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
-            <h1 id="app-title" class="text-base sm:text-lg font-extrabold tracking-tight truncate">Unicorn Work Log</h1>
+            <h1 id="app-title" class="text-base sm:text-lg font-extrabold tracking-tight truncate">Ynikorn Work Log</h1>
             <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/15 text-white">
               Unicorn International
             </span>
@@ -1034,7 +1034,7 @@
 
     const I18N = {
       en: {
-        appTitle: "Unicorn Work Log",
+        appTitle: "Ynikorn Work Log",
         appSubtitle: "Unicorn International - Vehicle Import & Documentation",
         langBtn: "සිංහල",
         reminderLbl: "Reminder:",
@@ -1702,7 +1702,7 @@
 
       if ("Notification" in window) {
         if (Notification.permission === "granted") {
-          new Notification("Unicorn Work Log", { body: msg });
+          new Notification("Ynikorn Work Log", { body: msg });
         } else if (Notification.permission !== "denied" && isManualTest) {
           Notification.requestPermission();
         }
@@ -2311,7 +2311,7 @@
       ];
 
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Unicorn Work Log");
+      XLSX.utils.book_append_sheet(wb, ws, "Ynikorn Work Log");
       const fileName = `Unicorn_Work_Log_${new Date().toISOString().slice(0, 10)}.xlsx`;
       XLSX.writeFile(wb, fileName);
       showToast("Excel sheet downloaded! Ready to send to Boss.", "success");
@@ -2531,7 +2531,7 @@
         const searchData = await searchRes.json();
 
         const payload = JSON.stringify({
-          app: "Unicorn Work Log",
+          app: "Ynikorn Work Log",
           company: "Unicorn International",
           syncedAt: new Date().toISOString(),
           users: appState.users,
