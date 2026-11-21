@@ -21,10 +21,13 @@
   <!-- SheetJS for Real Excel (.xlsx) Export -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 
-  <!-- jsPDF for Guaranteed Non-Blank PDF Generation on Mobile & PC -->
+  <!-- jsPDF for PDF Generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <!-- Google Identity Services (Pure Client-Side OAuth2 - Free Tier, No Apps Script) -->
+  <!-- html2canvas for Canvas Capture (Guarantees Non-Blank Multi-Page PDF with Unicode Sinhala Text) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- Google Identity Services (Client-Side OAuth2 API) -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
@@ -197,6 +200,25 @@
       background: var(--border-color);
       border-radius: 9999px;
     }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-export-area, #print-export-area * {
+        visibility: visible;
+      }
+      #print-export-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+    }
   </style>
 </head>
 <body data-palette="red-black" data-mode="light" class="min-h-screen flex flex-col">
@@ -205,7 +227,7 @@
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-[92vw] sm:max-w-sm pointer-events-none"></div>
 
   <!-- APP LOCK OVERLAY -->
-  <div id="app-lock-screen" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 backdrop-blur-xl" style="background-color: rgba(6, 10, 18, 0.92);">
+  <div id="app-lock-screen" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 backdrop-blur-xl" style="background-color: rgba(6, 10, 18, 0.93);">
     <div class="w-full max-w-md rounded-3xl p-6 sm:p-8 border border-white/15 bg-zinc-900 text-white shadow-2xl">
       <div class="flex flex-col items-center text-center mb-6">
         <div class="w-16 h-16 rounded-2xl bg-white/10 p-2 flex items-center justify-center mb-3 shadow-inner overflow-hidden">
@@ -276,7 +298,7 @@
         </button>
 
         <!-- Google Drive Auto-Sync Status Button -->
-        <button id="drive-sync-btn" type="button" title="Google Drive Auto-Sync"
+        <button id="drive-sync-btn" type="button" title="Google Drive Auto-Sync Settings"
           class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
           <span id="drive-status-dot" class="w-2 h-2 rounded-full bg-amber-500"></span>
           <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
@@ -310,6 +332,25 @@
       </div>
     </div>
   </header>
+
+  <!-- PROMINENT GOOGLE DRIVE RECONNECT BANNER -->
+  <div id="drive-reconnect-banner" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3">
+    <div class="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+          <i data-lucide="cloud-off" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
+        </div>
+        <div class="text-xs">
+          <p class="font-extrabold text-sm" data-i18n="driveAuthRequired">Google Drive Auto-Sync Ready</p>
+          <p class="text-amber-700 dark:text-amber-300 font-medium" data-i18n="driveAuthDesc">Connect Google account once for auto-syncing daily logs on load & updates.</p>
+        </div>
+      </div>
+      <button id="banner-reconnect-btn" type="button" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-amber-600 hover:bg-amber-500 text-white shadow transition flex items-center gap-1.5">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+        <span data-i18n="reconnectNow">Connect & Auto-Sync Google Drive</span>
+      </button>
+    </div>
+  </div>
 
   <!-- MAIN WORKSPACE -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-5">
@@ -367,12 +408,12 @@
       </div>
     </section>
 
-    <!-- MAIN GRID: LEFT = LOG ENTRY FORM | RIGHT = LOGS LIST, FILTERS, PREVIEW & EXPORT -->
+    <!-- MAIN GRID: LEFT = LOG ENTRY FORM | RIGHT = LOGS LIST (TABLE & CARD VIEWS) -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
       <!-- ADD / EDIT WORK LOG FORM (5 cols on LG) -->
-      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-6">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-theme">
+      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-theme">
           <div class="flex items-center gap-2.5">
             <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shadow-sm">
               <i data-lucide="file-plus-2" class="w-5 h-5"></i>
@@ -506,7 +547,7 @@
         </form>
       </section>
 
-      <!-- RIGHT PANEL: FILTERS, EXPORT TO BOSS, & WORK LOG LIST (7 cols on LG) -->
+      <!-- RIGHT PANEL: FILTERS, VIEW SWITCHER & WORK LOG LIST (TABLE COLUMNS / CARDS) (7 cols on LG) -->
       <section class="lg:col-span-7 space-y-4">
 
         <!-- ACTION & EXPORT BAR -->
@@ -520,8 +561,22 @@
               <p class="text-xs text-muted-theme" data-i18n="allTeamVisible">All team logs visible • Instant Excel & PDF report for Boss</p>
             </div>
 
-            <!-- Export & Preview Buttons -->
+            <!-- View Switcher + Export Buttons -->
             <div class="flex flex-wrap items-center gap-2">
+              <!-- TABLE vs CARD VIEW SWITCHER -->
+              <div class="flex items-center p-0.5 rounded-xl border border-theme bg-tertiary-theme">
+                <button id="view-mode-table" type="button" title="Table Columns View (තීරු)"
+                  class="px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs">
+                  <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                  <span data-i18n="tableViewBtn">Columns</span>
+                </button>
+                <button id="view-mode-cards" type="button" title="Card View (කාඩ්පත)"
+                  class="px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
+                  <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                  <span data-i18n="cardViewBtn">Cards</span>
+                </button>
+              </div>
+
               <button id="preview-report-btn" type="button"
                 class="px-3 py-2 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
                 <i data-lucide="eye" class="w-4 h-4"></i>
@@ -576,7 +631,7 @@
           </div>
         </div>
 
-        <!-- WORK LOG CARDS CONTAINER -->
+        <!-- WORK LOG CONTAINER (DYNAMIC TABLE COLUMNS / CARDS VIEW) -->
         <div id="logs-list-container" class="space-y-3"></div>
       </section>
     </div>
@@ -584,7 +639,7 @@
 
   <!-- FOOTER -->
   <footer class="mt-auto py-4 px-4 text-center text-xs text-muted-theme border-t border-theme">
-    <p>Yunikon Work Log • Yunikon International • Multi-User Personal Google Drive Sync</p>
+    <p>Yunikon Work Log • Yunikon International • Auto-Sync Google Drive & Multi-User Support</p>
   </footer>
 
   <!-- ========================================================= -->
@@ -606,6 +661,10 @@
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
             <span>PDF</span>
           </button>
+          <button id="modal-native-print" type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-zinc-800 text-white flex items-center gap-1.5">
+            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+            <span data-i18n="printPdf">Print</span>
+          </button>
           <button id="close-preview-modal" type="button" class="p-1.5 rounded-xl bg-tertiary-theme hover:opacity-80">
             <i data-lucide="x" class="w-4 h-4"></i>
           </button>
@@ -625,7 +684,7 @@
             <div class="text-left sm:text-right text-xs text-slate-600 space-y-0.5">
               <p><strong>Generated:</strong> <span id="report-generated-time"></span></p>
               <p><strong>Prepared By:</strong> <span id="report-prepared-by"></span></p>
-              <p><strong>Filter:</strong> <span id="report-filter-summary">All Records</span></p>
+              <p><strong>Filter Summary:</strong> <span id="report-filter-summary">All Records</span></p>
             </div>
           </div>
 
@@ -655,7 +714,7 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 2: SINGLE LOG QUICK PREVIEW + FULL PHOTO LIGHTBOX   -->
+  <!-- MODAL 2: SINGLE LOG QUICK PREVIEW + LIGHTBOX              -->
   <!-- ========================================================= -->
   <div id="single-log-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/75 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
@@ -669,7 +728,7 @@
     </div>
   </div>
 
-  <!-- FULLSCREEN IMAGE VIEWER -->
+  <!-- FULLSCREEN IMAGE LIGHTBOX -->
   <div id="image-lightbox" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/90">
     <button id="close-lightbox-btn" type="button" class="absolute top-4 right-4 p-2.5 rounded-full bg-white/15 text-white hover:bg-white/25">
       <i data-lucide="x" class="w-6 h-6"></i>
@@ -678,7 +737,7 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 3: ROLES & MULTI-USER MANAGEMENT (OWNER / ADMIN)    -->
+  <!-- MODAL 3: ROLES & MULTI-USER MANAGEMENT                    -->
   <!-- ========================================================= -->
   <div id="role-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
@@ -694,16 +753,15 @@
 
       <div class="p-5 overflow-y-auto space-y-4 text-sm">
         <p class="text-xs text-muted-theme" data-i18n="teamRolesDesc">
-          Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs with no boss approval required.
+          Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs.
         </p>
-
         <div id="users-role-list" class="space-y-3"></div>
       </div>
     </div>
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 4: APP LOCK & AUTO-LOCK REMINDER TIME SETTINGS      -->
+  <!-- MODAL 4: APP LOCK & AUTO-LOCK SETTINGS                     -->
   <!-- ========================================================= -->
   <div id="lock-settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden">
@@ -762,14 +820,14 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 5: GOOGLE DRIVE AUTO-SYNC (PURE CLIENT API, FREE)   -->
+  <!-- MODAL 5: GOOGLE DRIVE AUTO-SYNC SETTINGS                  -->
   <!-- ========================================================= -->
   <div id="drive-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
       <div class="px-5 py-3.5 border-b border-theme flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="hard-drive" class="w-5 h-5 text-blue-500"></i>
-          <h3 class="font-extrabold text-base" data-i18n="driveSyncTitle">Google Drive Auto-Sync (Free API)</h3>
+          <h3 class="font-extrabold text-base" data-i18n="driveSyncTitle">Google Drive Auto-Sync (Free Tier)</h3>
         </div>
         <button id="close-drive-modal" type="button" class="p-1.5 rounded-xl bg-tertiary-theme">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -780,10 +838,10 @@
         <div class="p-3.5 rounded-2xl bg-tertiary-theme space-y-1">
           <p class="font-bold flex items-center gap-1.5">
             <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
-            <span data-i18n="driveZeroBackendTitle">100% Free Tier • No Google Apps Script • GitHub Pages Ready</span>
+            <span data-i18n="driveZeroBackendTitle">100% Client-Side • Automatic Load Sync</span>
           </p>
           <p class="text-xs text-muted-theme" data-i18n="driveZeroBackendDesc">
-            Uses Google Identity Services & Drive REST API v3 directly in your browser to sync "yunikon_work_log_data.json" with your personal Google Drive automatically when the app opens and whenever logs change.
+            Syncs "yunikon_work_log_data.json" automatically to your personal Google Drive when opening the app and whenever logs change.
           </p>
         </div>
 
@@ -797,19 +855,16 @@
 
         <div id="owner-drive-config-box" class="space-y-2">
           <label for="google-client-id-input" class="block text-xs font-bold uppercase tracking-wider">
-            Google OAuth 2.0 Web Client ID (Free Google Cloud Console)
+            Google OAuth 2.0 Web Client ID
           </label>
           <input id="google-client-id-input" type="text" placeholder="xxxxxxxxxxxx-xxxxxxxxxxxxxxxx.apps.googleusercontent.com"
             class="w-full theme-input rounded-xl px-3 py-2.5 text-xs font-mono" />
-          <p class="text-[11px] text-muted-theme">
-            Add your GitHub Pages URL under Authorized JavaScript Origins in Google Cloud Console (Free tier).
-          </p>
         </div>
 
         <div class="flex flex-wrap gap-2 pt-1">
           <button id="connect-drive-btn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold btn-accent flex items-center justify-center gap-1.5">
             <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-            <span data-i18n="connectSyncDrive">Sign In & Auto-Sync Now</span>
+            <span data-i18n="connectSyncDrive">Connect & Sync Google Drive</span>
           </button>
           <button id="manual-pull-drive-btn" type="button" class="py-2.5 px-3.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme">
             <span data-i18n="syncNowBtn">Sync Now</span>
@@ -818,7 +873,7 @@
 
         <div class="pt-3 border-t border-theme flex items-center justify-between text-xs text-muted-theme">
           <span>Last Synced: <strong id="last-sync-timestamp">Not yet synced</strong></span>
-          <button id="export-json-backup-btn" type="button" class="underline font-bold">Download JSON Backup</button>
+          <button id="export-json-backup-btn" type="button" class="underline font-bold">JSON Backup</button>
         </div>
       </div>
     </div>
@@ -905,6 +960,9 @@
           previewReport: 'Preview',
           exportExcel: 'Excel',
           exportPdf: 'PDF',
+          printPdf: 'Print',
+          tableViewBtn: 'Columns',
+          cardViewBtn: 'Cards',
           searchPlaceholder: 'Search title, document...',
           allStatuses: 'All Statuses',
           allUsers: 'All Users',
@@ -919,17 +977,27 @@
           updatePinBtn: 'Update My PIN / Password',
           lockNowBtn: 'Lock App Immediately',
           driveSyncTitle: 'Google Drive Auto-Sync (Free API)',
-          driveZeroBackendTitle: '100% Free Tier • No Google Apps Script • GitHub Pages Ready',
+          driveZeroBackendTitle: '100% Client-Side • Automatic Load Sync',
           driveZeroBackendDesc: 'Uses Google Identity Services & Drive REST API v3 directly in your browser to sync "yunikon_work_log_data.json" with your personal Google Drive automatically when the app opens and whenever logs change.',
           autoSyncOnLoadLabel: 'Auto-Sync on App Load',
           autoSyncOnLoadDesc: 'Automatically pull & sync Drive data when opening the app',
-          connectSyncDrive: 'Sign In & Auto-Sync Now',
+          connectSyncDrive: 'Connect & Auto-Sync Google Drive',
           syncNowBtn: 'Sync Now',
           noLogsFound: 'No work logs match your current view.',
           noLogsHint: 'Add your first vehicle import task on the left or clear filters.',
           viewDetails: 'Preview',
           editBtn: 'Edit',
-          deleteBtn: 'Delete'
+          deleteBtn: 'Delete',
+          driveAuthRequired: 'Google Drive Auto-Sync Ready',
+          driveAuthDesc: 'Connect Google account once for auto-syncing daily logs on load & updates.',
+          reconnectNow: 'Connect & Auto-Sync Google Drive',
+          colDateTime: 'Date & Time',
+          colTitle: 'Work Title & Notes',
+          colDocType: 'Document Type',
+          colStatus: 'Status',
+          colPhotos: 'Photos',
+          colStaff: 'Staff',
+          colActions: 'Actions'
         },
         si: {
           brandTitle: 'Yunikon Work Log',
@@ -971,6 +1039,9 @@
           previewReport: 'පෙරදසුන (Preview)',
           exportExcel: 'Excel ගන්න',
           exportPdf: 'PDF ගන්න',
+          printPdf: 'මුද්‍රණය (Print)',
+          tableViewBtn: 'තීරු පෙනුම (Columns)',
+          cardViewBtn: 'කාඩ්පත (Cards)',
           searchPlaceholder: 'මාතෘකාව හෝ ලියවිල්ල සොයන්න...',
           allStatuses: 'සියලු තත්ත්වයන්',
           allUsers: 'සියලු සාමාජිකයින්',
@@ -985,36 +1056,67 @@
           updatePinBtn: 'PIN / මුරපදය සුරකින්න',
           lockNowBtn: 'දැන් App එක අගුළු දමන්න (Lock Now)',
           driveSyncTitle: 'Google Drive Auto-Sync (නොමිලේ)',
-          driveZeroBackendTitle: '100% නොමිලේ • Apps Script අවශ්‍ය නැත • GitHub Pages සඳහා සුදුසුයි',
+          driveZeroBackendTitle: '100% නොමිලේ • ස්වයංක්‍රීය Load Sync',
           driveZeroBackendDesc: 'App එක විවෘත කරන විට සහ වැඩ සටහන් වෙනස් කරන විට "yunikon_work_log_data.json" ගොනුව ඔබගේ Google Drive වෙත ස්වයංක්‍රීයව Sync වේ.',
           autoSyncOnLoadLabel: 'App එක Load වන විට Auto-Sync',
           autoSyncOnLoadDesc: 'App එක විවෘත කරන වහාම Drive දත්ත ස්වයංක්‍රීයව Sync කරන්න',
-          connectSyncDrive: 'Sign In කර Auto-Sync කරන්න',
+          connectSyncDrive: 'Google Drive Connect කර Sync කරන්න',
           syncNowBtn: 'දැන් Sync කරන්න',
           noLogsFound: 'වැඩ සටහන් කිසිවක් හමු නොවීය.',
           noLogsHint: 'වම් පසින් නව වැඩ සටහනක් ඇතුළත් කරන්න.',
           viewDetails: 'බලන්න',
           editBtn: 'වෙනස් කරන්න',
-          deleteBtn: 'මකන්න'
+          deleteBtn: 'මකන්න',
+          driveAuthRequired: 'Google Drive Auto-Sync සූදානම්',
+          driveAuthDesc: 'දෛනික වැඩ සටහන් Drive එකට Auto-Sync වීමට Google Account එක සම්බන්ධ කරන්න.',
+          reconnectNow: 'Connect වී Sync කරන්න',
+          colDateTime: 'දිනය සහ වේලාව',
+          colTitle: 'මාතෘකාව සහ විස්තර',
+          colDocType: 'ලියවිලි වර්ගය',
+          colStatus: 'තත්ත්වය',
+          colPhotos: 'ඡායාරූප',
+          colStaff: 'සාමාජිකයා',
+          colActions: 'ක්‍රියාකාරකම්'
         }
       };
+
+      // Sample vehicle SVG image data
+      const SAMPLE_CAR_IMG_1 = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%231e293b"/><path d="M50 200 L90 130 L160 110 L280 110 L340 160 L360 200 Z" fill="%23dc2626"/><circle cx="110" cy="210" r="30" fill="%23000"/><circle cx="110" cy="210" r="14" fill="%2394a3b8"/><circle cx="290" cy="210" r="30" fill="%23000"/><circle cx="290" cy="210" r="14" fill="%2394a3b8"/><text x="200" y="70" font-family="sans-serif" font-size="20" font-weight="bold" fill="%23ffffff" text-anchor="middle">HONDA VEZEL HYBRID</text><text x="200" y="270" font-family="sans-serif" font-size="14" fill="%2394a3b8" text-anchor="middle">Yunikon International Document</text></svg>`;
+      const SAMPLE_CAR_IMG_2 = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%230f294a"/><path d="M60 190 L100 120 L180 100 L270 100 L320 150 L340 190 Z" fill="%23facc15"/><circle cx="120" cy="200" r="26" fill="%23000"/><circle cx="120" cy="200" r="12" fill="%23e2e8f0"/><circle cx="280" cy="200" r="26" fill="%23000"/><circle cx="280" cy="200" r="12" fill="%23e2e8f0"/><text x="200" y="65" font-family="sans-serif" font-size="18" font-weight="bold" fill="%23ffffff" text-anchor="middle">TOYOTA PRIUS S-SAFETY</text><text x="200" y="265" font-family="sans-serif" font-size="14" fill="%23cbd5e1" text-anchor="middle">Customs Clearance Passed</text></svg>`;
 
       /* -----------------------------------------------------------
          2. APPLICATION STATE & LOCAL STORAGE PERSISTENCE
       ----------------------------------------------------------- */
-      const STORAGE_KEY = 'yunikon_work_log_state_v2';
+      const STORAGE_KEY = 'yunikon_work_log_state_v6';
       const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
       const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
+      function getTodayISO(offsetDays = 0) {
+        const now = new Date();
+        if (offsetDays !== 0) now.setDate(now.getDate() + offsetDays);
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      }
+
+      function getNowTimeHHMM() {
+        const now = new Date();
+        return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      }
+
       const defaultState = {
-        palette: 'red-black', // 'red-black' | 'navy-yellow'
-        mode: 'light',        // 'light' | 'dark'
-        lang: 'en',           // 'en' | 'si'
+        palette: 'red-black',
+        mode: 'light',
+        lang: 'en',
+        viewMode: 'table', // 'table' (Columns/Rows view) | 'cards'
         activeUserId: 'u1',
-        autoLockMinutes: '10', // '1' | '5' | '10' | '30' | '60' | 'always' | 'disable'
+        autoLockMinutes: '10',
         isLocked: false,
         lastActiveTimestamp: Date.now(),
         googleClientId: '',
+        googleAccessToken: null,
+        googleTokenExpiresAt: 0,
         autoSyncOnLoad: true,
         driveFileId: null,
         lastSyncTime: null,
@@ -1023,19 +1125,62 @@
           { id: 'u2', name: 'Member 2', role: 'Admin', pin: '1234' },
           { id: 'u3', name: 'Member 3', role: 'Admin', pin: '1234' }
         ],
-        logs: []
+        logs: [
+          {
+            id: 'sample_log_1',
+            title: 'Honda Vezel Hybrid - LC & Customs Clearance',
+            docType: 'Letter of Credit (LC)',
+            date: getTodayISO(0),
+            time: '09:30',
+            status: 'completed',
+            notes: 'LC opened via Commercial Bank. Customs CUSDEC verification completed for Honda Vezel (RU3-1348237). Ready for port clearance.',
+            photos: [SAMPLE_CAR_IMG_1],
+            userId: 'u1',
+            userName: 'Member 1',
+            createdAt: Date.now() - 3600000,
+            updatedAt: Date.now() - 3600000
+          },
+          {
+            id: 'sample_log_2',
+            title: 'Toyota Prius S-Safety - Bill of Lading & JAAI Certificate',
+            docType: 'Bill of Lading (B/L)',
+            date: getTodayISO(-1),
+            time: '14:15',
+            status: 'in_progress',
+            notes: 'Bill of Lading received from Kobe Port. JAAI inspection passed in Japan yard. Waiting for RMV approval.',
+            photos: [SAMPLE_CAR_IMG_2],
+            userId: 'u2',
+            userName: 'Member 2',
+            createdAt: Date.now() - 86400000,
+            updatedAt: Date.now() - 86400000
+          },
+          {
+            id: 'sample_log_3',
+            title: 'Suzuki Wagon R FZ - Commercial Invoice & Packing List',
+            docType: 'Commercial Invoice',
+            date: getTodayISO(-2),
+            time: '11:00',
+            status: 'not_started',
+            notes: 'Invoice received from supplier. Pending shipping company approval and LC amendment.',
+            photos: [],
+            userId: 'u3',
+            userName: 'Member 3',
+            createdAt: Date.now() - 172800000,
+            updatedAt: Date.now() - 172800000
+          }
+        ]
       };
 
       let state = loadState();
-      let draftPhotos = []; // Array of compressed dataURLs (max 10)
-      let googleAccessToken = null;
+      let draftPhotos = [];
+      let googleAccessToken = state.googleAccessToken || null;
       let tokenClient = null;
       let isSyncing = false;
-      let gsiReady = false;
+      let debouncedSyncTimer = null;
 
       function loadState() {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v1');
+          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v5');
           if (!raw) return structuredClone(defaultState);
           const parsed = JSON.parse(raw);
           const normalizedUsers = Array.isArray(parsed.users) && parsed.users.length === 3
@@ -1049,7 +1194,7 @@
             ...structuredClone(defaultState),
             ...parsed,
             users: normalizedUsers,
-            logs: Array.isArray(parsed.logs) ? parsed.logs : []
+            logs: Array.isArray(parsed.logs) && parsed.logs.length > 0 ? parsed.logs : defaultState.logs
           };
         } catch (err) {
           console.error('Failed to load state:', err);
@@ -1060,13 +1205,23 @@
       function saveState(triggerDriveSync = false) {
         try {
           state.lastActiveTimestamp = Date.now();
+          if (googleAccessToken) {
+            state.googleAccessToken = googleAccessToken;
+          }
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (err) {
           showToast('Local storage full! Try fewer photos per entry.', 'error');
         }
         if (triggerDriveSync) {
-          pushToGoogleDrive();
+          debouncedPushToDrive();
         }
+      }
+
+      function debouncedPushToDrive() {
+        if (debouncedSyncTimer) clearTimeout(debouncedSyncTimer);
+        debouncedSyncTimer = setTimeout(() => {
+          pushToGoogleDrive();
+        }, 800);
       }
 
       /* -----------------------------------------------------------
@@ -1143,19 +1298,6 @@
         return state.users.find(u => u.id === state.activeUserId) || state.users[0];
       }
 
-      function getTodayISO() {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-      }
-
-      function getNowTimeHHMM() {
-        const now = new Date();
-        return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      }
-
       function escapeHtml(str) {
         return String(str || '')
           .replace(/&/g, '&amp;')
@@ -1164,16 +1306,8 @@
           .replace(/"/g, '&quot;');
       }
 
-      function sanitizePdfText(str) {
-        return String(str || '')
-          .replace(/[^\x20-\x7E\n\r]/g, (ch) => {
-            const code = ch.charCodeAt(0);
-            return code >= 0x0D80 && code <= 0x0DFF ? '[SI]' : ' ';
-          });
-      }
-
       /* -----------------------------------------------------------
-         4. THEME (4 MODES) & BILINGUAL ENGINE
+         4. THEME & BILINGUAL ENGINE
       ----------------------------------------------------------- */
       function applyTheme() {
         document.body.setAttribute('data-palette', state.palette);
@@ -1226,7 +1360,7 @@
       }
 
       /* -----------------------------------------------------------
-         5. LIVE AUTO-UPDATING DATE & TIME CLOCK
+         5. LIVE AUTO CLOCK
       ----------------------------------------------------------- */
       function startLiveClock() {
         const el = document.getElementById('live-datetime');
@@ -1250,7 +1384,7 @@
       }
 
       /* -----------------------------------------------------------
-         6. APP LOCK & AUTO-LOCK TIMER (1, 5, 10, 30, 60, ALWAYS, DISABLE)
+         6. APP LOCK & AUTO-LOCK TIMER
       ----------------------------------------------------------- */
       function checkShouldLockOnStartup() {
         if (state.autoLockMinutes === 'disable') {
@@ -1309,9 +1443,7 @@
           } else if (!document.hidden) {
             checkShouldLockOnStartup();
             renderLockScreen();
-            if (state.autoSyncOnLoad && state.googleClientId && googleAccessToken) {
-              pullAndSyncFromGoogleDrive();
-            }
+            checkAndStartDriveSync();
           }
         });
 
@@ -1327,7 +1459,7 @@
       }
 
       /* -----------------------------------------------------------
-         7. VEHICLE IMPORT DOCUMENT DROPDOWN + MANUAL TYPING
+         7. VEHICLE IMPORT DOCUMENT COMBOBOX
       ----------------------------------------------------------- */
       function initDocumentCombobox() {
         const input = document.getElementById('doc-type-input');
@@ -1395,7 +1527,7 @@
       }
 
       /* -----------------------------------------------------------
-         8. PHOTO ATTACHMENTS (STRICT MAX 10 PHOTOS)
+         8. PHOTO ATTACHMENTS (MAX 10)
       ----------------------------------------------------------- */
       function renderDraftPhotos() {
         const grid = document.getElementById('form-photo-grid');
@@ -1444,7 +1576,7 @@
       }
 
       /* -----------------------------------------------------------
-         9. WORK LOG CRUD, INLINE STATUS CYCLING & RENDERING
+         9. WORK LOG CRUD, STRUCTURED COLUMNS/TABLE VIEW & CARDS VIEW
       ----------------------------------------------------------- */
       const STATUS_CYCLE = ['not_started', 'in_progress', 'completed'];
 
@@ -1537,63 +1669,160 @@
           return;
         }
 
-        container.innerHTML = filtered.map(log => {
-          const photos = Array.isArray(log.photos) ? log.photos : [];
-          const thumbsHtml = photos.length
-            ? `<div class="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1">
-                ${photos.map((src, i) => `
-                  <img src="${src}" alt="Photo ${i + 1}" onclick="window.openLightbox('${src}')"
-                    class="w-12 h-12 rounded-xl object-cover border border-theme shrink-0 cursor-pointer hover:scale-105 transition" />
-                `).join('')}
-              </div>`
-            : '';
+        // 1. STRUCTURED TABLE COLUMNS VIEW (තීරු තීරු පෙනුම)
+        if (state.viewMode === 'table') {
+          container.innerHTML = `
+            <div class="theme-card rounded-3xl overflow-hidden border border-theme shadow-sm">
+              <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="border-b border-theme bg-tertiary-theme/70 text-[11px] font-extrabold uppercase tracking-wider text-muted-theme">
+                      <th class="p-3.5 whitespace-nowrap min-w-[110px]">${dict.colDateTime}</th>
+                      <th class="p-3.5 min-w-[200px]">${dict.colTitle}</th>
+                      <th class="p-3.5 whitespace-nowrap min-w-[130px]">${dict.colDocType}</th>
+                      <th class="p-3.5 whitespace-nowrap min-w-[110px]">${dict.colStatus}</th>
+                      <th class="p-3.5 whitespace-nowrap min-w-[100px]">${dict.colPhotos}</th>
+                      <th class="p-3.5 whitespace-nowrap min-w-[90px]">${dict.colStaff}</th>
+                      <th class="p-3.5 text-right whitespace-nowrap min-w-[100px]">${dict.colActions}</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-theme">
+                    ${filtered.map((log, idx) => {
+                      const photos = Array.isArray(log.photos) ? log.photos : [];
+                      return `
+                        <tr class="hover:bg-tertiary-theme/40 transition">
+                          <!-- Date & Time Column -->
+                          <td class="p-3.5 align-top whitespace-nowrap font-medium text-muted-theme">
+                            <div class="font-bold text-primary tabular-nums">${escapeHtml(log.date)}</div>
+                            <div class="text-[10px] tabular-nums">${escapeHtml(log.time)}</div>
+                          </td>
 
-          return `
-            <article class="theme-card rounded-3xl p-4 sm:p-5 space-y-2.5">
-              <div class="flex flex-wrap items-start justify-between gap-2">
-                <div class="space-y-1 min-w-0 flex-1">
-                  <div class="flex flex-wrap items-center gap-1.5">
-                    ${getStatusBadgeHtml(log.status, log.id)}
-                    ${log.docType ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
-                  </div>
-                  <h3 class="text-base font-extrabold leading-snug break-words">${escapeHtml(log.title)}</h3>
-                </div>
+                          <!-- Title & Notes Column -->
+                          <td class="p-3.5 align-top space-y-1">
+                            <div class="font-extrabold text-sm text-primary leading-snug break-words">${escapeHtml(log.title)}</div>
+                            ${log.notes ? `<p class="text-xs text-secondary-theme line-clamp-2 leading-relaxed whitespace-pre-line">${escapeHtml(log.notes)}</p>` : ''}
+                          </td>
 
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
-                    class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-tertiary-theme hover:opacity-80 flex items-center gap-1">
-                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">${dict.viewDetails}</span>
-                  </button>
-                  <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
-                    class="p-1.5 rounded-xl bg-tertiary-theme hover:opacity-80">
-                    <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                  </button>
-                  <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
-                    class="p-1.5 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                  </button>
-                </div>
+                          <!-- Document Type Column -->
+                          <td class="p-3.5 align-top whitespace-nowrap">
+                            ${log.docType
+                              ? `<span class="px-2.5 py-1 rounded-lg text-[11px] font-bold badge-secondary inline-block">${escapeHtml(log.docType)}</span>`
+                              : `<span class="text-muted-theme text-[11px]">—</span>`
+                            }
+                          </td>
+
+                          <!-- Status Column (Clickable Inline Cycle) -->
+                          <td class="p-3.5 align-top whitespace-nowrap">
+                            ${getStatusBadgeHtml(log.status, log.id)}
+                          </td>
+
+                          <!-- Photos Column -->
+                          <td class="p-3.5 align-top whitespace-nowrap">
+                            ${photos.length > 0
+                              ? `<div class="flex items-center gap-1">
+                                  <img src="${photos[0]}" onclick="window.openLightbox('${photos[0]}')"
+                                    class="w-9 h-9 rounded-lg object-cover border border-theme cursor-pointer hover:scale-105 transition shrink-0" />
+                                  ${photos.length > 1
+                                    ? `<span class="px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-tertiary-theme">+${photos.length - 1}</span>`
+                                    : ''}
+                                </div>`
+                              : `<span class="text-muted-theme text-[11px]">No photos</span>`
+                            }
+                          </td>
+
+                          <!-- Staff Column -->
+                          <td class="p-3.5 align-top whitespace-nowrap font-medium">
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] bg-tertiary-theme">
+                              <i data-lucide="user" class="w-3 h-3 text-muted-theme"></i>
+                              <strong>${escapeHtml(log.userName)}</strong>
+                            </span>
+                          </td>
+
+                          <!-- Actions Column -->
+                          <td class="p-3.5 align-top text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-1">
+                              <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
+                                class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
+                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                              </button>
+                              <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
+                                class="p-1.5 rounded-lg bg-tertiary-theme hover:opacity-80">
+                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                              </button>
+                              <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
+                                class="p-1.5 rounded-lg bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
               </div>
-
-              ${log.notes ? `<p class="text-xs sm:text-sm text-secondary-theme whitespace-pre-line leading-relaxed">${escapeHtml(log.notes)}</p>` : ''}
-
-              ${thumbsHtml}
-
-              <div class="pt-2 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-theme font-medium">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="user" class="w-3.5 h-3.5"></i>
-                  <strong>${escapeHtml(log.userName)}</strong>
-                </span>
-                <span class="flex items-center gap-1 tabular-nums">
-                  <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
-                  ${escapeHtml(log.date)} • ${escapeHtml(log.time)}
-                  ${photos.length ? ` • 📷 ${photos.length}/10` : ''}
-                </span>
-              </div>
-            </article>
+            </div>
           `;
-        }).join('');
+        } else {
+          // 2. CARD VIEW
+          container.innerHTML = filtered.map(log => {
+            const photos = Array.isArray(log.photos) ? log.photos : [];
+            const thumbsHtml = photos.length
+              ? `<div class="flex items-center gap-1.5 mt-3 overflow-x-auto pb-1">
+                  ${photos.map((src, i) => `
+                    <img src="${src}" alt="Photo ${i + 1}" onclick="window.openLightbox('${src}')"
+                      class="w-12 h-12 rounded-xl object-cover border border-theme shrink-0 cursor-pointer hover:scale-105 transition" />
+                  `).join('')}
+                </div>`
+              : '';
+
+            return `
+              <article class="theme-card rounded-3xl p-4 sm:p-5 space-y-2.5">
+                <div class="flex flex-wrap items-start justify-between gap-2">
+                  <div class="space-y-1 min-w-0 flex-1">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      ${getStatusBadgeHtml(log.status, log.id)}
+                      ${log.docType ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold badge-secondary">${escapeHtml(log.docType)}</span>` : ''}
+                    </div>
+                    <h3 class="text-base font-extrabold leading-snug break-words">${escapeHtml(log.title)}</h3>
+                  </div>
+
+                  <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
+                      class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-tertiary-theme hover:opacity-80 flex items-center gap-1">
+                      <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                      <span class="hidden sm:inline">${dict.viewDetails}</span>
+                    </button>
+                    <button type="button" onclick="window.editLog('${log.id}')" title="${dict.editBtn}"
+                      class="p-1.5 rounded-xl bg-tertiary-theme hover:opacity-80">
+                      <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button type="button" onclick="window.deleteLog('${log.id}')" title="${dict.deleteBtn}"
+                      class="p-1.5 rounded-xl bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </div>
+
+                ${log.notes ? `<p class="text-xs sm:text-sm text-secondary-theme whitespace-pre-line leading-relaxed">${escapeHtml(log.notes)}</p>` : ''}
+
+                ${thumbsHtml}
+
+                <div class="pt-2 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-theme font-medium">
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                    <strong>${escapeHtml(log.userName)}</strong>
+                  </span>
+                  <span class="flex items-center gap-1 tabular-nums">
+                    <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i>
+                    ${escapeHtml(log.date)} • ${escapeHtml(log.time)}
+                    ${photos.length ? ` • 📷 ${photos.length}/10` : ''}
+                  </span>
+                </div>
+              </article>
+            `;
+          }).join('');
+        }
 
         lucide.createIcons();
       }
@@ -1701,7 +1930,7 @@
       };
 
       /* -----------------------------------------------------------
-         10. MULTI-USER & ROLE UI (OWNER / ADMIN ONLY)
+         10. MULTI-USER & ROLE UI
       ----------------------------------------------------------- */
       function renderUserUI() {
         const activeUser = getActiveUser();
@@ -1779,7 +2008,7 @@
       }
 
       /* -----------------------------------------------------------
-         11. REPORT PREVIEW, EXCEL (.XLSX) & GUARANTEED PDF EXPORT
+         11. REPORT PREVIEW, EXCEL (.XLSX) & GUARANTEED NON-BLANK PDF
       ----------------------------------------------------------- */
       function buildReportPreview() {
         const filtered = getFilteredLogs();
@@ -1869,10 +2098,9 @@
             return;
           }
         } catch (err) {
-          console.warn('XLSX fallback to CSV:', err);
+          console.warn('XLSX export fallback:', err);
         }
 
-        // Reliable CSV fallback if SheetJS CDN is blocked
         const headers = Object.keys(rows[0]);
         const csv = [
           headers.join(','),
@@ -1888,167 +2116,145 @@
         showToast('Spreadsheet exported!', 'success');
       }
 
-      function exportToPDF() {
+      async function exportToPDF() {
         const filtered = getFilteredLogs();
         if (!filtered.length) {
           showToast('No work logs to export to PDF!', 'warning');
           return;
         }
+        showToast('Rendering high-quality PDF report...', 'info');
 
         try {
-          const jsPDFCtor = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
-          if (!jsPDFCtor) {
-            throw new Error('jsPDF unavailable');
+          buildReportPreview();
+
+          const sourceEl = document.getElementById('print-export-area');
+          if (!sourceEl) throw new Error('Report container element missing');
+
+          // Create an off-screen clone with clear white background for perfect rendering
+          const clone = sourceEl.cloneNode(true);
+          clone.style.width = '794px';
+          clone.style.position = 'absolute';
+          clone.style.left = '-9999px';
+          clone.style.top = '0px';
+          clone.style.backgroundColor = '#ffffff';
+          clone.style.color = '#000000';
+          clone.style.zIndex = '-9999';
+
+          document.body.appendChild(clone);
+          await new Promise(r => setTimeout(r, 250));
+
+          if (typeof html2canvas === 'undefined') {
+            throw new Error('html2canvas library missing');
           }
 
-          const doc = new jsPDFCtor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-          const pageWidth = doc.internal.pageSize.getWidth();
-          const pageHeight = doc.internal.pageSize.getHeight();
-          const margin = 14;
-          const contentWidth = pageWidth - margin * 2;
-          let y = 16;
-
-          const activeUser = getActiveUser();
-          const completedCount = filtered.filter(l => l.status === 'completed').length;
-          const progressCount = filtered.filter(l => l.status === 'in_progress').length;
-          const notStartedCount = filtered.filter(l => l.status === 'not_started').length;
-
-          // Header Banner
-          doc.setFillColor(15, 23, 42);
-          doc.rect(0, 0, pageWidth, 28, 'F');
-          doc.setTextColor(255, 255, 255);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(15);
-          doc.text('YUNIKON INTERNATIONAL - YUNIKON WORK LOG', margin, 12);
-
-          doc.setFont('helvetica', 'normal');
-          doc.setFontSize(9);
-          doc.text(
-            sanitizePdfText(`Generated: ${new Date().toLocaleString()}   |   By: ${activeUser.name} (${activeUser.role})`),
-            margin,
-            21
-          );
-
-          y = 36;
-          doc.setTextColor(15, 23, 42);
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(10);
-          doc.text(
-            `Summary: Total=${filtered.length}   Completed=${completedCount}   In Progress=${progressCount}   Not Started=${notStartedCount}`,
-            margin,
-            y
-          );
-          y += 8;
-
-          const statusMap = {
-            completed: 'COMPLETED',
-            in_progress: 'IN PROGRESS',
-            not_started: 'NOT STARTED'
-          };
-
-          filtered.forEach((log, idx) => {
-            if (y > pageHeight - 45) {
-              doc.addPage();
-              y = 18;
-            }
-
-            doc.setDrawColor(203, 213, 225);
-            doc.setFillColor(248, 250, 252);
-            doc.roundedRect(margin, y, contentWidth, 8, 2, 2, 'FD');
-
-            doc.setTextColor(15, 23, 42);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            const titleLine = sanitizePdfText(`#${idx + 1}  ${log.title}  [${statusMap[log.status] || log.status}]`);
-            doc.text(titleLine.slice(0, 92), margin + 3, y + 5.3);
-            y += 12;
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(71, 85, 105);
-            const metaLine = sanitizePdfText(
-              `Doc Type: ${log.docType || 'General'}  |  Date/Time: ${log.date} ${log.time}  |  User: ${log.userName}`
-            );
-            const metaWrapped = doc.splitTextToSize(metaLine, contentWidth);
-            doc.text(metaWrapped, margin, y);
-            y += metaWrapped.length * 4.5 + 1;
-
-            if (log.notes) {
-              doc.setTextColor(30, 41, 59);
-              const noteWrapped = doc.splitTextToSize(sanitizePdfText(`Notes: ${log.notes}`), contentWidth);
-              doc.text(noteWrapped, margin, y);
-              y += noteWrapped.length * 4.5 + 2;
-            }
-
-            // Render attached compressed photos cleanly into PDF
-            const photos = Array.isArray(log.photos) ? log.photos : [];
-            if (photos.length > 0) {
-              const thumbW = 24;
-              const thumbH = 18;
-              let xPos = margin;
-              if (y + thumbH + 6 > pageHeight - 14) {
-                doc.addPage();
-                y = 18;
-              }
-              photos.slice(0, 6).forEach((dataUrl) => {
-                try {
-                  if (xPos + thumbW > pageWidth - margin) {
-                    xPos = margin;
-                    y += thumbH + 3;
-                  }
-                  doc.addImage(dataUrl, 'JPEG', xPos, y, thumbW, thumbH);
-                  xPos += thumbW + 3;
-                } catch (imgErr) {
-                  // Skip malformed image data safely without failing PDF
-                }
-              });
-              y += thumbH + 6;
-            } else {
-              y += 3;
-            }
-
-            doc.setDrawColor(226, 232, 240);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 6;
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false
           });
 
-          const fileName = `Yunikon_Work_Log_${getTodayISO()}.pdf`;
-          doc.save(fileName);
-          showToast('PDF report generated & downloaded!', 'success');
+          document.body.removeChild(clone);
+
+          const jsPDFCtor = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+          if (!jsPDFCtor) throw new Error('jsPDF library missing');
+
+          const pdf = new jsPDFCtor('p', 'mm', 'a4');
+          const pdfWidth = 210;
+          const pdfHeight = 297;
+          const imgWidth = pdfWidth;
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          let heightLeft = imgHeight;
+          let position = 0;
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+          pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pdfHeight;
+
+          while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
+          }
+
+          pdf.save(`Yunikon_Work_Log_${getTodayISO()}.pdf`);
+          showToast('PDF report downloaded successfully!', 'success');
+
         } catch (err) {
-          console.error('PDF generation error:', err);
-          // Guaranteed text/HTML PDF download fallback so it is never blank
-          buildReportPreview();
-          const reportText = document.getElementById('print-export-area').innerText;
-          const blob = new Blob([reportText], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `Yunikon_Work_Log_${getTodayISO()}.pdf`;
-          a.click();
-          URL.revokeObjectURL(url);
-          showToast('PDF exported via fallback!', 'success');
+          console.warn('PDF capture error, using print fallback:', err);
+          printReport();
+        }
+      }
+
+      function printReport() {
+        buildReportPreview();
+        const printContent = document.getElementById('print-export-area').outerHTML;
+        const printWin = window.open('', '_blank', 'width=900,height=850');
+
+        if (printWin) {
+          printWin.document.write(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <title>Yunikon Work Log Report — Boss Copy</title>
+              <script src="https://cdn.tailwindcss.com"><\/script>
+              <style>
+                body { background: #ffffff; color: #000000; padding: 20px; font-family: sans-serif; }
+                @media print {
+                  body { padding: 0; }
+                }
+              </style>
+            </head>
+            <body>
+              ${printContent}
+              <script>
+                window.onload = function() {
+                  setTimeout(function() {
+                    window.print();
+                    window.close();
+                  }, 400);
+                };
+              <\/script>
+            </body>
+            </html>
+          `);
+          printWin.document.close();
+        } else {
+          window.print();
         }
       }
 
       /* -----------------------------------------------------------
-         12. PURE CLIENT-SIDE GOOGLE DRIVE AUTO-SYNC (NO APPS SCRIPT)
+         12. PURE CLIENT-SIDE GOOGLE DRIVE AUTO-SYNC ON LOAD & UPDATE
       ----------------------------------------------------------- */
       function updateDriveStatusUI(status, text) {
         const dot = document.getElementById('drive-status-dot');
         const label = document.getElementById('drive-status-text');
         const tsEl = document.getElementById('last-sync-timestamp');
+        const banner = document.getElementById('drive-reconnect-banner');
 
         const colors = {
           synced: 'bg-emerald-500',
           syncing: 'bg-blue-500 animate-ping',
           local: 'bg-amber-500',
+          reconnect: 'bg-amber-500 animate-pulse',
           error: 'bg-rose-500'
         };
         dot.className = `w-2 h-2 rounded-full ${colors[status] || colors.local}`;
         label.textContent = text;
+
         if (state.lastSyncTime) {
           tsEl.textContent = new Date(state.lastSyncTime).toLocaleString();
+        }
+
+        if (status === 'reconnect' || status === 'error') {
+          banner.classList.remove('hidden');
+        } else {
+          banner.classList.add('hidden');
         }
       }
 
@@ -2059,6 +2265,7 @@
         const searchRes = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`, {
           headers: { Authorization: `Bearer ${token}` }
         });
+
         if (!searchRes.ok) {
           throw new Error(`Drive search failed (${searchRes.status})`);
         }
@@ -2077,6 +2284,7 @@
           },
           body: JSON.stringify({ name: DRIVE_FILE_NAME, mimeType: 'application/json' })
         });
+
         if (!createRes.ok) {
           throw new Error(`Drive file create failed (${createRes.status})`);
         }
@@ -2103,7 +2311,7 @@
       }
 
       async function pullAndSyncFromGoogleDrive() {
-        if (!state.googleClientId || !googleAccessToken || isSyncing) return;
+        if (!googleAccessToken || isSyncing) return;
         try {
           isSyncing = true;
           updateDriveStatusUI('syncing', 'Syncing...');
@@ -2133,7 +2341,14 @@
           updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
           console.error('Pull & Sync error:', err);
-          updateDriveStatusUI('error', 'Sync Err');
+          if (err.message && err.message.includes('401')) {
+            googleAccessToken = null;
+            state.googleAccessToken = null;
+            saveState(false);
+            updateDriveStatusUI('reconnect', 'Connect Drive');
+          } else {
+            updateDriveStatusUI('error', 'Sync Err');
+          }
         } finally {
           isSyncing = false;
         }
@@ -2167,7 +2382,7 @@
       async function pushToGoogleDrive() {
         if (!state.googleClientId || !state.autoSyncOnLoad) return;
         if (!googleAccessToken) {
-          requestGoogleToken(true);
+          updateDriveStatusUI('reconnect', 'Connect Drive');
           return;
         }
         if (isSyncing) return;
@@ -2180,7 +2395,14 @@
           updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
           console.error('Push error:', err);
-          updateDriveStatusUI('error', 'Retry Sync');
+          if (err.message && err.message.includes('401')) {
+            googleAccessToken = null;
+            state.googleAccessToken = null;
+            saveState(false);
+            updateDriveStatusUI('reconnect', 'Connect Drive');
+          } else {
+            updateDriveStatusUI('error', 'Retry Sync');
+          }
         } finally {
           isSyncing = false;
         }
@@ -2196,59 +2418,53 @@
           callback: (resp) => {
             if (resp && resp.access_token) {
               googleAccessToken = resp.access_token;
+              state.googleAccessToken = resp.access_token;
+              state.googleTokenExpiresAt = Date.now() + ((resp.expires_in || 3600) * 1000);
+              saveState(false);
               pullAndSyncFromGoogleDrive();
+              showToast('Google Drive connected & auto-synced!', 'success');
             } else if (resp && resp.error) {
-              updateDriveStatusUI('local', 'Sign In');
+              console.warn('Google Auth callback error:', resp.error);
+              updateDriveStatusUI('reconnect', 'Connect Drive');
             }
           }
         });
       }
 
-      function requestGoogleToken(silentOnLoad = false) {
+      function requestGoogleToken(promptConsent = false) {
         if (!state.googleClientId) {
-          updateDriveStatusUI('local', 'Local');
+          updateDriveStatusUI('local', 'Local Mode');
           return;
         }
         tokenClient = setupTokenClient();
         if (!tokenClient) return;
 
         try {
-          tokenClient.requestAccessToken({ prompt: silentOnLoad ? 'none' : 'consent' });
+          tokenClient.requestAccessToken({ prompt: promptConsent ? 'consent' : 'none' });
         } catch (err) {
-          if (!silentOnLoad) {
-            showToast('Unable to open Google sign-in popup. Check Client ID & origins.', 'warning');
-          }
+          console.warn('requestAccessToken error:', err);
+          updateDriveStatusUI('reconnect', 'Connect Drive');
         }
       }
 
-      function triggerAutoSyncOnLoad() {
-        if (!state.googleClientId) {
-          updateDriveStatusUI('local', 'Local');
-          return;
-        }
-        if (!state.autoSyncOnLoad) {
-          updateDriveStatusUI('local', 'Auto-Sync Off');
+      function checkAndStartDriveSync() {
+        if (!state.googleClientId || !state.autoSyncOnLoad) {
+          updateDriveStatusUI('local', 'Local Mode');
           return;
         }
 
-        const tryStart = () => {
-          if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-            gsiReady = true;
-            requestGoogleToken(true);
-            return true;
-          }
-          return false;
-        };
+        const now = Date.now();
+        const safetyMargin = 5 * 60 * 1000;
+        if (googleAccessToken && state.googleTokenExpiresAt && (now + safetyMargin < state.googleTokenExpiresAt)) {
+          updateDriveStatusUI('synced', 'Synced');
+          pullAndSyncFromGoogleDrive();
+          return;
+        }
 
-        if (!tryStart()) {
-          let attempts = 0;
-          const timer = setInterval(() => {
-            attempts += 1;
-            if (tryStart() || attempts >= 20) {
-              clearInterval(timer);
-              if (!gsiReady) updateDriveStatusUI('local', 'Drive Ready');
-            }
-          }, 300);
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+          requestGoogleToken(false);
+        } else {
+          updateDriveStatusUI('reconnect', 'Connect Drive');
         }
       }
 
@@ -2275,6 +2491,23 @@
         };
         document.getElementById('lang-toggle-btn').addEventListener('click', toggleLang);
         document.getElementById('lock-lang-toggle').addEventListener('click', toggleLang);
+
+        // View Mode Switcher: Columns / Table vs Cards
+        document.getElementById('view-mode-table').addEventListener('click', () => {
+          state.viewMode = 'table';
+          saveState(false);
+          document.getElementById('view-mode-table').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs';
+          document.getElementById('view-mode-cards').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary';
+          renderLogs();
+        });
+
+        document.getElementById('view-mode-cards').addEventListener('click', () => {
+          state.viewMode = 'cards';
+          saveState(false);
+          document.getElementById('view-mode-cards').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs';
+          document.getElementById('view-mode-table').className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary';
+          renderLogs();
+        });
 
         const attemptUnlock = () => {
           const selectedUserId = document.getElementById('lock-user-select').value;
@@ -2363,6 +2596,11 @@
           document.getElementById('drive-modal').classList.add('hidden');
           document.getElementById('drive-modal').classList.remove('flex');
         });
+
+        document.getElementById('banner-reconnect-btn').addEventListener('click', () => {
+          requestGoogleToken(true);
+        });
+
         document.getElementById('auto-sync-on-load-checkbox').addEventListener('change', (e) => {
           state.autoSyncOnLoad = e.target.checked;
           saveState(false);
@@ -2377,13 +2615,13 @@
           state.googleClientId = cid;
           state.autoSyncOnLoad = document.getElementById('auto-sync-on-load-checkbox').checked;
           saveState(false);
-          requestGoogleToken(false);
+          requestGoogleToken(true);
         });
         document.getElementById('manual-pull-drive-btn').addEventListener('click', () => {
           if (googleAccessToken) {
             pullAndSyncFromGoogleDrive();
           } else {
-            requestGoogleToken(false);
+            requestGoogleToken(true);
           }
         });
         document.getElementById('export-json-backup-btn').addEventListener('click', () => {
@@ -2396,7 +2634,7 @@
           URL.revokeObjectURL(url);
         });
 
-        // Work Log Form Submit (Mandatory Title Check)
+        // Form Submit
         document.getElementById('work-log-form').addEventListener('submit', (e) => {
           e.preventDefault();
           const titleInput = document.getElementById('log-title');
@@ -2504,6 +2742,7 @@
         document.getElementById('modal-download-excel').addEventListener('click', exportToExcel);
         document.getElementById('export-pdf-btn').addEventListener('click', exportToPDF);
         document.getElementById('modal-download-pdf').addEventListener('click', exportToPDF);
+        document.getElementById('modal-native-print').addEventListener('click', printReport);
 
         document.getElementById('close-single-modal').addEventListener('click', () => {
           document.getElementById('single-log-modal').classList.add('hidden');
@@ -2519,6 +2758,13 @@
             document.getElementById('image-lightbox').classList.remove('flex');
           }
         });
+
+        // Periodic background auto-sync check every 2 minutes
+        setInterval(() => {
+          if (googleAccessToken && state.autoSyncOnLoad) {
+            pushToGoogleDrive();
+          }
+        }, 120000);
       }
 
       /* -----------------------------------------------------------
@@ -2537,8 +2783,10 @@
         renderLockScreen();
         lucide.createIcons();
 
-        // Automatically sync with Google Drive on app load when enabled & configured
-        triggerAutoSyncOnLoad();
+        // Automatically trigger Google Drive sync on app load
+        setTimeout(() => {
+          checkAndStartDriveSync();
+        }, 500);
       });
     })();
   </script>
