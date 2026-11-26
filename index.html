@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,7 +227,7 @@
   <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-[92vw] sm:max-w-sm pointer-events-none"></div>
 
-  <!-- APP LOCK OVERLAY -->
+  <!-- APP LOCK OVERLAY (Silent 1234 default PIN; no default PIN hint shown) -->
   <div id="app-lock-screen" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 backdrop-blur-xl" style="background-color: rgba(6, 10, 18, 0.93);">
     <div class="w-full max-w-md rounded-3xl p-6 sm:p-8 border border-white/15 bg-zinc-900 text-white shadow-2xl">
       <div class="flex flex-col items-center text-center mb-6">
@@ -263,8 +263,7 @@
           <span data-i18n="unlockBtn">Unlock Workspace</span>
         </button>
 
-        <div class="pt-2 border-t border-zinc-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-400 gap-1 text-center sm:text-left">
-          <span data-i18n="defaultPinHint">Default PIN: 1234 • Custom PIN saved automatically</span>
+        <div class="pt-2 border-t border-zinc-800 flex items-center justify-end text-[11px] text-zinc-400">
           <button type="button" id="lock-lang-toggle" class="text-zinc-200 underline font-semibold shrink-0">සිංහල / EN</button>
         </div>
       </div>
@@ -296,7 +295,7 @@
 
       <!-- Right: Compact Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
-        <!-- Active User Name Button (Role badge hidden on main header; visible inside Team & Role modal) -->
+        <!-- Active User Name Button (Role badge hidden in main header; visible inside Team & Role modal) -->
         <button id="open-role-modal-btn" type="button" title="Team Member & Role Permissions"
           class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-500"></i>
@@ -544,7 +543,7 @@
             <div id="form-photo-grid" class="grid grid-cols-5 gap-1.5 mt-2 empty:hidden"></div>
           </div>
 
-          <!-- SUBMIT & SAVE + ADD ANOTHER BUTTONS -->
+          <!-- SUBMIT & '+ SAVE & ADD ANOTHER' BUTTONS -->
           <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-0.5">
             <button type="submit" id="save-log-btn"
               class="sm:col-span-7 py-3 px-3 rounded-xl font-extrabold text-xs sm:text-sm btn-accent shadow-md flex items-center justify-center gap-1.5 min-w-0">
@@ -668,7 +667,7 @@
       <div class="px-4 sm:px-6 py-3.5 border-b border-theme flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-500"></i>
-          <h3 class="font-extrabold text-sm sm:text-base" data-i18n="reportPreviewTitle">Daily Work Report Preview</h3>
+          <h3 class="font-extrabold text-sm sm:text-base" data-i18n="reportPreviewTitle">Daily Work Report</h3>
         </div>
         <div class="flex items-center gap-1.5">
           <button id="modal-download-excel" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white flex items-center gap-1">
@@ -706,7 +705,7 @@
             </div>
           </div>
 
-          <!-- Clean Work Log List Only -->
+          <!-- Clean Work Log List Only (No 4 summary boxes) -->
           <div id="report-items-container" class="space-y-2.5 mt-4"></div>
         </div>
       </div>
@@ -836,43 +835,86 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 5: ENTERPRISE GOOGLE DRIVE AUTO-SYNC PANEL          -->
+  <!-- MODAL 5: ENTERPRISE GOOGLE DRIVE AUTO-SYNC ENGINE MODAL     -->
   <!-- ========================================================= -->
-  <div id="drive-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm">
-    <div class="theme-card rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
-      <div class="px-5 py-3.5 border-b border-theme flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="hard-drive" class="w-5 h-5 text-blue-500"></i>
-          <h3 class="font-extrabold text-base" data-i18n="driveSyncTitle">Google Drive Auto-Sync Engine</h3>
+  <div id="drive-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2.5 sm:p-5 bg-black/70 backdrop-blur-sm">
+    <div class="theme-card rounded-3xl w-full max-w-lg max-h-[92vh] flex flex-col overflow-hidden min-w-0">
+      <div class="px-4 sm:px-5 py-3.5 border-b border-theme flex items-center justify-between gap-2 shrink-0">
+        <div class="flex items-center gap-2 min-w-0">
+          <i data-lucide="hard-drive" class="w-5 h-5 text-blue-500 shrink-0"></i>
+          <h3 class="font-extrabold text-sm sm:text-base truncate" data-i18n="driveSyncTitle">Google Drive Auto-Sync Engine</h3>
         </div>
-        <button id="close-drive-modal" type="button" class="p-1.5 rounded-xl bg-tertiary-theme">
+        <button id="close-drive-modal" type="button" class="p-1.5 rounded-xl bg-tertiary-theme shrink-0 hover:opacity-80">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm">
-        <div class="p-3.5 rounded-2xl bg-tertiary-theme space-y-1.5">
-          <p class="font-bold flex items-center justify-between gap-1.5">
-            <span class="flex items-center gap-1.5">
-              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
-              <span data-i18n="driveZeroBackendTitle">High-Level Auto-Sync • Offline Queue & Tombstones</span>
-            </span>
-            <span id="pending-queue-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">0 Queued</span>
+      <div class="p-4 sm:p-5 overflow-y-auto space-y-3.5 text-xs sm:text-sm min-w-0">
+        <!-- RESPONSIVE 2x2 AUTO-SYNC TELEMETRY GRID -->
+        <div class="grid grid-cols-2 gap-2.5 min-w-0">
+          <!-- Box 1: Sync Status -->
+          <div id="sync-box-status-card" class="rounded-2xl p-3 border border-theme bg-tertiary-theme/70 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-muted-theme truncate" data-i18n="boxSyncStatusLabel">Sync Status</span>
+              <span id="sync-box-status-dot" class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+            </div>
+            <p id="sync-box-status-value" class="text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums">NOT SYNCED</p>
+            <p id="sync-box-status-sub" class="text-[10px] text-muted-theme mt-0.5 truncate" data-i18n="boxSyncStatusSubLocal">Local cache ready</p>
+          </div>
+
+          <!-- Box 2: Network Status -->
+          <div id="sync-box-network-card" class="rounded-2xl p-3 border border-theme bg-tertiary-theme/70 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-muted-theme truncate" data-i18n="boxNetworkLabel">Network Status</span>
+              <span id="sync-box-network-dot" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+            </div>
+            <p id="sync-box-network-value" class="text-sm sm:text-base font-black mt-1 tracking-tight truncate text-emerald-600 dark:text-emerald-400">ONLINE</p>
+            <p id="sync-box-network-sub" class="text-[10px] text-muted-theme mt-0.5 truncate" data-i18n="boxNetworkSubOnline">Direct sync active</p>
+          </div>
+
+          <!-- Box 3: Sync Duration / Retry -->
+          <div id="sync-box-duration-card" class="rounded-2xl p-3 border border-theme bg-tertiary-theme/70 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-muted-theme truncate" data-i18n="boxDurationLabel">Duration / Retry</span>
+              <i data-lucide="timer" class="w-3.5 h-3.5 text-muted-theme shrink-0"></i>
+            </div>
+            <p id="sync-box-duration-value" class="text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums">—</p>
+            <p id="sync-box-retry-sub" class="text-[10px] text-muted-theme mt-0.5 truncate tabular-nums">Retry: 0/3</p>
+          </div>
+
+          <!-- Box 4: Pending Queue -->
+          <div id="sync-box-queue-card" class="rounded-2xl p-3 border border-theme bg-tertiary-theme/70 min-w-0">
+            <div class="flex items-center justify-between gap-1.5">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-muted-theme truncate" data-i18n="boxQueueLabel">Pending Queue</span>
+              <i data-lucide="list-todo" class="w-3.5 h-3.5 text-muted-theme shrink-0"></i>
+            </div>
+            <p id="sync-box-queue-value" class="text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums">0 queued</p>
+            <p id="sync-box-queue-sub" class="text-[10px] text-muted-theme mt-0.5 truncate" data-i18n="boxQueueSubClean">All changes queued or clear</p>
+          </div>
+        </div>
+
+        <!-- Engine Description Banner -->
+        <div class="p-3 rounded-2xl bg-tertiary-theme/60 border border-theme space-y-1 min-w-0">
+          <p class="font-bold text-xs flex items-center gap-1.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+            <span data-i18n="driveZeroBackendTitle">High-Level Auto-Sync • Offline Queue & Tombstones</span>
           </p>
-          <p class="text-xs text-muted-theme" data-i18n="driveZeroBackendDesc">
+          <p class="text-[11px] text-muted-theme leading-relaxed" data-i18n="driveZeroBackendDesc">
             Syncs "yunikon_work_log_data.json" automatically on load & edits with offline queue replay, tombstone deletion protection, 3x exponential backoff retry, and cross-tab sync.
           </p>
         </div>
 
-        <label class="flex items-center justify-between p-3 rounded-2xl border border-theme bg-tertiary-theme/50 cursor-pointer">
-          <div>
-            <span class="font-bold block text-xs sm:text-sm" data-i18n="autoSyncOnLoadLabel">Auto-Sync on App Load & Changes</span>
-            <span class="text-[11px] text-muted-theme" data-i18n="autoSyncOnLoadDesc">Automatically pull, merge, and push Drive data on open & updates</span>
+        <!-- Auto-Sync Toggle -->
+        <label class="flex items-center justify-between gap-3 p-3 rounded-2xl border border-theme bg-tertiary-theme/50 cursor-pointer min-w-0">
+          <div class="min-w-0">
+            <span class="font-bold block text-xs sm:text-sm truncate" data-i18n="autoSyncOnLoadLabel">Auto-Sync on App Load & Changes</span>
+            <span class="text-[11px] text-muted-theme block truncate" data-i18n="autoSyncOnLoadDesc">Automatically pull, merge, and push Drive data on open & updates</span>
           </div>
-          <input id="auto-sync-on-load-checkbox" type="checkbox" class="w-4 h-4 accent-emerald-600 rounded" checked />
+          <input id="auto-sync-on-load-checkbox" type="checkbox" class="w-4 h-4 accent-emerald-600 rounded shrink-0" checked />
         </label>
 
-        <div id="owner-drive-config-box" class="space-y-2">
+        <!-- Google Client ID Input -->
+        <div id="owner-drive-config-box" class="space-y-1.5 min-w-0">
           <label for="google-client-id-input" class="block text-xs font-bold uppercase tracking-wider">
             Google OAuth 2.0 Web Client ID
           </label>
@@ -880,19 +922,21 @@
             class="w-full theme-input rounded-xl px-3 py-2.5 text-xs font-mono" />
         </div>
 
-        <div class="flex flex-wrap gap-2 pt-1">
-          <button id="connect-drive-btn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold btn-accent flex items-center justify-center gap-1.5">
-            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-            <span data-i18n="connectSyncDrive">Connect & Auto-Sync Google Drive</span>
+        <!-- Connect & Manual Sync Actions -->
+        <div class="flex flex-wrap gap-2 pt-0.5">
+          <button id="connect-drive-btn" type="button" class="flex-1 min-w-[180px] py-2.5 px-4 rounded-xl text-xs font-bold btn-accent flex items-center justify-center gap-1.5">
+            <i data-lucide="cloud-upload" class="w-4 h-4 shrink-0"></i>
+            <span data-i18n="connectSyncDrive" class="truncate">Connect & Auto-Sync Google Drive</span>
           </button>
-          <button id="manual-pull-drive-btn" type="button" class="py-2.5 px-3.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme">
+          <button id="manual-pull-drive-btn" type="button" class="py-2.5 px-3.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 shrink-0">
             <span data-i18n="syncNowBtn">Sync Now</span>
           </button>
         </div>
 
-        <div class="pt-3 border-t border-theme flex items-center justify-between text-xs text-muted-theme">
-          <span>Last Synced: <strong id="last-sync-timestamp">Not yet synced</strong></span>
-          <button id="export-json-backup-btn" type="button" class="underline font-bold">JSON Backup</button>
+        <!-- Footer Info & Backup -->
+        <div class="pt-3 border-t border-theme flex flex-wrap items-center justify-between gap-2 text-xs text-muted-theme">
+          <span class="truncate">Last Synced: <strong id="last-sync-timestamp">Not yet synced</strong></span>
+          <button id="export-json-backup-btn" type="button" class="underline font-bold shrink-0">JSON Backup</button>
         </div>
       </div>
     </div>
@@ -946,7 +990,6 @@
           selectUser: 'Team Member',
           enterPin: 'PIN / Password',
           unlockBtn: 'Unlock Workspace',
-          defaultPinHint: 'Default PIN: 1234 • Custom PIN saved automatically',
           totalTasks: 'Total Logs',
           statusCompleted: 'Completed',
           statusInProgress: 'In Progress',
@@ -988,7 +1031,7 @@
           searchPlaceholder: 'Search title, document...',
           allStatuses: 'All Statuses',
           allUsers: 'All Users',
-          reportPreviewTitle: 'Daily Work Report Preview',
+          reportPreviewTitle: 'Daily Work Report',
           teamRolesTitle: 'Team & Role Permissions (3 Users)',
           teamRolesDesc: 'Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs.',
           appLockSettingsTitle: 'App Lock & Security',
@@ -1019,7 +1062,20 @@
           colStatus: 'Status',
           colPhotos: 'Photos',
           colStaff: 'Staff',
-          colActions: 'Actions'
+          colActions: 'Actions',
+          boxSyncStatusLabel: 'Sync Status',
+          boxNetworkLabel: 'Network Status',
+          boxDurationLabel: 'Duration / Retry',
+          boxQueueLabel: 'Pending Queue',
+          boxSyncStatusSubLocal: 'Local mode / ready',
+          boxSyncStatusSubSyncing: 'Pushing & merging Drive...',
+          boxSyncStatusSubSynced: 'Up to date with Drive',
+          boxSyncStatusSubPending: 'Waiting to sync changes',
+          boxSyncStatusSubNotSynced: 'Not synced yet',
+          boxNetworkSubOnline: 'Connection available',
+          boxNetworkSubOffline: 'Changes queue to pendingSync',
+          boxQueueSubClean: 'No unsynced items waiting',
+          boxQueueSubWaiting: 'Will auto-flush when online & connected'
         },
         si: {
           brandTitle: 'Yunikon Work Log',
@@ -1028,7 +1084,6 @@
           selectUser: 'සාමාජිකයා තෝරන්න',
           enterPin: 'PIN / මුරපදය',
           unlockBtn: 'ඇතුළු වන්න (Unlock)',
-          defaultPinHint: 'පෙරනිමි PIN: 1234 • වෙනස් කළ PIN ස්වයංක්‍රීයව සුරැකේ',
           totalTasks: 'මුළු වැඩ ගණන',
           statusCompleted: 'අවසන් කළා',
           statusInProgress: 'කරගෙන යනවා',
@@ -1101,14 +1156,27 @@
           colStatus: 'තත්ත්වය',
           colPhotos: 'ඡායාරූප',
           colStaff: 'සාමාජිකයා',
-          colActions: 'ක්‍රියාකාරකම්'
+          colActions: 'ක්‍රියාකාරකම්',
+          boxSyncStatusLabel: 'Sync තත්ත්වය',
+          boxNetworkLabel: 'Network තත්ත්වය',
+          boxDurationLabel: 'කාලය / Retry',
+          boxQueueLabel: 'Pending Queue',
+          boxSyncStatusSubLocal: 'Local මාදිලිය / සූදානම්',
+          boxSyncStatusSubSyncing: 'Drive වෙත Sync වෙමින්...',
+          boxSyncStatusSubSynced: 'Drive සමඟ යාවත්කාලීනයි',
+          boxSyncStatusSubPending: 'Sync වීමට බලා සිටී',
+          boxSyncStatusSubNotSynced: 'තවම Sync වී නැත',
+          boxNetworkSubOnline: 'අන්තර්ජාලය සම්බන්ධයි',
+          boxNetworkSubOffline: 'වෙනස්කම් pendingSync queue වෙත යයි',
+          boxQueueSubClean: 'Sync කිරීමට ඇති items 0',
+          boxQueueSubWaiting: 'Online වූ විට ස්වයංක්‍රීයව Sync වේ'
         }
       };
 
       /* -----------------------------------------------------------
          2. APPLICATION STATE, PIN BACKUP & BROADCAST CHANNEL
       ----------------------------------------------------------- */
-      const STORAGE_KEY = 'yunikon_work_log_state_v9';
+      const STORAGE_KEY = 'yunikon_work_log_state_v10';
       const PIN_BACKUP_KEY = 'yunikon_user_pins_v1';
       const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
       const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
@@ -1167,7 +1235,11 @@
         autoSyncOnLoad: true,
         driveFileId: null,
         lastSyncTime: null,
+        lastSyncDurationMs: null,
+        syncRetryDisplay: '0/3',
+        syncBoxStatus: 'NOT SYNCED',
         pendingSync: false,
+        pendingQueueCount: 0,
         deletedIds: [],
         users: [
           { id: 'u1', name: 'Member 1', role: 'Owner', pin: '1234' },
@@ -1184,12 +1256,14 @@
       let isSyncing = false;
       let debouncedSyncTimer = null;
       let isApplyingRemoteBroadcast = false;
+      let networkOnlineState = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true;
 
       function loadState() {
         try {
           const backupPinsMap = loadSavedPinsMap();
           const raw =
             localStorage.getItem(STORAGE_KEY) ||
+            localStorage.getItem('yunikon_work_log_state_v9') ||
             localStorage.getItem('yunikon_work_log_state_v8') ||
             localStorage.getItem('yunikon_work_log_state_v7');
 
@@ -1220,13 +1294,30 @@
             ? parsed.logs.filter(item => item && item.id && !deletedIds.includes(item.id))
             : [];
 
+          const pendingSync = Boolean(parsed.pendingSync);
+          const rawQueueCount = typeof parsed.pendingQueueCount === 'number' && !isNaN(parsed.pendingQueueCount)
+            ? Math.max(0, Math.floor(parsed.pendingQueueCount))
+            : (pendingSync ? 1 : 0);
+          const pendingQueueCount = pendingSync ? Math.max(1, rawQueueCount) : 0;
+
+          let syncBoxStatus = parsed.syncBoxStatus || 'NOT SYNCED';
+          if (pendingSync && syncBoxStatus !== 'SYNCING') {
+            syncBoxStatus = 'PENDING';
+          } else if (!pendingSync && parsed.lastSyncTime && syncBoxStatus === 'PENDING') {
+            syncBoxStatus = 'SYNCED';
+          }
+
           return {
             ...structuredClone(defaultState),
             ...parsed,
             users: normalizedUsers,
             logs,
             deletedIds,
-            pendingSync: Boolean(parsed.pendingSync)
+            pendingSync,
+            pendingQueueCount,
+            syncBoxStatus,
+            syncRetryDisplay: parsed.syncRetryDisplay || '0/3',
+            lastSyncDurationMs: typeof parsed.lastSyncDurationMs === 'number' ? parsed.lastSyncDurationMs : null
           };
         } catch (err) {
           console.error('Failed to load state:', err);
@@ -1243,6 +1334,12 @@
 
           if (triggerDriveSync) {
             state.pendingSync = true;
+            state.pendingQueueCount = (typeof state.pendingQueueCount === 'number' ? state.pendingQueueCount : 0) + 1;
+            if (!isSyncing) {
+              state.syncBoxStatus = 'PENDING';
+            }
+          } else if (!state.pendingSync) {
+            state.pendingQueueCount = 0;
           }
 
           const backupPins = loadSavedPinsMap();
@@ -1253,7 +1350,7 @@
           });
           localStorage.setItem(PIN_BACKUP_KEY, JSON.stringify(backupPins));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-          updatePendingQueueUI();
+          renderAutoSyncBoxes();
 
           if (!isApplyingRemoteBroadcast && syncChannel) {
             syncChannel.postMessage({
@@ -1276,15 +1373,6 @@
         debouncedSyncTimer = setTimeout(() => {
           pushToGoogleDrive();
         }, 650);
-      }
-
-      function updatePendingQueueUI() {
-        const badge = document.getElementById('pending-queue-badge');
-        if (!badge) return;
-        badge.textContent = state.pendingSync ? 'Pending Sync' : '0 Queued';
-        badge.className = state.pendingSync
-          ? 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-700 dark:text-amber-300'
-          : 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400';
       }
 
       /* -----------------------------------------------------------
@@ -1437,6 +1525,7 @@
 
         renderUserUI();
         renderLogs();
+        renderAutoSyncBoxes();
       }
 
       /* -----------------------------------------------------------
@@ -1522,15 +1611,29 @@
             state.isLocked = true;
             saveState(false, 'auto_lock_always');
           } else if (!document.hidden) {
+            networkOnlineState = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true;
             checkShouldLockOnStartup();
             renderLockScreen();
+            renderAutoSyncBoxes();
             checkAndStartDriveSync();
           }
         });
 
         window.addEventListener('online', () => {
+          networkOnlineState = true;
+          renderAutoSyncBoxes();
           showToast('Back online! Flushing queued sync changes...', 'info');
           checkAndStartDriveSync();
+        });
+
+        window.addEventListener('offline', () => {
+          networkOnlineState = false;
+          if (state.pendingSync) {
+            state.syncBoxStatus = 'PENDING';
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          }
+          renderAutoSyncBoxes();
+          showToast('Offline mode: changes will queue in pendingSync.', 'warning');
         });
 
         setInterval(() => {
@@ -2106,7 +2209,7 @@
         const activeUser = getActiveUser();
         const backupPins = loadSavedPinsMap();
 
-        // Main header button displays active user name only
+        // Main header displays active user name only
         document.getElementById('active-user-badge').textContent = activeUser.name;
 
         const targetPinSelect = document.getElementById('target-user-pin-select');
@@ -2402,9 +2505,101 @@
       }
 
       /* -----------------------------------------------------------
-         12. ENTERPRISE AUTO-SYNC ENGINE (OFFLINE QUEUE, TOMBSTONES,
-             EXPONENTIAL BACKOFF RETRY 3x, TOKEN AUTO-REFRESH)
+         12. ENTERPRISE AUTO-SYNC ENGINE & 2x2 TELEMETRY BOXES
       ----------------------------------------------------------- */
+      function computeCurrentSyncBoxStatus() {
+        if (isSyncing) return 'SYNCING';
+        if (state.pendingSync || (typeof state.pendingQueueCount === 'number' && state.pendingQueueCount > 0)) {
+          return 'PENDING';
+        }
+        if (state.lastSyncTime) return 'SYNCED';
+        return 'NOT SYNCED';
+      }
+
+      function formatDurationLabel(ms) {
+        if (typeof ms !== 'number' || isNaN(ms) || ms < 0) return '—';
+        if (ms < 1000) return `${Math.max(1, Math.round(ms))}ms`;
+        return `${(ms / 1000).toFixed(1)}s`;
+      }
+
+      function renderAutoSyncBoxes() {
+        const dict = I18N[state.lang] || I18N.en;
+        const statusCode = computeCurrentSyncBoxStatus();
+        state.syncBoxStatus = statusCode;
+
+        const isOnline = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : networkOnlineState;
+        networkOnlineState = isOnline;
+
+        const queueCount = state.pendingSync
+          ? Math.max(1, parseInt(state.pendingQueueCount || 1, 10))
+          : 0;
+
+        // Box 1: Sync Status
+        const statusValEl = document.getElementById('sync-box-status-value');
+        const statusDotEl = document.getElementById('sync-box-status-dot');
+        const statusSubEl = document.getElementById('sync-box-status-sub');
+
+        if (statusValEl && statusDotEl && statusSubEl) {
+          statusValEl.textContent = statusCode;
+          if (statusCode === 'SYNCED') {
+            statusValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-emerald-600 dark:text-emerald-400';
+            statusDotEl.className = 'w-2 h-2 rounded-full bg-emerald-500 shrink-0';
+            statusSubEl.textContent = dict.boxSyncStatusSubSynced;
+          } else if (statusCode === 'SYNCING') {
+            statusValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-blue-600 dark:text-blue-400';
+            statusDotEl.className = 'w-2 h-2 rounded-full bg-blue-500 animate-ping shrink-0';
+            statusSubEl.textContent = dict.boxSyncStatusSubSyncing;
+          } else if (statusCode === 'PENDING') {
+            statusValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-amber-600 dark:text-amber-400';
+            statusDotEl.className = 'w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0';
+            statusSubEl.textContent = dict.boxSyncStatusSubPending;
+          } else {
+            statusValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-muted-theme';
+            statusDotEl.className = 'w-2 h-2 rounded-full bg-zinc-400 shrink-0';
+            statusSubEl.textContent = state.googleClientId ? dict.boxSyncStatusSubNotSynced : dict.boxSyncStatusSubLocal;
+          }
+        }
+
+        // Box 2: Network Status
+        const netValEl = document.getElementById('sync-box-network-value');
+        const netDotEl = document.getElementById('sync-box-network-dot');
+        const netSubEl = document.getElementById('sync-box-network-sub');
+
+        if (netValEl && netDotEl && netSubEl) {
+          if (isOnline) {
+            netValEl.textContent = 'ONLINE';
+            netValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate text-emerald-600 dark:text-emerald-400';
+            netDotEl.className = 'w-2 h-2 rounded-full bg-emerald-500 shrink-0';
+            netSubEl.textContent = dict.boxNetworkSubOnline;
+          } else {
+            netValEl.textContent = 'OFFLINE';
+            netValEl.className = 'text-sm sm:text-base font-black mt-1 tracking-tight truncate text-rose-600 dark:text-rose-400';
+            netDotEl.className = 'w-2 h-2 rounded-full bg-rose-500 shrink-0';
+            netSubEl.textContent = dict.boxNetworkSubOffline;
+          }
+        }
+
+        // Box 3: Sync Duration / Retry
+        const durValEl = document.getElementById('sync-box-duration-value');
+        const retrySubEl = document.getElementById('sync-box-retry-sub');
+        if (durValEl && retrySubEl) {
+          durValEl.textContent = formatDurationLabel(state.lastSyncDurationMs);
+          const retryText = state.syncRetryDisplay || '0/3';
+          retrySubEl.textContent = `Retry: ${retryText}`;
+        }
+
+        // Box 4: Pending Queue
+        const queueValEl = document.getElementById('sync-box-queue-value');
+        const queueSubEl = document.getElementById('sync-box-queue-sub');
+        if (queueValEl && queueSubEl) {
+          queueValEl.textContent = `${queueCount} queued`;
+          queueValEl.className = queueCount > 0
+            ? 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-amber-600 dark:text-amber-400'
+            : 'text-sm sm:text-base font-black mt-1 tracking-tight truncate tabular-nums text-primary';
+          queueSubEl.textContent = queueCount > 0 ? dict.boxQueueSubWaiting : dict.boxQueueSubClean;
+        }
+      }
+
       function updateDriveStatusUI(status, text) {
         const dot = document.getElementById('drive-status-dot');
         const label = document.getElementById('drive-status-text');
@@ -2421,7 +2616,7 @@
         dot.className = `w-2 h-2 rounded-full ${colors[status] || colors.local}`;
         label.textContent = text;
 
-        if (state.lastSyncTime) {
+        if (state.lastSyncTime && tsEl) {
           tsEl.textContent = new Date(state.lastSyncTime).toLocaleString();
         }
 
@@ -2430,11 +2625,14 @@
         } else {
           banner.classList.add('hidden');
         }
-        updatePendingQueueUI();
+        renderAutoSyncBoxes();
       }
 
-      async function withBackoffRetry(fn, maxRetries = 3, baseDelayMs = 600) {
+      async function withBackoffRetry(fn, maxRetries = 3, baseDelayMs = 550) {
         let lastError = null;
+        state.syncRetryDisplay = `0/${maxRetries}`;
+        renderAutoSyncBoxes();
+
         for (let attempt = 0; attempt <= maxRetries; attempt++) {
           try {
             return await fn();
@@ -2444,7 +2642,10 @@
             if (msg.includes('401') || attempt === maxRetries) {
               throw err;
             }
-            const waitMs = baseDelayMs * Math.pow(2, attempt) + Math.floor(Math.random() * 150);
+            const nextRetryNum = attempt + 1;
+            state.syncRetryDisplay = `${nextRetryNum}/${maxRetries}`;
+            renderAutoSyncBoxes();
+            const waitMs = baseDelayMs * Math.pow(2, attempt) + Math.floor(Math.random() * 140);
             await new Promise(res => setTimeout(res, waitMs));
           }
         }
@@ -2558,8 +2759,11 @@
 
       async function pullAndSyncFromGoogleDrive() {
         if (isSyncing) return;
-        if (!navigator.onLine) {
+        const isOnline = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true;
+        if (!isOnline) {
           state.pendingSync = true;
+          state.pendingQueueCount = Math.max(1, parseInt(state.pendingQueueCount || 1, 10));
+          state.syncBoxStatus = 'PENDING';
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           updateDriveStatusUI('local', 'Offline Queue');
           return;
@@ -2571,8 +2775,10 @@
           return;
         }
 
+        const startedAt = performance.now();
         try {
           isSyncing = true;
+          state.syncBoxStatus = 'SYNCING';
           updateDriveStatusUI('syncing', 'Syncing...');
 
           await withBackoffRetry(async () => {
@@ -2608,8 +2814,13 @@
             await uploadCurrentPayloadToDrive(fileId, token);
           }, 3, 550);
 
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          state.lastSyncDurationMs = elapsed;
           state.pendingSync = false;
+          state.pendingQueueCount = 0;
+          state.syncBoxStatus = 'SYNCED';
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
           if (syncChannel) {
             syncChannel.postMessage({ type: 'STATE_UPDATED', reason: 'drive_sync', timestamp: Date.now() });
           }
@@ -2619,6 +2830,8 @@
           updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
           console.error('Pull & Sync error:', err);
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          state.lastSyncDurationMs = elapsed;
           if (err.message && err.message.includes('401')) {
             googleAccessToken = null;
             state.googleAccessToken = null;
@@ -2626,11 +2839,14 @@
             updateDriveStatusUI('reconnect', 'Connect Drive');
           } else {
             state.pendingSync = true;
+            state.pendingQueueCount = Math.max(1, parseInt(state.pendingQueueCount || 1, 10));
+            state.syncBoxStatus = 'PENDING';
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateDriveStatusUI('error', 'Retry Sync');
           }
         } finally {
           isSyncing = false;
+          renderAutoSyncBoxes();
         }
       }
 
@@ -2658,13 +2874,17 @@
         }
         state.lastSyncTime = Date.now();
         state.pendingSync = false;
+        state.pendingQueueCount = 0;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
       async function pushToGoogleDrive() {
         if (!state.googleClientId || !state.autoSyncOnLoad) return;
-        if (!navigator.onLine) {
+        const isOnline = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true;
+        if (!isOnline) {
           state.pendingSync = true;
+          state.pendingQueueCount = Math.max(1, parseInt(state.pendingQueueCount || 1, 10));
+          state.syncBoxStatus = 'PENDING';
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           updateDriveStatusUI('local', 'Offline Queue');
           return;
@@ -2672,13 +2892,19 @@
 
         const token = await ensureFreshAccessToken();
         if (!token) {
+          state.pendingSync = true;
+          state.pendingQueueCount = Math.max(1, parseInt(state.pendingQueueCount || 1, 10));
+          state.syncBoxStatus = 'PENDING';
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           updateDriveStatusUI('reconnect', 'Connect Drive');
           return;
         }
         if (isSyncing) return;
 
+        const startedAt = performance.now();
         try {
           isSyncing = true;
+          state.syncBoxStatus = 'SYNCING';
           updateDriveStatusUI('syncing', 'Syncing...');
 
           await withBackoffRetry(async () => {
@@ -2686,9 +2912,17 @@
             await uploadCurrentPayloadToDrive(fileId, token);
           }, 3, 550);
 
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          state.lastSyncDurationMs = elapsed;
+          state.pendingSync = false;
+          state.pendingQueueCount = 0;
+          state.syncBoxStatus = 'SYNCED';
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
           console.error('Push error:', err);
+          const elapsed = Math.max(1, Math.round(performance.now() - startedAt));
+          state.lastSyncDurationMs = elapsed;
           if (err.message && err.message.includes('401')) {
             googleAccessToken = null;
             state.googleAccessToken = null;
@@ -2696,11 +2930,14 @@
             updateDriveStatusUI('reconnect', 'Connect Drive');
           } else {
             state.pendingSync = true;
+            state.pendingQueueCount = Math.max(1, parseInt(state.pendingQueueCount || 1, 10));
+            state.syncBoxStatus = 'PENDING';
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateDriveStatusUI('error', 'Retry Sync');
           }
         } finally {
           isSyncing = false;
+          renderAutoSyncBoxes();
         }
       }
 
@@ -2744,12 +2981,14 @@
       }
 
       function checkAndStartDriveSync() {
+        renderAutoSyncBoxes();
         if (!state.googleClientId || !state.autoSyncOnLoad) {
           updateDriveStatusUI('local', 'Local Mode');
           return;
         }
 
-        if (!navigator.onLine) {
+        const isOnline = typeof navigator !== 'undefined' ? Boolean(navigator.onLine) : true;
+        if (!isOnline) {
           updateDriveStatusUI('local', 'Offline Queue');
           return;
         }
@@ -2781,7 +3020,7 @@
               applyTheme();
               renderUserUI();
               renderLogs();
-              updatePendingQueueUI();
+              renderAutoSyncBoxes();
               isApplyingRemoteBroadcast = false;
             }
           };
@@ -2982,10 +3221,11 @@
           if (state.lastSyncTime) {
             document.getElementById('last-sync-timestamp').textContent = new Date(state.lastSyncTime).toLocaleString();
           }
-          updatePendingQueueUI();
+          renderAutoSyncBoxes();
           const m = document.getElementById('drive-modal');
           m.classList.remove('hidden');
           m.classList.add('flex');
+          lucide.createIcons();
         });
         document.getElementById('close-drive-modal').addEventListener('click', () => {
           document.getElementById('drive-modal').classList.add('hidden');
@@ -3029,7 +3269,6 @@
           URL.revokeObjectURL(url);
         });
 
-        // Save or '+ Save & Add Another' handler
         function submitWorkLogForm(addAnotherAfterSave = false) {
           const titleInput = document.getElementById('log-title');
           const titleErr = document.getElementById('title-error-msg');
@@ -3192,7 +3431,7 @@
         initAutoLockWatchers();
         bindEvents();
         renderLockScreen();
-        updatePendingQueueUI();
+        renderAutoSyncBoxes();
         lucide.createIcons();
 
         setTimeout(() => {
