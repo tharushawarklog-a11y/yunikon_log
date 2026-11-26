@@ -24,7 +24,7 @@
   <!-- jsPDF for Multi-Page PDF Slicing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <!-- html2canvas for High-DPI Canvas Capture (Guarantees Non-Blank PDF with Unicode Sinhala Text) -->
+  <!-- html2canvas for High-DPI Canvas Capture -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- Google Identity Services (Client-Side OAuth2 API) -->
@@ -125,13 +125,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
+    html, body {
       font-family: 'Inter', 'Noto Sans Sinhala', sans-serif;
       background-color: var(--bg-primary);
       color: var(--text-primary);
       transition: background-color 0.25s ease, color 0.25s ease;
       overflow-x: hidden;
-      width: 100vw;
+      max-width: 100%;
     }
 
     .theme-card {
@@ -296,12 +296,11 @@
 
       <!-- Right: Compact Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
-        <!-- Compact Role / Permission Button -->
-        <button id="open-role-modal-btn" type="button" title="Role & Permissions"
+        <!-- Active User Name Button (Role badge hidden on main header; visible inside Team & Role modal) -->
+        <button id="open-role-modal-btn" type="button" title="Team Member & Role Permissions"
           class="px-2.5 py-1.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme hover:opacity-90 flex items-center gap-1.5 transition">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-          <span id="active-user-badge" class="max-w-[75px] sm:max-w-[110px] truncate">Member 1</span>
-          <span id="active-role-tag" class="px-1.5 py-0.5 rounded-md text-[10px] font-extrabold uppercase badge-secondary">Owner</span>
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+          <span id="active-user-badge" class="max-w-[95px] sm:max-w-[130px] truncate">Member 1</span>
         </button>
 
         <!-- Google Drive Auto-Sync Status Button -->
@@ -343,7 +342,7 @@
   <!-- GOOGLE DRIVE RECONNECT BANNER -->
   <div id="drive-reconnect-banner" class="hidden max-w-7xl w-full mx-auto px-3 sm:px-6 pt-3">
     <div class="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex flex-wrap items-center justify-between gap-2 shadow-sm">
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
           <i data-lucide="cloud-off" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
         </div>
@@ -364,52 +363,52 @@
 
     <!-- KPI SUMMARY CARDS -->
     <section class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-4">
-      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
-        <div>
-          <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide" data-i18n="totalTasks">Total Logs</p>
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between min-w-0">
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide truncate" data-i18n="totalTasks">Total Logs</p>
           <p id="stat-total" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums">0</p>
         </div>
-        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme">
+        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme shrink-0">
           <i data-lucide="clipboard-list" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
-        <div>
-          <p class="text-[11px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide" data-i18n="statusCompleted">Completed</p>
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between min-w-0">
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide truncate" data-i18n="statusCompleted">Completed</p>
           <p id="stat-completed" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-emerald-600 dark:text-emerald-400">0</p>
         </div>
-        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+        <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
           <i data-lucide="check-circle-2" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
-        <div>
-          <p class="text-[11px] sm:text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide" data-i18n="statusInProgress">In Progress</p>
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between min-w-0">
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wide truncate" data-i18n="statusInProgress">In Progress</p>
           <p id="stat-progress" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-amber-600 dark:text-amber-400">0</p>
         </div>
-        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
           <i data-lucide="clock" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between">
-        <div>
-          <p class="text-[11px] sm:text-xs font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wide" data-i18n="statusNotStarted">Not Started</p>
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between min-w-0">
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wide truncate" data-i18n="statusNotStarted">Not Started</p>
           <p id="stat-notstarted" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums text-rose-600 dark:text-rose-400">0</p>
         </div>
-        <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+        <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center shrink-0">
           <i data-lucide="circle-dashed" class="w-4 h-4"></i>
         </div>
       </div>
 
-      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between col-span-2 sm:col-span-1">
-        <div>
-          <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide" data-i18n="totalPhotos">Attached Photos</p>
+      <div class="theme-card rounded-2xl p-3 sm:p-4 flex items-center justify-between col-span-2 sm:col-span-1 min-w-0">
+        <div class="min-w-0">
+          <p class="text-[11px] sm:text-xs font-semibold text-muted-theme uppercase tracking-wide truncate" data-i18n="totalPhotos">Attached Photos</p>
           <p id="stat-photos" class="text-xl sm:text-2xl font-extrabold mt-0.5 tabular-nums">0</p>
         </div>
-        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme">
+        <div class="w-9 h-9 rounded-xl bg-tertiary-theme flex items-center justify-center text-muted-theme shrink-0">
           <i data-lucide="images" class="w-4 h-4"></i>
         </div>
       </div>
@@ -419,18 +418,18 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
       <!-- ADD / EDIT WORK LOG FORM (5 cols on LG) -->
-      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-5 space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-theme">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shadow-sm">
+      <section class="lg:col-span-5 theme-card rounded-3xl p-4 sm:p-5 space-y-4 min-w-0">
+        <div class="flex items-center justify-between pb-3 border-b border-theme gap-2">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl btn-accent flex items-center justify-center shadow-sm shrink-0">
               <i data-lucide="file-plus-2" class="w-5 h-5"></i>
             </div>
-            <div>
-              <h2 id="form-heading" class="text-base sm:text-lg font-extrabold" data-i18n="newWorkLog">Add Daily Work Log</h2>
-              <p class="text-xs text-muted-theme" data-i18n="formSubheading">Record vehicle import documents & daily tasks</p>
+            <div class="min-w-0">
+              <h2 id="form-heading" class="text-base sm:text-lg font-extrabold truncate" data-i18n="newWorkLog">Add Daily Work Log</h2>
+              <p class="text-xs text-muted-theme truncate" data-i18n="formSubheading">Record vehicle import documents & daily tasks</p>
             </div>
           </div>
-          <button id="cancel-edit-btn" type="button" class="hidden px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-600 hover:bg-rose-500/20">
+          <button id="cancel-edit-btn" type="button" class="hidden px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 shrink-0">
             <span data-i18n="cancel">Cancel</span>
           </button>
         </div>
@@ -521,7 +520,7 @@
           <!-- MANUAL TASK DESCRIPTION / NOTES -->
           <div>
             <label for="log-notes" class="block text-xs font-bold uppercase tracking-wider mb-1" data-i18n="notesLabel">Manual Task Notes / Details</label>
-            <textarea id="log-notes" rows="2.5"
+            <textarea id="log-notes" rows="3"
               placeholder="Write details about completed work, bank/customs updates, pending items..."
               data-i18n-placeholder="notesPlaceholder"
               class="w-full theme-input rounded-xl px-3 py-2 text-xs sm:text-sm"></textarea>
@@ -538,50 +537,58 @@
               class="flex flex-col items-center justify-center rounded-xl border border-dashed border-theme bg-tertiary-theme/60 hover:bg-tertiary-theme p-3 cursor-pointer transition text-center">
               <i data-lucide="camera" class="w-5 h-5 mb-0.5 text-muted-theme"></i>
               <span class="text-xs font-bold" data-i18n="uploadPhotosBtn">Tap to Add Photos (Camera / Gallery)</span>
+              <span class="text-[10px] text-muted-theme mt-0.5" data-i18n="photoSubHint">Auto-optimized for fast Google Drive sync</span>
               <input id="photo-input" type="file" accept="image/*" multiple class="hidden" />
             </label>
 
             <div id="form-photo-grid" class="grid grid-cols-5 gap-1.5 mt-2 empty:hidden"></div>
           </div>
 
-          <!-- SUBMIT BUTTON -->
-          <button type="submit" id="save-log-btn"
-            class="w-full py-3 rounded-xl font-extrabold text-xs sm:text-sm btn-accent shadow-md flex items-center justify-center gap-2">
-            <i data-lucide="save" class="w-4 h-4"></i>
-            <span id="save-btn-text" data-i18n="saveWorkLog">Save Work Log</span>
-          </button>
+          <!-- SUBMIT & SAVE + ADD ANOTHER BUTTONS -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-0.5">
+            <button type="submit" id="save-log-btn"
+              class="sm:col-span-7 py-3 px-3 rounded-xl font-extrabold text-xs sm:text-sm btn-accent shadow-md flex items-center justify-center gap-1.5 min-w-0">
+              <i data-lucide="save" class="w-4 h-4 shrink-0"></i>
+              <span id="save-btn-text" data-i18n="saveWorkLog" class="truncate">Save Work Log</span>
+            </button>
+            <button type="button" id="save-and-add-another-btn"
+              class="sm:col-span-5 py-3 px-3 rounded-xl font-extrabold text-xs sm:text-sm border border-theme bg-tertiary-theme hover:opacity-90 shadow-xs flex items-center justify-center gap-1 transition min-w-0">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
+              <span data-i18n="saveAndAddAnother" class="truncate">+ Save & Add Another</span>
+            </button>
+          </div>
         </form>
       </section>
 
-      <!-- RIGHT PANEL: FILTERS, VIEW SWITCHER & WORK LOG LIST (COMPACT STRIPS DEFAULT) (7 cols on LG) -->
-      <section class="lg:col-span-7 space-y-3.5">
+      <!-- RIGHT PANEL: FILTERS, VIEW SWITCHER & WORK LOG LIST (7 cols on LG) -->
+      <section class="lg:col-span-7 space-y-3.5 min-w-0">
 
         <!-- ACTION & EXPORT BAR -->
-        <div class="theme-card rounded-3xl p-3.5 sm:p-4 space-y-3">
+        <div class="theme-card rounded-3xl p-3.5 sm:p-4 space-y-3 min-w-0">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
+            <div class="min-w-0">
               <h2 class="text-base font-extrabold flex items-center gap-2">
-                <span data-i18n="workRecordsHeading">Daily Work Records</span>
-                <span id="filtered-count-pill" class="px-2 py-0.5 rounded-full text-xs font-bold bg-tertiary-theme">0</span>
+                <span data-i18n="workRecordsHeading" class="truncate">Daily Work Records</span>
+                <span id="filtered-count-pill" class="px-2 py-0.5 rounded-full text-xs font-bold bg-tertiary-theme shrink-0">0</span>
               </h2>
-              <p class="text-[11px] text-muted-theme" data-i18n="allTeamVisible">All team logs visible • Instant Excel & PDF report for Boss</p>
+              <p class="text-[11px] text-muted-theme truncate" data-i18n="allTeamVisible">All team logs visible • Instant Excel & PDF report for Boss</p>
             </div>
 
             <!-- View Switcher + Export Buttons -->
             <div class="flex flex-wrap items-center gap-1.5">
               <!-- VIEW MODE SWITCHER: STRIPS (DEFAULT) / TABLE / CARDS -->
               <div class="flex items-center p-0.5 rounded-xl border border-theme bg-tertiary-theme">
-                <button id="view-mode-strips" type="button" title="Compact Strips View (පොඩි තීරු)"
+                <button id="view-mode-strips" type="button" title="Compact Strips View"
                   class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition btn-accent shadow-xs">
                   <i data-lucide="menu" class="w-3.5 h-3.5"></i>
                   <span data-i18n="stripViewBtn">Strips</span>
                 </button>
-                <button id="view-mode-table" type="button" title="Table Columns View (තීරු)"
+                <button id="view-mode-table" type="button" title="Table Columns View"
                   class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
                   <i data-lucide="table" class="w-3.5 h-3.5"></i>
                   <span data-i18n="tableViewBtn">Table</span>
                 </button>
-                <button id="view-mode-cards" type="button" title="Card View (කාඩ්පත)"
+                <button id="view-mode-cards" type="button" title="Card View"
                   class="px-2 py-1 rounded-lg text-xs font-bold flex items-center gap-1 transition text-muted-theme hover:text-primary">
                   <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
                   <span data-i18n="cardViewBtn">Cards</span>
@@ -643,7 +650,7 @@
         </div>
 
         <!-- WORK LOG CONTAINER (COMPACT STRIPS DEFAULT) -->
-        <div id="logs-list-container" class="space-y-2"></div>
+        <div id="logs-list-container" class="space-y-2 min-w-0"></div>
       </section>
     </div>
   </main>
@@ -654,14 +661,14 @@
   </footer>
 
   <!-- ========================================================= -->
-  <!-- MODAL 1: REPORT PREVIEW & EXPORT (FOR BOSS)               -->
+  <!-- MODAL 1: SIMPLIFIED DAILY WORK REPORT PREVIEW & EXPORT      -->
   <!-- ========================================================= -->
   <div id="report-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-4 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
-      <div class="px-4 sm:px-6 py-3.5 border-b border-theme flex items-center justify-between gap-2">
+      <div class="px-4 sm:px-6 py-3.5 border-b border-theme flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
           <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-500"></i>
-          <h3 class="font-extrabold text-sm sm:text-base" data-i18n="reportPreviewTitle">Work Log Report Preview (Boss Copy)</h3>
+          <h3 class="font-extrabold text-sm sm:text-base" data-i18n="reportPreviewTitle">Daily Work Report Preview</h3>
         </div>
         <div class="flex items-center gap-1.5">
           <button id="modal-download-excel" type="button" class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white flex items-center gap-1">
@@ -689,7 +696,7 @@
               <img id="report-logo-img" src="" alt="Yunikon International" class="w-12 h-12 object-contain rounded-xl border border-slate-200 p-1" />
               <div>
                 <h1 class="text-lg font-black tracking-tight text-slate-900">YUNIKON INTERNATIONAL</h1>
-                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Yunikon Work Log — Daily Import Report</p>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-600">Daily Work Report</p>
               </div>
             </div>
             <div class="text-left sm:text-right text-[11px] text-slate-600 space-y-0.5">
@@ -699,26 +706,8 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-4 gap-2 my-3 text-center">
-            <div class="p-2 rounded-xl bg-slate-100 border border-slate-200">
-              <span class="block text-[10px] font-bold uppercase text-slate-500">Total</span>
-              <span id="rep-stat-total" class="text-base font-black text-slate-900">0</span>
-            </div>
-            <div class="p-2 rounded-xl bg-emerald-50 border border-emerald-200">
-              <span class="block text-[10px] font-bold uppercase text-emerald-700">Completed</span>
-              <span id="rep-stat-completed" class="text-base font-black text-emerald-700">0</span>
-            </div>
-            <div class="p-2 rounded-xl bg-amber-50 border border-amber-200">
-              <span class="block text-[10px] font-bold uppercase text-amber-700">In Progress</span>
-              <span id="rep-stat-progress" class="text-base font-black text-amber-700">0</span>
-            </div>
-            <div class="p-2 rounded-xl bg-rose-50 border border-rose-200">
-              <span class="block text-[10px] font-bold uppercase text-rose-700">Not Started</span>
-              <span id="rep-stat-notstarted" class="text-base font-black text-rose-700">0</span>
-            </div>
-          </div>
-
-          <div id="report-items-container" class="space-y-2 mt-3"></div>
+          <!-- Clean Work Log List Only -->
+          <div id="report-items-container" class="space-y-2.5 mt-4"></div>
         </div>
       </div>
     </div>
@@ -847,14 +836,14 @@
   </div>
 
   <!-- ========================================================= -->
-  <!-- MODAL 5: GOOGLE DRIVE AUTO-SYNC SETTINGS                  -->
+  <!-- MODAL 5: ENTERPRISE GOOGLE DRIVE AUTO-SYNC PANEL          -->
   <!-- ========================================================= -->
   <div id="drive-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/70 backdrop-blur-sm">
     <div class="theme-card rounded-3xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden">
       <div class="px-5 py-3.5 border-b border-theme flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="hard-drive" class="w-5 h-5 text-blue-500"></i>
-          <h3 class="font-extrabold text-base" data-i18n="driveSyncTitle">Google Drive Auto-Sync (Free Tier)</h3>
+          <h3 class="font-extrabold text-base" data-i18n="driveSyncTitle">Google Drive Auto-Sync Engine</h3>
         </div>
         <button id="close-drive-modal" type="button" class="p-1.5 rounded-xl bg-tertiary-theme">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -862,20 +851,23 @@
       </div>
 
       <div class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm">
-        <div class="p-3.5 rounded-2xl bg-tertiary-theme space-y-1">
-          <p class="font-bold flex items-center gap-1.5">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
-            <span data-i18n="driveZeroBackendTitle">100% Client-Side • Automatic Load Sync</span>
+        <div class="p-3.5 rounded-2xl bg-tertiary-theme space-y-1.5">
+          <p class="font-bold flex items-center justify-between gap-1.5">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+              <span data-i18n="driveZeroBackendTitle">High-Level Auto-Sync • Offline Queue & Tombstones</span>
+            </span>
+            <span id="pending-queue-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">0 Queued</span>
           </p>
           <p class="text-xs text-muted-theme" data-i18n="driveZeroBackendDesc">
-            Syncs "yunikon_work_log_data.json" automatically to your personal Google Drive when opening the app and whenever logs change.
+            Syncs "yunikon_work_log_data.json" automatically on load & edits with offline queue replay, tombstone deletion protection, 3x exponential backoff retry, and cross-tab sync.
           </p>
         </div>
 
         <label class="flex items-center justify-between p-3 rounded-2xl border border-theme bg-tertiary-theme/50 cursor-pointer">
           <div>
-            <span class="font-bold block text-xs sm:text-sm" data-i18n="autoSyncOnLoadLabel">Auto-Sync on App Load</span>
-            <span class="text-[11px] text-muted-theme" data-i18n="autoSyncOnLoadDesc">Automatically pull & sync Drive data when opening the app</span>
+            <span class="font-bold block text-xs sm:text-sm" data-i18n="autoSyncOnLoadLabel">Auto-Sync on App Load & Changes</span>
+            <span class="text-[11px] text-muted-theme" data-i18n="autoSyncOnLoadDesc">Automatically pull, merge, and push Drive data on open & updates</span>
           </div>
           <input id="auto-sync-on-load-checkbox" type="checkbox" class="w-4 h-4 accent-emerald-600 rounded" checked />
         </label>
@@ -891,7 +883,7 @@
         <div class="flex flex-wrap gap-2 pt-1">
           <button id="connect-drive-btn" type="button" class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold btn-accent flex items-center justify-center gap-1.5">
             <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-            <span data-i18n="connectSyncDrive">Connect & Sync Google Drive</span>
+            <span data-i18n="connectSyncDrive">Connect & Auto-Sync Google Drive</span>
           </button>
           <button id="manual-pull-drive-btn" type="button" class="py-2.5 px-3.5 rounded-xl text-xs font-bold border border-theme bg-tertiary-theme">
             <span data-i18n="syncNowBtn">Sync Now</span>
@@ -981,6 +973,8 @@
           uploadPhotosBtn: 'Tap to Add Photos (Camera / Gallery)',
           photoSubHint: 'Auto-optimized for fast Google Drive sync',
           saveWorkLog: 'Save Work Log',
+          saveAndAddAnother: '+ Save & Add Another',
+          addNextTask: '+ Add Next Task',
           updateWorkLog: 'Update Work Log',
           workRecordsHeading: 'Daily Work Records',
           allTeamVisible: 'All team logs visible • Instant Excel & PDF report for Boss',
@@ -994,22 +988,21 @@
           searchPlaceholder: 'Search title, document...',
           allStatuses: 'All Statuses',
           allUsers: 'All Users',
-          reportPreviewTitle: 'Work Log Report Preview (Boss Copy)',
+          reportPreviewTitle: 'Daily Work Report Preview',
           teamRolesTitle: 'Team & Role Permissions (3 Users)',
-          teamRolesDesc: 'Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs with no boss approval required.',
+          teamRolesDesc: 'Switch active team member or manage Owner / Admin roles. All 3 users can view all work logs.',
           appLockSettingsTitle: 'App Lock & Security',
           autoLockTimeLabel: 'Auto-Lock / Reminder Time',
           autoLockHelp: 'Automatically locks the app after inactivity or when reopening.',
           setPersonalPinLabel: 'Set Personal PIN / Password',
           selectUserToUpdate: 'Select Profile to Update:',
-          currentProfileText: 'Active Profile:',
           updatePinBtn: 'Update PIN / Password',
           lockNowBtn: 'Lock App Immediately',
-          driveSyncTitle: 'Google Drive Auto-Sync (Free API)',
-          driveZeroBackendTitle: '100% Client-Side • Automatic Load Sync',
-          driveZeroBackendDesc: 'Uses Google Identity Services & Drive REST API v3 directly in your browser to sync "yunikon_work_log_data.json" with your personal Google Drive automatically when the app opens and whenever logs change.',
-          autoSyncOnLoadLabel: 'Auto-Sync on App Load',
-          autoSyncOnLoadDesc: 'Automatically pull & sync Drive data when opening the app',
+          driveSyncTitle: 'Google Drive Auto-Sync Engine',
+          driveZeroBackendTitle: 'High-Level Auto-Sync • Offline Queue & Tombstones',
+          driveZeroBackendDesc: 'Syncs "yunikon_work_log_data.json" automatically on load & edits with offline queue replay, tombstone deletion protection, 3x exponential backoff retry, and cross-tab sync.',
+          autoSyncOnLoadLabel: 'Auto-Sync on App Load & Changes',
+          autoSyncOnLoadDesc: 'Automatically pull, merge, and push Drive data on open & updates',
           connectSyncDrive: 'Connect & Auto-Sync Google Drive',
           syncNowBtn: 'Sync Now',
           noLogsFound: 'No work logs recorded yet.',
@@ -1062,6 +1055,8 @@
           uploadPhotosBtn: 'ඡායාරූප තෝරන්න (Camera / Gallery)',
           photoSubHint: 'Google Drive වෙත ඉක්මනින් Sync වීමට ස්වයංක්‍රීයව සැකසේ',
           saveWorkLog: 'වැඩ සටහන සුරකින්න (Save)',
+          saveAndAddAnother: '+ සුරැක තවත් වැඩක් එක් කරන්න',
+          addNextTask: '+ ඊළඟ වැඩය එක් කරන්න',
           updateWorkLog: 'යාවත්කාලීන කරන්න (Update)',
           workRecordsHeading: 'දෛනික වැඩ වාර්තා',
           allTeamVisible: 'සියලුම සාමාජිකයින්ගේ වැඩ පෙනේ • Boss වෙත Excel සහ PDF යැවිය හැක',
@@ -1075,7 +1070,7 @@
           searchPlaceholder: 'මාතෘකාව හෝ ලියවිල්ල සොයන්න...',
           allStatuses: 'සියලු තත්ත්වයන්',
           allUsers: 'සියලු සාමාජිකයින්',
-          reportPreviewTitle: 'වැඩ වාර්තා පෙරදසුන (Boss Copy)',
+          reportPreviewTitle: 'Daily Work Report පෙරදසුන',
           teamRolesTitle: 'සාමාජිකයින් සහ බලතල (Users 3)',
           teamRolesDesc: 'සාමාජිකයා මාරු කිරීම හෝ Owner / Admin තනතුරු සැකසීම මෙතැනින් කළ හැක. සියලු දෙනාටම සියලු වැඩ පෙනේ.',
           appLockSettingsTitle: 'App Lock සහ ආරක්ෂාව',
@@ -1083,14 +1078,13 @@
           autoLockHelp: 'නියමිත කාලයකට පසු හෝ නැවත App එක විවෘත කරන විට මුරපදය ඉල්ලයි.',
           setPersonalPinLabel: 'PIN / මුරපදය වෙනස් කරන්න',
           selectUserToUpdate: 'මුරපදය වෙනස් කරන සාමාජිකයා:',
-          currentProfileText: 'වත්මන් සාමාජිකයා:',
           updatePinBtn: 'PIN / මුරපදය සුරකින්න',
           lockNowBtn: 'දැන් App එක අගුළු දමන්න (Lock Now)',
-          driveSyncTitle: 'Google Drive Auto-Sync (නොමිලේ)',
-          driveZeroBackendTitle: '100% නොමිලේ • ස්වයංක්‍රීය Load Sync',
-          driveZeroBackendDesc: 'App එක විවෘත කරන විට සහ වැඩ සටහන් වෙනස් කරන විට "yunikon_work_log_data.json" ගොනුව ඔබගේ Google Drive වෙත ස්වයංක්‍රීයව Sync වේ.',
-          autoSyncOnLoadLabel: 'App එක Load වන විට Auto-Sync',
-          autoSyncOnLoadDesc: 'App එක විවෘත කරන වහාම Drive දත්ත ස්වයංක්‍රීයව Sync කරන්න',
+          driveSyncTitle: 'Google Drive Auto-Sync Engine',
+          driveZeroBackendTitle: 'High-Level Auto-Sync • Offline Queue & Tombstones',
+          driveZeroBackendDesc: 'App එක Load වන විට සහ වෙනස්කම් සිදු කරන විට "yunikon_work_log_data.json" ගොනුව Offline Queue, Tombstone Deletion, 3x Retry සහ Cross-Tab Sync සමඟ ස්වයංක්‍රීයව Sync වේ.',
+          autoSyncOnLoadLabel: 'App එක Load වන විට & වෙනස්කම් වලදී Auto-Sync',
+          autoSyncOnLoadDesc: 'App එක විවෘත කරන විට සහ වැඩ වෙනස් කරන විට ස්වයංක්‍රීයව Sync කරන්න',
           connectSyncDrive: 'Google Drive Connect කර Sync කරන්න',
           syncNowBtn: 'දැන් Sync කරන්න',
           noLogsFound: 'කිසිදු වැඩ සටහනක් ඇතුළත් කර නැත.',
@@ -1112,13 +1106,17 @@
       };
 
       /* -----------------------------------------------------------
-         2. APPLICATION STATE & LOCAL STORAGE PERSISTENCE
-         REDUNDANT DEDICATED PIN STORAGE KEY: 'yunikon_user_pins_v1'
+         2. APPLICATION STATE, PIN BACKUP & BROADCAST CHANNEL
       ----------------------------------------------------------- */
-      const STORAGE_KEY = 'yunikon_work_log_state_v8';
+      const STORAGE_KEY = 'yunikon_work_log_state_v9';
       const PIN_BACKUP_KEY = 'yunikon_user_pins_v1';
       const DRIVE_FILE_NAME = 'yunikon_work_log_data.json';
       const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+      const CHANNEL_NAME = 'yunikon_work_log_sync_channel_v1';
+
+      const syncChannel = (typeof BroadcastChannel !== 'undefined')
+        ? new BroadcastChannel(CHANNEL_NAME)
+        : null;
 
       function loadSavedPinsMap() {
         try {
@@ -1158,7 +1156,7 @@
         palette: 'red-black',
         mode: 'light',
         lang: 'en',
-        viewMode: 'strips', // 'strips' (Compact Strips - Default) | 'table' | 'cards'
+        viewMode: 'strips',
         activeUserId: 'u1',
         autoLockMinutes: '10',
         isLocked: false,
@@ -1169,6 +1167,8 @@
         autoSyncOnLoad: true,
         driveFileId: null,
         lastSyncTime: null,
+        pendingSync: false,
+        deletedIds: [],
         users: [
           { id: 'u1', name: 'Member 1', role: 'Owner', pin: '1234' },
           { id: 'u2', name: 'Member 2', role: 'Admin', pin: '1234' },
@@ -1183,11 +1183,16 @@
       let tokenClient = null;
       let isSyncing = false;
       let debouncedSyncTimer = null;
+      let isApplyingRemoteBroadcast = false;
 
       function loadState() {
         try {
           const backupPinsMap = loadSavedPinsMap();
-          const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('yunikon_work_log_state_v7');
+          const raw =
+            localStorage.getItem(STORAGE_KEY) ||
+            localStorage.getItem('yunikon_work_log_state_v8') ||
+            localStorage.getItem('yunikon_work_log_state_v7');
+
           const parsed = raw ? JSON.parse(raw) : structuredClone(defaultState);
 
           const defaultUsers = structuredClone(defaultState.users);
@@ -1196,7 +1201,7 @@
             : defaultUsers;
 
           const normalizedUsers = sourceUsers.map((u, i) => {
-            const fallbackDef = defaultUsers[i] || { id: `u${i+1}`, name: `Member ${i+1}`, role: 'Admin', pin: '1234' };
+            const fallbackDef = defaultUsers[i] || { id: `u${i + 1}`, name: `Member ${i + 1}`, role: 'Admin', pin: '1234' };
             const uid = u.id || fallbackDef.id;
             const customPin = backupPinsMap[uid] || u.pin || fallbackDef.pin || '1234';
             return {
@@ -1207,11 +1212,21 @@
             };
           });
 
+          const deletedIds = Array.isArray(parsed.deletedIds)
+            ? Array.from(new Set(parsed.deletedIds.filter(Boolean)))
+            : [];
+
+          const logs = Array.isArray(parsed.logs)
+            ? parsed.logs.filter(item => item && item.id && !deletedIds.includes(item.id))
+            : [];
+
           return {
             ...structuredClone(defaultState),
             ...parsed,
             users: normalizedUsers,
-            logs: Array.isArray(parsed.logs) ? parsed.logs : []
+            logs,
+            deletedIds,
+            pendingSync: Boolean(parsed.pendingSync)
           };
         } catch (err) {
           console.error('Failed to load state:', err);
@@ -1219,14 +1234,17 @@
         }
       }
 
-      function saveState(triggerDriveSync = false) {
+      function saveState(triggerDriveSync = false, reason = 'state_update') {
         try {
           state.lastActiveTimestamp = Date.now();
           if (googleAccessToken) {
             state.googleAccessToken = googleAccessToken;
           }
 
-          // Flushes user PINs to backup store as well
+          if (triggerDriveSync) {
+            state.pendingSync = true;
+          }
+
           const backupPins = loadSavedPinsMap();
           state.users.forEach(u => {
             if (u.id && u.pin) {
@@ -1235,9 +1253,19 @@
           });
           localStorage.setItem(PIN_BACKUP_KEY, JSON.stringify(backupPins));
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          updatePendingQueueUI();
+
+          if (!isApplyingRemoteBroadcast && syncChannel) {
+            syncChannel.postMessage({
+              type: 'STATE_UPDATED',
+              reason,
+              timestamp: Date.now()
+            });
+          }
         } catch (err) {
           showToast('Local storage full! Try fewer photos per entry.', 'error');
         }
+
         if (triggerDriveSync) {
           debouncedPushToDrive();
         }
@@ -1247,13 +1275,22 @@
         if (debouncedSyncTimer) clearTimeout(debouncedSyncTimer);
         debouncedSyncTimer = setTimeout(() => {
           pushToGoogleDrive();
-        }, 800);
+        }, 650);
+      }
+
+      function updatePendingQueueUI() {
+        const badge = document.getElementById('pending-queue-badge');
+        if (!badge) return;
+        badge.textContent = state.pendingSync ? 'Pending Sync' : '0 Queued';
+        badge.className = state.pendingSync
+          ? 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/20 text-amber-700 dark:text-amber-300'
+          : 'px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400';
       }
 
       /* -----------------------------------------------------------
          3. UTILITY HELPERS (TOAST, IMAGE LOADER, COMPRESSION)
       ----------------------------------------------------------- */
-      function showToast(message, type = 'info') {
+      function showToast(message, type = 'info', actionLabel = null, onAction = null) {
         const container = document.getElementById('toast-container');
         const el = document.createElement('div');
         const colors = {
@@ -1262,14 +1299,31 @@
           warning: 'bg-amber-500 text-slate-950',
           info: 'bg-zinc-900 text-white border border-white/15'
         };
-        el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 transition-all duration-300 ${colors[type] || colors.info}`;
-        el.textContent = message;
+        el.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-xl text-xs font-bold flex items-center justify-between gap-3 transition-all duration-300 ${colors[type] || colors.info}`;
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = message;
+        el.appendChild(textSpan);
+
+        if (actionLabel && typeof onAction === 'function') {
+          const actionBtn = document.createElement('button');
+          actionBtn.type = 'button';
+          actionBtn.className = 'px-2.5 py-1 rounded-lg bg-white/20 hover:bg-white/30 text-[11px] font-extrabold underline shrink-0 transition';
+          actionBtn.textContent = actionLabel;
+          actionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            onAction();
+            el.remove();
+          });
+          el.appendChild(actionBtn);
+        }
+
         container.appendChild(el);
         setTimeout(() => {
           el.style.opacity = '0';
           el.style.transform = 'translateY(8px)';
           setTimeout(() => el.remove(), 300);
-        }, 3400);
+        }, actionLabel ? 4800 : 3200);
       }
 
       function setLogoWithFallback(imgEl, paletteKey) {
@@ -1410,7 +1464,7 @@
       }
 
       /* -----------------------------------------------------------
-         6. APP LOCK & AUTO-LOCK TIMER (WITH PERMANENT PIN SYNC)
+         6. RESILIENT AUTO-LOGIN & AUTO-LOCK SESSION MANAGER
       ----------------------------------------------------------- */
       function checkShouldLockOnStartup() {
         if (state.autoLockMinutes === 'disable') {
@@ -1443,7 +1497,7 @@
         }
 
         userSelect.innerHTML = state.users
-          .map(u => `<option value="${u.id}" ${u.id === state.activeUserId ? 'selected' : ''}>${escapeHtml(u.name)} [${u.role}]</option>`)
+          .map(u => `<option value="${u.id}" ${u.id === state.activeUserId ? 'selected' : ''}>${escapeHtml(u.name)}</option>`)
           .join('');
         pinInput.value = '';
         pinInput.type = 'password';
@@ -1466,7 +1520,7 @@
         document.addEventListener('visibilitychange', () => {
           if (document.hidden && state.autoLockMinutes === 'always') {
             state.isLocked = true;
-            saveState(false);
+            saveState(false, 'auto_lock_always');
           } else if (!document.hidden) {
             checkShouldLockOnStartup();
             renderLockScreen();
@@ -1474,12 +1528,17 @@
           }
         });
 
+        window.addEventListener('online', () => {
+          showToast('Back online! Flushing queued sync changes...', 'info');
+          checkAndStartDriveSync();
+        });
+
         setInterval(() => {
           if (state.isLocked || state.autoLockMinutes === 'disable' || state.autoLockMinutes === 'always') return;
           const mins = parseInt(state.autoLockMinutes, 10);
           if (!isNaN(mins) && Date.now() - state.lastActiveTimestamp >= mins * 60 * 1000) {
             state.isLocked = true;
-            saveState(false);
+            saveState(false, 'auto_lock_timeout');
             renderLockScreen();
           }
         }, 10000);
@@ -1603,7 +1662,7 @@
       }
 
       /* -----------------------------------------------------------
-         9. WORK LOG CRUD & COMPACT STRIP VIEW (පොඩි තීරු)
+         9. WORK LOG CRUD, '+ SAVE & ADD ANOTHER' & LIST VIEWS
       ----------------------------------------------------------- */
       const STATUS_CYCLE = ['not_started', 'in_progress', 'completed'];
 
@@ -1615,6 +1674,9 @@
 
         return state.logs
           .filter(log => {
+            if (!log || !log.id || (Array.isArray(state.deletedIds) && state.deletedIds.includes(log.id))) {
+              return false;
+            }
             if (dateFilter && log.date !== dateFilter) return false;
             if (statusFilter !== 'all' && log.status !== statusFilter) return false;
             if (userFilter !== 'all' && log.userId !== userFilter) return false;
@@ -1651,16 +1713,16 @@
         const pad = compact ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-[11px]';
 
         if (status === 'completed') {
-          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shrink-0 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span><span>${dict.statusCompleted}</span>
           </span>`;
         }
         if (status === 'in_progress') {
-          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+          return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-amber-500/15 text-amber-600 dark:text-amber-400 shrink-0 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span><span>${dict.statusInProgress}</span>
           </span>`;
         }
-        return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
+        return `<span ${attrs} class="inline-flex items-center gap-1 ${pad} rounded-full font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 shrink-0 ${clickableId ? 'cursor-pointer hover:opacity-80' : ''}">
           <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0"></span><span>${dict.statusNotStarted}</span>
         </span>`;
       }
@@ -1671,7 +1733,7 @@
         const currIdx = STATUS_CYCLE.indexOf(log.status);
         log.status = STATUS_CYCLE[(currIdx + 1) % STATUS_CYCLE.length];
         log.updatedAt = Date.now();
-        saveState(true);
+        saveState(true, 'cycle_status');
         renderLogs();
         showToast('Status updated!', 'success');
       };
@@ -1698,7 +1760,7 @@
           return;
         }
 
-        // 1. COMPACT HORIZONTAL STRIP VIEW ("පොඩි තීරු") - DEFAULT
+        // 1. COMPACT HORIZONTAL STRIP VIEW (DEFAULT)
         if (state.viewMode === 'strips') {
           container.innerHTML = filtered.map(log => {
             const photos = Array.isArray(log.photos) ? log.photos : [];
@@ -1707,44 +1769,43 @@
               : (log.status === 'in_progress' ? 'bg-amber-500' : 'bg-rose-500');
 
             const photosThumbStack = photos.length > 0
-              ? `<div class="flex items-center gap-1 shrink-0">
-                  ${photos.slice(0, 3).map((src, i) => `
+              ? `<div class="hidden sm:flex items-center gap-1 shrink-0">
+                  ${photos.slice(0, 2).map((src, i) => `
                     <img src="${src}" alt="Thumb ${i + 1}" onclick="window.openLightbox('${src}')"
-                      class="w-8 h-8 rounded-lg object-cover border border-theme cursor-pointer hover:scale-110 transition shrink-0" />
+                      class="w-7 h-7 rounded-lg object-cover border border-theme cursor-pointer hover:scale-105 transition shrink-0" />
                   `).join('')}
-                  ${photos.length > 3 ? `<span class="text-[10px] font-bold text-muted-theme bg-tertiary-theme px-1.5 py-0.5 rounded-md">+${photos.length - 3}</span>` : ''}
+                  ${photos.length > 2 ? `<span class="text-[10px] font-bold text-muted-theme bg-tertiary-theme px-1.5 py-0.5 rounded-md">+${photos.length - 2}</span>` : ''}
                 </div>`
               : '';
 
             return `
-              <article class="theme-card rounded-xl p-2.5 sm:p-3 transition hover:border-accent-primary/40 space-y-1.5">
-                <!-- COMPACT SINGLE-ROW LAYOUT -->
-                <div class="flex items-center justify-between gap-2">
+              <article class="theme-card rounded-xl p-2.5 sm:p-3 transition hover:opacity-95 min-w-0">
+                <div class="flex items-center justify-between gap-2 min-w-0">
                   <!-- Left: Status dot + Title + Doc Badge -->
                   <div class="flex items-center gap-2 min-w-0 flex-1">
                     <span class="w-2.5 h-2.5 rounded-full ${borderDotColor} shrink-0" title="Status: ${log.status}"></span>
 
                     <div class="min-w-0 flex-1">
-                      <div class="flex items-center gap-1.5 flex-wrap">
+                      <div class="flex items-center gap-1.5 min-w-0">
                         <h3 class="text-xs sm:text-sm font-extrabold text-primary truncate leading-tight">${escapeHtml(log.title)}</h3>
-                        ${log.docType ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold badge-secondary shrink-0">${escapeHtml(log.docType)}</span>` : ''}
+                        ${log.docType ? `<span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold badge-secondary shrink-0">${escapeHtml(log.docType)}</span>` : ''}
                       </div>
                       ${log.notes ? `<p class="text-[11px] text-muted-theme truncate mt-0.5 leading-tight">${escapeHtml(log.notes)}</p>` : ''}
                     </div>
                   </div>
 
                   <!-- Right: Metadata, Thumbnails & Quick Actions -->
-                  <div class="flex items-center gap-2 shrink-0">
+                  <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     ${photosThumbStack}
 
-                    <div class="hidden md:flex flex-col text-right text-[10px] text-muted-theme font-medium tabular-nums">
+                    <div class="hidden md:flex flex-col text-right text-[10px] text-muted-theme font-medium tabular-nums shrink-0">
                       <span>${escapeHtml(log.date)}</span>
                       <span>${escapeHtml(log.userName)}</span>
                     </div>
 
                     ${getStatusBadgeHtml(log.status, log.id, true)}
 
-                    <div class="flex items-center gap-0.5 border-l border-theme pl-1.5">
+                    <div class="flex items-center gap-0.5 border-l border-theme pl-1.5 shrink-0">
                       <button type="button" onclick="window.previewSingleLog('${log.id}')" title="${dict.viewDetails}"
                         class="p-1 rounded-lg bg-tertiary-theme hover:opacity-80">
                         <i data-lucide="eye" class="w-3.5 h-3.5"></i>
@@ -1764,16 +1825,16 @@
             `;
           }).join('');
         }
-        // 2. TABLE COLUMNS VIEW (තීරු)
+        // 2. TABLE COLUMNS VIEW
         else if (state.viewMode === 'table') {
           container.innerHTML = `
-            <div class="theme-card rounded-2xl overflow-hidden border border-theme shadow-xs">
+            <div class="theme-card rounded-2xl overflow-hidden border border-theme shadow-xs max-w-full">
               <div class="overflow-x-auto w-full">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr class="border-b border-theme bg-tertiary-theme/70 text-[10px] font-extrabold uppercase tracking-wider text-muted-theme">
                       <th class="p-2.5 whitespace-nowrap">${dict.colDateTime}</th>
-                      <th class="p-2.5 min-w-[180px]">${dict.colTitle}</th>
+                      <th class="p-2.5 min-w-[160px]">${dict.colTitle}</th>
                       <th class="p-2.5 whitespace-nowrap">${dict.colDocType}</th>
                       <th class="p-2.5 whitespace-nowrap">${dict.colStatus}</th>
                       <th class="p-2.5 whitespace-nowrap">${dict.colPhotos}</th>
@@ -1791,9 +1852,9 @@
                             <div class="text-[10px] tabular-nums">${escapeHtml(log.time)}</div>
                           </td>
 
-                          <td class="p-2.5 align-top space-y-0.5">
+                          <td class="p-2.5 align-top space-y-0.5 max-w-[220px]">
                             <div class="font-extrabold text-xs text-primary leading-snug break-words">${escapeHtml(log.title)}</div>
-                            ${log.notes ? `<p class="text-[11px] text-muted-theme line-clamp-1">${escapeHtml(log.notes)}</p>` : ''}
+                            ${log.notes ? `<p class="text-[11px] text-muted-theme truncate">${escapeHtml(log.notes)}</p>` : ''}
                           </td>
 
                           <td class="p-2.5 align-top whitespace-nowrap">
@@ -1816,12 +1877,12 @@
                                     ? `<span class="px-1 py-0.5 rounded text-[9px] font-extrabold bg-tertiary-theme">+${photos.length - 1}</span>`
                                     : ''}
                                 </div>`
-                              : `<span class="text-muted-theme text-[10px]">No photos</span>`
+                              : `<span class="text-muted-theme text-[10px]">—</span>`
                             }
                           </td>
 
                           <td class="p-2.5 align-top whitespace-nowrap font-medium">
-                            <span class="text-[11px]"><strong>${escapeHtml(log.userName)}</strong></span>
+                            <span class="text-[11px] font-bold">${escapeHtml(log.userName)}</span>
                           </td>
 
                           <td class="p-2.5 align-top text-right whitespace-nowrap">
@@ -1863,8 +1924,8 @@
               : '';
 
             return `
-              <article class="theme-card rounded-2xl p-3.5 space-y-2">
-                <div class="flex flex-wrap items-start justify-between gap-2">
+              <article class="theme-card rounded-2xl p-3.5 space-y-2 min-w-0">
+                <div class="flex items-start justify-between gap-2 min-w-0">
                   <div class="space-y-1 min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-1.5">
                       ${getStatusBadgeHtml(log.status, log.id, true)}
@@ -1889,7 +1950,7 @@
                   </div>
                 </div>
 
-                ${log.notes ? `<p class="text-xs text-muted-theme whitespace-pre-line leading-relaxed line-clamp-3">${escapeHtml(log.notes)}</p>` : ''}
+                ${log.notes ? `<p class="text-xs text-muted-theme whitespace-pre-line leading-relaxed line-clamp-3 break-words">${escapeHtml(log.notes)}</p>` : ''}
 
                 ${thumbsHtml}
 
@@ -1912,22 +1973,42 @@
         lucide.createIcons();
       }
 
-      function resetForm() {
+      function resetForm(options = {}) {
+        const { keepContext = false, focusTitle = false } = options;
         const dict = I18N[state.lang] || I18N.en;
+        const prevDate = document.getElementById('log-date').value || getTodayISO();
+        const prevStatus = document.querySelector('input[name="log-status"]:checked')?.value || 'in_progress';
+
         document.getElementById('edit-log-id').value = '';
         document.getElementById('log-title').value = '';
         document.getElementById('doc-type-input').value = '';
-        document.getElementById('log-date').value = getTodayISO();
+        document.getElementById('log-date').value = keepContext ? prevDate : getTodayISO();
         document.getElementById('log-time').value = getNowTimeHHMM();
         document.getElementById('log-notes').value = '';
-        document.querySelector('input[name="log-status"][value="in_progress"]').checked = true;
+
+        const targetStatus = keepContext ? prevStatus : 'in_progress';
+        const statusRadio = document.querySelector(`input[name="log-status"][value="${targetStatus}"]`);
+        if (statusRadio) statusRadio.checked = true;
+
         document.getElementById('title-error-msg').classList.add('hidden');
         document.getElementById('cancel-edit-btn').classList.add('hidden');
         document.getElementById('form-heading').textContent = dict.newWorkLog;
         document.getElementById('save-btn-text').textContent = dict.saveWorkLog;
         draftPhotos = [];
         renderDraftPhotos();
+
+        if (focusTitle) {
+          setTimeout(() => {
+            const titleEl = document.getElementById('log-title');
+            if (titleEl) titleEl.focus();
+          }, 60);
+        }
       }
+
+      window.focusNewTaskForm = function () {
+        resetForm({ keepContext: true, focusTitle: true });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
 
       window.editLog = function (id) {
         const log = state.logs.find(l => l.id === id);
@@ -1962,10 +2043,14 @@
           return;
         }
 
+        if (!Array.isArray(state.deletedIds)) state.deletedIds = [];
+        if (!state.deletedIds.includes(id)) {
+          state.deletedIds.push(id);
+        }
         state.logs = state.logs.filter(l => l.id !== id);
-        saveState(true);
+        saveState(true, 'delete_log');
         renderLogs();
-        showToast('Work log deleted.', 'info');
+        showToast('Work log deleted & tombstoned for sync.', 'info');
       };
 
       window.openLightbox = function (src) {
@@ -2015,16 +2100,15 @@
       };
 
       /* -----------------------------------------------------------
-         10. MULTI-USER & ROLE UI
+         10. MULTI-USER & ROLE UI (ROLES SHOWN ONLY INSIDE MODAL)
       ----------------------------------------------------------- */
       function renderUserUI() {
         const activeUser = getActiveUser();
         const backupPins = loadSavedPinsMap();
 
+        // Main header button displays active user name only
         document.getElementById('active-user-badge').textContent = activeUser.name;
-        document.getElementById('active-role-tag').textContent = activeUser.role;
 
-        // Target user select in Security Modal
         const targetPinSelect = document.getElementById('target-user-pin-select');
         if (targetPinSelect) {
           const currSelected = targetPinSelect.value;
@@ -2072,7 +2156,7 @@
             const user = state.users.find(x => x.id === uid);
             if (user && inp.value.trim()) {
               user.name = inp.value.trim();
-              saveState(true);
+              saveState(true, 'rename_user');
               renderUserUI();
               renderLogs();
             }
@@ -2085,7 +2169,7 @@
             const user = state.users.find(x => x.id === uid);
             if (user) {
               user.role = sel.value;
-              saveState(true);
+              saveState(true, 'role_change');
               renderUserUI();
               showToast(`Updated ${user.name} role to ${user.role}`, 'success');
             }
@@ -2095,7 +2179,7 @@
         listEl.querySelectorAll('button[data-switch-user]').forEach(btn => {
           btn.addEventListener('click', () => {
             state.activeUserId = btn.getAttribute('data-switch-user');
-            saveState(false);
+            saveState(false, 'switch_user');
             renderUserUI();
             showToast(`Switched active user to ${getActiveUser().name}`, 'success');
           });
@@ -2103,22 +2187,17 @@
       }
 
       /* -----------------------------------------------------------
-         11. REPORT PREVIEW, EXCEL (.XLSX) & GUARANTEED NON-BLANK PDF
+         11. SIMPLIFIED DAILY WORK REPORT PREVIEW, EXCEL & PDF
       ----------------------------------------------------------- */
       function buildReportPreview() {
         const filtered = getFilteredLogs();
         const activeUser = getActiveUser();
 
         document.getElementById('report-generated-time').textContent = new Date().toLocaleString();
-        document.getElementById('report-prepared-by').textContent = `${activeUser.name} (${activeUser.role})`;
+        document.getElementById('report-prepared-by').textContent = activeUser.name;
 
         const dateVal = document.getElementById('filter-date').value;
         document.getElementById('report-filter-summary').textContent = dateVal ? `Date: ${dateVal}` : 'All Recorded Logs';
-
-        document.getElementById('rep-stat-total').textContent = filtered.length;
-        document.getElementById('rep-stat-completed').textContent = filtered.filter(l => l.status === 'completed').length;
-        document.getElementById('rep-stat-progress').textContent = filtered.filter(l => l.status === 'in_progress').length;
-        document.getElementById('rep-stat-notstarted').textContent = filtered.filter(l => l.status === 'not_started').length;
 
         const statusTextMap = {
           completed: 'Completed',
@@ -2187,9 +2266,9 @@
           if (typeof XLSX !== 'undefined') {
             const ws = XLSX.utils.json_to_sheet(rows);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Yunikon Work Log');
-            XLSX.writeFile(wb, `Yunikon_Work_Log_${getTodayISO()}.xlsx`);
-            showToast('Excel (.xlsx) downloaded for Boss!', 'success');
+            XLSX.utils.book_append_sheet(wb, ws, 'Daily Work Report');
+            XLSX.writeFile(wb, `Daily_Work_Report_${getTodayISO()}.xlsx`);
+            showToast('Excel (.xlsx) downloaded!', 'success');
             return;
           }
         } catch (err) {
@@ -2205,7 +2284,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Yunikon_Work_Log_${getTodayISO()}.csv`;
+        a.download = `Daily_Work_Report_${getTodayISO()}.csv`;
         a.click();
         URL.revokeObjectURL(url);
         showToast('Spreadsheet exported!', 'success');
@@ -2217,7 +2296,7 @@
           showToast('No work logs to export to PDF!', 'warning');
           return;
         }
-        showToast('Rendering high-quality PDF report...', 'info');
+        showToast('Rendering Daily Work Report PDF...', 'info');
 
         try {
           buildReportPreview();
@@ -2274,8 +2353,8 @@
             heightLeft -= pdfHeight;
           }
 
-          pdf.save(`Yunikon_Work_Log_${getTodayISO()}.pdf`);
-          showToast('PDF report downloaded successfully!', 'success');
+          pdf.save(`Daily_Work_Report_${getTodayISO()}.pdf`);
+          showToast('Daily Work Report PDF downloaded!', 'success');
 
         } catch (err) {
           console.warn('PDF capture error, using print fallback:', err);
@@ -2294,7 +2373,7 @@
             <html lang="en">
             <head>
               <meta charset="UTF-8" />
-              <title>Yunikon Work Log Report — Boss Copy</title>
+              <title>Daily Work Report — Yunikon International</title>
               <script src="https://cdn.tailwindcss.com"><\/script>
               <style>
                 body { background: #ffffff; color: #000000; padding: 20px; font-family: sans-serif; }
@@ -2323,7 +2402,8 @@
       }
 
       /* -----------------------------------------------------------
-         12. PURE CLIENT-SIDE GOOGLE DRIVE AUTO-SYNC ON LOAD & UPDATE
+         12. ENTERPRISE AUTO-SYNC ENGINE (OFFLINE QUEUE, TOMBSTONES,
+             EXPONENTIAL BACKOFF RETRY 3x, TOKEN AUTO-REFRESH)
       ----------------------------------------------------------- */
       function updateDriveStatusUI(status, text) {
         const dot = document.getElementById('drive-status-dot');
@@ -2350,6 +2430,65 @@
         } else {
           banner.classList.add('hidden');
         }
+        updatePendingQueueUI();
+      }
+
+      async function withBackoffRetry(fn, maxRetries = 3, baseDelayMs = 600) {
+        let lastError = null;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            return await fn();
+          } catch (err) {
+            lastError = err;
+            const msg = String(err && err.message ? err.message : '');
+            if (msg.includes('401') || attempt === maxRetries) {
+              throw err;
+            }
+            const waitMs = baseDelayMs * Math.pow(2, attempt) + Math.floor(Math.random() * 150);
+            await new Promise(res => setTimeout(res, waitMs));
+          }
+        }
+        throw lastError;
+      }
+
+      async function ensureFreshAccessToken() {
+        const now = Date.now();
+        const safetyMarginMs = 4 * 60 * 1000;
+        const hasValidToken = Boolean(
+          googleAccessToken &&
+          state.googleTokenExpiresAt &&
+          (now + safetyMarginMs < state.googleTokenExpiresAt)
+        );
+
+        if (hasValidToken) return googleAccessToken;
+
+        if (state.googleClientId && typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+          return new Promise((resolve) => {
+            const client = google.accounts.oauth2.initTokenClient({
+              client_id: state.googleClientId,
+              scope: DRIVE_SCOPE,
+              callback: (resp) => {
+                if (resp && resp.access_token) {
+                  googleAccessToken = resp.access_token;
+                  state.googleAccessToken = resp.access_token;
+                  state.googleTokenExpiresAt = Date.now() + ((resp.expires_in || 3600) * 1000);
+                  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                  resolve(googleAccessToken);
+                } else {
+                  resolve(null);
+                }
+              }
+            });
+            try {
+              client.requestAccessToken({ prompt: 'none' });
+            } catch (_) {
+              resolve(null);
+            }
+            setTimeout(() => resolve(googleAccessToken || null), 2500);
+          });
+        }
+
+        return googleAccessToken || null;
       }
 
       async function findOrCreateDriveFile(token) {
@@ -2366,7 +2505,7 @@
         const searchData = await searchRes.json();
         if (searchData.files && searchData.files.length > 0) {
           state.driveFileId = searchData.files[0].id;
-          saveState(false);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           return state.driveFileId;
         }
 
@@ -2384,60 +2523,97 @@
         }
         const created = await createRes.json();
         state.driveFileId = created.id;
-        saveState(false);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         return state.driveFileId;
       }
 
-      function mergeLogsWithRemote(remoteLogs) {
-        if (!Array.isArray(remoteLogs)) return;
+      function mergeLogsAndTombstones(remoteLogs = [], remoteDeletedIds = []) {
+        const tombstones = new Set([
+          ...(Array.isArray(state.deletedIds) ? state.deletedIds : []),
+          ...(Array.isArray(remoteDeletedIds) ? remoteDeletedIds : [])
+        ]);
+        state.deletedIds = Array.from(tombstones);
+
         const map = new Map();
-        remoteLogs.forEach(item => {
-          if (item && item.id) map.set(item.id, item);
-        });
-        state.logs.forEach(item => {
-          if (!item || !item.id) return;
-          const existing = map.get(item.id);
-          if (!existing || (item.updatedAt || 0) >= (existing.updatedAt || 0)) {
-            map.set(item.id, item);
-          }
-        });
+        if (Array.isArray(remoteLogs)) {
+          remoteLogs.forEach(item => {
+            if (item && item.id && !tombstones.has(item.id)) {
+              map.set(item.id, item);
+            }
+          });
+        }
+
+        if (Array.isArray(state.logs)) {
+          state.logs.forEach(item => {
+            if (!item || !item.id || tombstones.has(item.id)) return;
+            const existing = map.get(item.id);
+            if (!existing || (item.updatedAt || 0) >= (existing.updatedAt || 0)) {
+              map.set(item.id, item);
+            }
+          });
+        }
+
         state.logs = Array.from(map.values());
       }
 
       async function pullAndSyncFromGoogleDrive() {
-        if (!googleAccessToken || isSyncing) return;
+        if (isSyncing) return;
+        if (!navigator.onLine) {
+          state.pendingSync = true;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          updateDriveStatusUI('local', 'Offline Queue');
+          return;
+        }
+
+        const token = await ensureFreshAccessToken();
+        if (!token) {
+          updateDriveStatusUI('reconnect', 'Connect Drive');
+          return;
+        }
+
         try {
           isSyncing = true;
           updateDriveStatusUI('syncing', 'Syncing...');
-          const fileId = await findOrCreateDriveFile(googleAccessToken);
 
-          const getRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { Authorization: `Bearer ${googleAccessToken}` }
-          });
+          await withBackoffRetry(async () => {
+            const fileId = await findOrCreateDriveFile(token);
 
-          if (getRes.ok) {
-            const text = await getRes.text();
-            if (text && text.trim().startsWith('{')) {
-              const remoteData = JSON.parse(text);
-              mergeLogsWithRemote(remoteData.logs);
+            const getRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
 
-              // Preserves local custom PINs when merging user roles/profiles from Drive
-              const localBackupPins = loadSavedPinsMap();
-              if (Array.isArray(remoteData.users) && remoteData.users.length === 3) {
-                state.users = remoteData.users.map((remoteUser, idx) => {
-                  const localUser = state.users.find(u => u.id === remoteUser.id) || state.users[idx];
-                  const mergedPin = localBackupPins[remoteUser.id] || localUser.pin || remoteUser.pin || '1234';
-                  return {
-                    ...remoteUser,
-                    role: remoteUser.role === 'Owner' ? 'Owner' : 'Admin',
-                    pin: String(mergedPin).trim()
-                  };
-                });
+            if (getRes.ok) {
+              const text = await getRes.text();
+              if (text && text.trim().startsWith('{')) {
+                const remoteData = JSON.parse(text);
+                mergeLogsAndTombstones(remoteData.logs, remoteData.deletedIds);
+
+                const localBackupPins = loadSavedPinsMap();
+                if (Array.isArray(remoteData.users) && remoteData.users.length === 3) {
+                  state.users = remoteData.users.map((remoteUser, idx) => {
+                    const localUser = state.users.find(u => u.id === remoteUser.id) || state.users[idx];
+                    const mergedPin = localBackupPins[remoteUser.id] || localUser.pin || remoteUser.pin || '1234';
+                    return {
+                      ...remoteUser,
+                      role: remoteUser.role === 'Owner' ? 'Owner' : 'Admin',
+                      pin: String(mergedPin).trim()
+                    };
+                  });
+                }
               }
+            } else if (getRes.status === 401) {
+              throw new Error('401 Unauthorized');
             }
+
+            await uploadCurrentPayloadToDrive(fileId, token);
+          }, 3, 550);
+
+          state.pendingSync = false;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          if (syncChannel) {
+            syncChannel.postMessage({ type: 'STATE_UPDATED', reason: 'drive_sync', timestamp: Date.now() });
           }
 
-          await uploadCurrentPayloadToDrive(fileId);
           renderUserUI();
           renderLogs();
           updateDriveStatusUI('synced', 'Synced');
@@ -2446,21 +2622,24 @@
           if (err.message && err.message.includes('401')) {
             googleAccessToken = null;
             state.googleAccessToken = null;
-            saveState(false);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateDriveStatusUI('reconnect', 'Connect Drive');
           } else {
-            updateDriveStatusUI('error', 'Sync Err');
+            state.pendingSync = true;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            updateDriveStatusUI('error', 'Retry Sync');
           }
         } finally {
           isSyncing = false;
         }
       }
 
-      async function uploadCurrentPayloadToDrive(fileId) {
+      async function uploadCurrentPayloadToDrive(fileId, token) {
         const payload = JSON.stringify({
           app: 'Yunikon Work Log',
           company: 'Yunikon International',
           updatedAt: Date.now(),
+          deletedIds: state.deletedIds || [],
           users: state.users,
           logs: state.logs
         });
@@ -2468,7 +2647,7 @@
         const uploadRes = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
           method: 'PATCH',
           headers: {
-            Authorization: `Bearer ${googleAccessToken}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           body: payload
@@ -2478,12 +2657,21 @@
           throw new Error(`Drive upload failed (${uploadRes.status})`);
         }
         state.lastSyncTime = Date.now();
+        state.pendingSync = false;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       }
 
       async function pushToGoogleDrive() {
         if (!state.googleClientId || !state.autoSyncOnLoad) return;
-        if (!googleAccessToken) {
+        if (!navigator.onLine) {
+          state.pendingSync = true;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          updateDriveStatusUI('local', 'Offline Queue');
+          return;
+        }
+
+        const token = await ensureFreshAccessToken();
+        if (!token) {
           updateDriveStatusUI('reconnect', 'Connect Drive');
           return;
         }
@@ -2492,17 +2680,23 @@
         try {
           isSyncing = true;
           updateDriveStatusUI('syncing', 'Syncing...');
-          const fileId = await findOrCreateDriveFile(googleAccessToken);
-          await uploadCurrentPayloadToDrive(fileId);
+
+          await withBackoffRetry(async () => {
+            const fileId = await findOrCreateDriveFile(token);
+            await uploadCurrentPayloadToDrive(fileId, token);
+          }, 3, 550);
+
           updateDriveStatusUI('synced', 'Synced');
         } catch (err) {
           console.error('Push error:', err);
           if (err.message && err.message.includes('401')) {
             googleAccessToken = null;
             state.googleAccessToken = null;
-            saveState(false);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateDriveStatusUI('reconnect', 'Connect Drive');
           } else {
+            state.pendingSync = true;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
             updateDriveStatusUI('error', 'Retry Sync');
           }
         } finally {
@@ -2522,7 +2716,7 @@
               googleAccessToken = resp.access_token;
               state.googleAccessToken = resp.access_token;
               state.googleTokenExpiresAt = Date.now() + ((resp.expires_in || 3600) * 1000);
-              saveState(false);
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
               pullAndSyncFromGoogleDrive();
               showToast('Google Drive connected & auto-synced!', 'success');
             } else if (resp && resp.error) {
@@ -2555,10 +2749,14 @@
           return;
         }
 
+        if (!navigator.onLine) {
+          updateDriveStatusUI('local', 'Offline Queue');
+          return;
+        }
+
         const now = Date.now();
-        const safetyMargin = 5 * 60 * 1000;
+        const safetyMargin = 4 * 60 * 1000;
         if (googleAccessToken && state.googleTokenExpiresAt && (now + safetyMargin < state.googleTokenExpiresAt)) {
-          updateDriveStatusUI('synced', 'Synced');
           pullAndSyncFromGoogleDrive();
           return;
         }
@@ -2574,27 +2772,41 @@
          13. EVENT LISTENERS & INITIALIZATION
       ----------------------------------------------------------- */
       function bindEvents() {
+        if (syncChannel) {
+          syncChannel.onmessage = (event) => {
+            if (event && event.data && event.data.type === 'STATE_UPDATED') {
+              isApplyingRemoteBroadcast = true;
+              state = loadState();
+              googleAccessToken = state.googleAccessToken || googleAccessToken;
+              applyTheme();
+              renderUserUI();
+              renderLogs();
+              updatePendingQueueUI();
+              isApplyingRemoteBroadcast = false;
+            }
+          };
+        }
+
         document.getElementById('palette-toggle-btn').addEventListener('click', () => {
           state.palette = state.palette === 'red-black' ? 'navy-yellow' : 'red-black';
-          saveState(false);
+          saveState(false, 'theme_palette');
           applyTheme();
         });
 
         document.getElementById('mode-toggle-btn').addEventListener('click', () => {
           state.mode = state.mode === 'light' ? 'dark' : 'light';
-          saveState(false);
+          saveState(false, 'theme_mode');
           applyTheme();
         });
 
         const toggleLang = () => {
           state.lang = state.lang === 'en' ? 'si' : 'en';
-          saveState(false);
+          saveState(false, 'language_change');
           applyLanguage();
         };
         document.getElementById('lang-toggle-btn').addEventListener('click', toggleLang);
         document.getElementById('lock-lang-toggle').addEventListener('click', toggleLang);
 
-        // View Mode Switcher: Strips (Compact Rows) / Table / Cards
         const updateViewBtns = (activeMode) => {
           const btnStrips = document.getElementById('view-mode-strips');
           const btnTable = document.getElementById('view-mode-table');
@@ -2608,28 +2820,29 @@
           btnCards.className = activeMode === 'cards' ? activeStyle : inactiveStyle;
         };
 
+        updateViewBtns(state.viewMode || 'strips');
+
         document.getElementById('view-mode-strips').addEventListener('click', () => {
           state.viewMode = 'strips';
-          saveState(false);
+          saveState(false, 'view_mode');
           updateViewBtns('strips');
           renderLogs();
         });
 
         document.getElementById('view-mode-table').addEventListener('click', () => {
           state.viewMode = 'table';
-          saveState(false);
+          saveState(false, 'view_mode');
           updateViewBtns('table');
           renderLogs();
         });
 
         document.getElementById('view-mode-cards').addEventListener('click', () => {
           state.viewMode = 'cards';
-          saveState(false);
+          saveState(false, 'view_mode');
           updateViewBtns('cards');
           renderLogs();
         });
 
-        // Eye Toggle on Lock Screen
         const toggleLockPinVisBtn = document.getElementById('toggle-lock-pin-vis');
         if (toggleLockPinVisBtn) {
           toggleLockPinVisBtn.addEventListener('click', () => {
@@ -2646,7 +2859,6 @@
           });
         }
 
-        // Eye Toggle in Security Modal
         const toggleNewPinVisBtn = document.getElementById('toggle-new-pin-vis');
         if (toggleNewPinVisBtn) {
           toggleNewPinVisBtn.addEventListener('click', () => {
@@ -2663,7 +2875,6 @@
           });
         }
 
-        // APP UNLOCK LOGIC (NORMALIZED COMPARISON WITH BACKUP STORE)
         const attemptUnlock = () => {
           const selectedUserId = document.getElementById('lock-user-select').value;
           const enteredPin = document.getElementById('lock-pin-input').value.trim();
@@ -2676,10 +2887,11 @@
           if (user && String(enteredPin).trim() === expectedPin) {
             state.activeUserId = user.id;
             state.isLocked = false;
-            saveState(false);
+            saveState(false, 'unlock_success');
             renderLockScreen();
             renderUserUI();
             showToast(`Welcome, ${user.name}!`, 'success');
+            checkAndStartDriveSync();
           } else {
             errEl.textContent = state.lang === 'si' ? 'වැරදි PIN / මුරපදයකි!' : 'Incorrect PIN / Password!';
             errEl.classList.remove('hidden');
@@ -2706,11 +2918,10 @@
         document.getElementById('auto-lock-select').addEventListener('change', (e) => {
           state.autoLockMinutes = e.target.value;
           if (state.autoLockMinutes === 'disable') state.isLocked = false;
-          saveState(false);
+          saveState(false, 'auto_lock_config');
           showToast(`Auto-Lock set to: ${e.target.options[e.target.selectedIndex].text}`, 'success');
         });
 
-        // PERMANENT DEDICATED PIN UPDATE LOGIC
         const handleUpdatePin = () => {
           const newPin = document.getElementById('new-pin-input').value.trim();
           if (newPin.length < 4) {
@@ -2721,14 +2932,9 @@
           const targetUserId = document.getElementById('target-user-pin-select').value || state.activeUserId;
           const user = state.users.find(u => u.id === targetUserId) || getActiveUser();
 
-          // 1. Update state memory
           user.pin = String(newPin).trim();
-
-          // 2. Immediate Backup Storage Flush
           saveUserPinToBackup(user.id, newPin);
-
-          // 3. Full State Sync & Storage Save
-          saveState(true);
+          saveState(true, 'update_pin');
 
           document.getElementById('new-pin-input').value = '';
           const indicator = document.getElementById('pin-saved-indicator');
@@ -2753,7 +2959,7 @@
           document.getElementById('lock-settings-modal').classList.add('hidden');
           document.getElementById('lock-settings-modal').classList.remove('flex');
           state.isLocked = true;
-          saveState(false);
+          saveState(false, 'manual_lock');
           renderLockScreen();
         });
 
@@ -2776,6 +2982,7 @@
           if (state.lastSyncTime) {
             document.getElementById('last-sync-timestamp').textContent = new Date(state.lastSyncTime).toLocaleString();
           }
+          updatePendingQueueUI();
           const m = document.getElementById('drive-modal');
           m.classList.remove('hidden');
           m.classList.add('flex');
@@ -2791,8 +2998,8 @@
 
         document.getElementById('auto-sync-on-load-checkbox').addEventListener('change', (e) => {
           state.autoSyncOnLoad = e.target.checked;
-          saveState(false);
-          showToast(state.autoSyncOnLoad ? 'Auto-Sync on Load enabled.' : 'Auto-Sync on Load paused.', 'info');
+          saveState(state.autoSyncOnLoad, 'auto_sync_toggle');
+          showToast(state.autoSyncOnLoad ? 'Auto-Sync enabled.' : 'Auto-Sync paused.', 'info');
         });
         document.getElementById('connect-drive-btn').addEventListener('click', () => {
           const cid = document.getElementById('google-client-id-input').value.trim();
@@ -2802,7 +3009,7 @@
           }
           state.googleClientId = cid;
           state.autoSyncOnLoad = document.getElementById('auto-sync-on-load-checkbox').checked;
-          saveState(false);
+          saveState(false, 'set_client_id');
           requestGoogleToken(true);
         });
         document.getElementById('manual-pull-drive-btn').addEventListener('click', () => {
@@ -2822,9 +3029,8 @@
           URL.revokeObjectURL(url);
         });
 
-        // Form Submit
-        document.getElementById('work-log-form').addEventListener('submit', (e) => {
-          e.preventDefault();
+        // Save or '+ Save & Add Another' handler
+        function submitWorkLogForm(addAnotherAfterSave = false) {
           const titleInput = document.getElementById('log-title');
           const titleErr = document.getElementById('title-error-msg');
           const title = titleInput.value.trim();
@@ -2844,6 +3050,7 @@
           const status = document.querySelector('input[name="log-status"]:checked')?.value || 'in_progress';
           const notes = document.getElementById('log-notes').value.trim();
           const activeUser = getActiveUser();
+          const dict = I18N[state.lang] || I18N.en;
 
           if (editId) {
             const idx = state.logs.findIndex(l => l.id === editId);
@@ -2876,12 +3083,28 @@
               createdAt: Date.now(),
               updatedAt: Date.now()
             });
-            showToast('Work log saved & syncing...', 'success');
+
+            if (addAnotherAfterSave) {
+              showToast('Saved! Ready for next task.', 'success');
+            } else {
+              showToast('Work log saved & syncing...', 'success', dict.addNextTask, () => {
+                window.focusNewTaskForm();
+              });
+            }
           }
 
-          saveState(true);
-          resetForm();
+          saveState(true, editId ? 'edit_log' : 'create_log');
+          resetForm({ keepContext: addAnotherAfterSave, focusTitle: addAnotherAfterSave });
           renderLogs();
+        }
+
+        document.getElementById('work-log-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          submitWorkLogForm(false);
+        });
+
+        document.getElementById('save-and-add-another-btn').addEventListener('click', () => {
+          submitWorkLogForm(true);
         });
 
         document.getElementById('log-title').addEventListener('input', () => {
@@ -2895,7 +3118,7 @@
           document.getElementById('log-time').value = getNowTimeHHMM();
         });
 
-        document.getElementById('cancel-edit-btn').addEventListener('click', resetForm);
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => resetForm());
 
         document.getElementById('photo-input').addEventListener('change', async (e) => {
           await handlePhotoFiles(e.target.files);
@@ -2947,12 +3170,12 @@
           }
         });
 
-        // Background auto-sync check every 2 minutes
+        // Background auto-sync check every 90 seconds
         setInterval(() => {
-          if (googleAccessToken && state.autoSyncOnLoad) {
+          if (state.autoSyncOnLoad && (state.pendingSync || googleAccessToken)) {
             pushToGoogleDrive();
           }
-        }, 120000);
+        }, 90000);
       }
 
       /* -----------------------------------------------------------
@@ -2969,16 +3192,14 @@
         initAutoLockWatchers();
         bindEvents();
         renderLockScreen();
+        updatePendingQueueUI();
         lucide.createIcons();
 
-        
-        // Automatically trigger Google Drive sync on app load
         setTimeout(() => {
           checkAndStartDriveSync();
-        }, 500);
+        }, 450);
       });
     })();
   </script>
 </body>
 </html>
-```
